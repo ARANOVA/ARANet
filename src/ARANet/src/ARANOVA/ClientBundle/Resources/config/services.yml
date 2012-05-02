@@ -1,0 +1,7 @@
+parameters:
+#    aranova_client.example.class: ARANOVA\ClientBundle\Example
+
+services:
+#    aranova_client.example:
+#        class: %aranova_client.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
