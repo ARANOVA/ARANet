@@ -1,0 +1,7 @@
+parameters:
+#    aranova_vendor.example.class: ARANOVA\VendorBundle\Example
+
+services:
+#    aranova_vendor.example:
+#        class: %aranova_vendor.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

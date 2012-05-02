@@ -18,6 +18,8 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new ARANOVA\ClientBundle\ARANOVAClientBundle(),
+            new ARANOVA\DashboardBundle\ARANOVADashboardBundle(),
+            new ARANOVA\VendorBundle\ARANOVAVendorBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

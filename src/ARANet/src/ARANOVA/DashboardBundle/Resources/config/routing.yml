@@ -1,0 +1,3 @@
+ARANOVADashboardBundle_homepage:
+    pattern:  /
+    defaults: { _controller: ARANOVADashboardBundle:Default:index }

@@ -1,3 +1,11 @@
+ARANOVAVendorBundle:
+    resource: "@ARANOVAVendorBundle/Resources/config/routing.yml"
+    prefix:   /
+
+ARANOVADashboardBundle:
+    resource: "@ARANOVADashboardBundle/Resources/config/routing.yml"
+    prefix:   /
+
 ARANOVAClientBundle:
     resource: "@ARANOVAClientBundle/Resources/config/routing.yml"
     prefix:   /
