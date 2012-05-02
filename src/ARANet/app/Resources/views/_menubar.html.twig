@@ -1,91 +1,91 @@
 <div class="navbar navbar-fixed-top">
-    	    		<div class="navbar-inner">
-    					<div class="container">
+    <div class="navbar-inner">
+        <div class="container">
 
-    						<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-						  	<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						    	<span class="icon-bar"></span>
-						        <span class="icon-bar"></span>
-						        <span class="icon-bar"></span>
-						    </a>
-						      
-    						<!-- Be sure to leave the brand out there if you want it shown -->
-    						<a class="brand" href="#">ARANet</a>
-    						
-    						<!-- Everything you want hidden at 940px or less, place within here -->
-      						<div class="nav-collapse">
-      
-    							<ul class="nav">
-    								<li>
-    									<a href="{{ path('_dashboard') }}">Dashboard</a>
-	  								</li>
-  									<!-- <li class="divider-vertical"></li> -->
-  									<li class="dropdown">
-    									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    										Empresa
-          									<b class="caret"></b>
-										</a>
-    									<ul class="dropdown-menu">
-      										<li><a href="clients">Clientes</a></li>
-      										<li><a href="{{ path('_vendors') }}">Proveedores</a></li>
-      										<li class="divider"></li>
-      										<li><a href="contacts">Contactos</a></li>
-    									</ul>
-	  								</li>
-	  								<li class="dropdown">
-    									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    										Producción
-          									<b class="caret"></b>
-										</a>
-    									<ul class="dropdown-menu">
-      										<li><a href="#">Artículos</a></li>
-      										<li><a href="#">Proyectos</a></li>
-      										<li><a href="#">Presupuestos</a></li>
-      										<li class="divider"></li>
-      										<li><a href="#">Partes de dedicación</a></li>
-    									</ul>
-	  								</li>
-	  								<li class="dropdown">
-    									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    										Gestión
-          									<b class="caret"></b>
-										</a>
-    									<ul class="dropdown-menu">
-    										<li class="nav-header">Proveedores</li>
-      										<li><a href="#">Pedidos</a></li>
-      										<li><a href="#">Albaranes</a></li>
-      										<li><a href="#">Facturas</a></li>
-      										<li class="divider"></li>
-      										<li class="nav-header">Clientes</li>
-      										<li><a href="#">Pedidos</a></li>
-      										<li><a href="#">Albaranes</a></li>
-      										<li><a href="#">Facturas</a></li>
-      										<li class="divider"></li>
-      										<li class="nav-header">Caja</li>
-      										<li><a href="#">Movimientos de caja</a></li>
-      										<li class="divider"></li>
-      										<li><a href="#">Otros ingresos</a></li>
-      										<li><a href="#">Otros gastos</a></li>
-    									</ul>
-	  								</li>
-	  								<li class="dropdown">
-    									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    										Extra
-          									<b class="caret"></b>
-										</a>
-    									<ul class="dropdown-menu">
-    										<li><a href="#">Archivos</a></li>
-      									</ul>
-      								</li>
-      								<li>
-    									<a href="#">Salir</a>
-	  								</li>
-								</ul>
-								<form class="navbar-search pull-right">
-  									<input type="text" class="search-query" placeholder="Buscar...">
-								</form>
-							</div>
+            <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+              
+            <!-- Be sure to leave the brand out there if you want it shown -->
+            <a class="brand" href="#">ARANet</a>
+            
+            <!-- Everything you want hidden at 940px or less, place within here -->
+            <div class="nav-collapse">
 
-    					</div>
-  					</div>
-				</div>
+                <ul class="nav">
+                    <li{% if app.request.uri == url('homepage') %} class="active"{% endif %}>
+                        <a href="{{ path('homepage') }}">Dashboard</a>
+                    </li>
+                    <!-- <li class="divider-vertical"></li> -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Empresa
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li{% if app.request.uri == url('_clients') %} class="active"{% endif %}><a href="{{ path('_clients') }}" title="Clientes">Clientes</a></li>
+                            <li{% if app.request.uri == url('_vendors') %} class="active"{% endif %}><a href="{{ path('_vendors') }}" title="Proveedores">Proveedores</a></li>
+                            <li class="divider"></li>
+                            <li{% if app.request.uri == url('_contacts') %} class="active"{% endif %}><a href="{{ path('_contacts') }}" title="Contactos">Contactos</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Producción
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Artículos</a></li>
+                            <li><a href="#">Proyectos</a></li>
+                            <li><a href="#">Presupuestos</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">Partes de dedicación</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Gestión
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="nav-header">Proveedores</li>
+                            <li><a href="#">Pedidos</a></li>
+                            <li><a href="#">Albaranes</a></li>
+                            <li><a href="#">Facturas</a></li>
+                            <li class="divider"></li>
+                            <li class="nav-header">Clientes</li>
+                            <li><a href="#">Pedidos</a></li>
+                            <li><a href="#">Albaranes</a></li>
+                            <li><a href="#">Facturas</a></li>
+                            <li class="divider"></li>
+                            <li class="nav-header">Caja</li>
+                            <li><a href="#">Movimientos de caja</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">Otros ingresos</a></li>
+                            <li><a href="#">Otros gastos</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Extra
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Archivos</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">Salir</a>
+                    </li>
+                </ul>
+                <form class="navbar-search pull-right">
+                    <input type="text" class="search-query" placeholder="Buscar...">
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

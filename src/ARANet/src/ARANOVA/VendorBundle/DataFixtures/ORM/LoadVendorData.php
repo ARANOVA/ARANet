@@ -1,28 +1,29 @@
 <?php
-namespace ARANOVA\ARANetBundle\DataFixtures\ORM;
+namespace ARANOVA\VendorBundle\DataFixtures\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use ARANOVA\ARANetBundle\Entity\AranetVendor;
-use ARANOVA\ARANetBundle\Entity\AranetContact;
-use ARANOVA\ARANetBundle\Entity\AranetKindOfCompany;
-use ARANOVA\ARANetBundle\Entity\AranetVendorContact;
-use ARANOVA\ARANetBundle\Entity\AranetVendorStatistic;
-use ARANOVA\ARANetBundle\Entity\AranetAddress;
-use ARANOVA\ARANetBundle\Entity\AranetVendorAddress;
+use ARANOVA\VendorBundle\Entity\AranetVendor;
+use ARANOVA\VendorBundle\Entity\AranetContact;
+use ARANOVA\VendorBundle\Entity\AranetKindOfCompany;
+use ARANOVA\VendorBundle\Entity\AranetVendorContact;
+use ARANOVA\VendorBundle\Entity\AranetVendorStatistic;
+use ARANOVA\VendorBundle\Entity\AranetAddress;
+use ARANOVA\VendorBundle\Entity\AranetVendorAddress;
 
 
 class LoadVendorData implements FixtureInterface
 {
     public function load(ObjectManager $manager)
     {
-    	$kind_of_company = new AranetKindOfCompany();
-    	$kind_of_company->setKindOfCompanyTitle("tipo1");
-    	$manager->persist($kind_of_company);
-    	
+        $kind_of_company = new AranetKindOfCompany();
+        $kind_of_company->setKindOfCompanyTitle("tipo1");
+        $manager->persist($kind_of_company);
+
         $vendor1 = new AranetVendor();
         $vendor1->setVendorUniqueName("Prueba");
         $vendor1->setVendorCompanyName("Prueba");
+        $vendor1->setVendorCIF("B12345678");
         $vendor1->setVendorKindOfCompany($kind_of_company);
         $manager->persist($vendor1);
         
@@ -61,6 +62,7 @@ class LoadVendorData implements FixtureInterface
         $vendor2 = new AranetVendor();
         $vendor2->setVendorUniqueName("Prueba 2");
         $vendor2->setVendorCompanyName("Prueba 2");
+        $vendor2->setVendorCIF("ESA12345678");
         $vendor2->setVendorKindOfCompany($kind_of_company);
         $manager->persist($vendor2);
         

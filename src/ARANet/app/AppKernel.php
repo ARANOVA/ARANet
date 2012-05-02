@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new ARANOVA\DashboardBundle\ARANOVADashboardBundle(),
             new ARANOVA\VendorBundle\ARANOVAVendorBundle(),
             new ARANOVA\ContactBundle\ARANOVAContactBundle(),
+            new Symfony\Bundle\DoctrineFixturesBundle\DoctrineFixturesBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
