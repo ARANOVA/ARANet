@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new ARANOVA\ClientBundle\ARANOVAClientBundle(),
             new ARANOVA\DashboardBundle\ARANOVADashboardBundle(),
             new ARANOVA\VendorBundle\ARANOVAVendorBundle(),
+            new ARANOVA\ContactBundle\ARANOVAContactBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

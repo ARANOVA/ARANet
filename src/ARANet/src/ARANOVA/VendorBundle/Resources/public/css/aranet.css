@@ -1,0 +1,50 @@
+body {
+	margin-top:40px;
+}
+.sidebar2 {
+	margin-top: 23px;
+}
+.badge-pill-inverse {
+	background-color: #ffffff;
+  	color: #0088cc;
+}
+.badge-pill-inverse:hover {
+	color: #0088cc;
+}
+.badge-pill {
+	color: #ffffff;
+  	background-color: #0088cc;
+}
+.badge-pill:hover {
+	color: #ffffff;
+}
+.centered {
+	text-align: center !important;
+	vertical-align: middle !important;
+}
+.righted {
+	text-align: right !important;
+	white-space:nowrap;
+}
+.lefted {
+	text-align: left !important;
+}
+td {
+	vertical-align: middle !important;
+}
+.well-inverted {
+  background-color: #ffffff;
+  border: 1px solid #f5f5f5;
+}
+th {
+	text-align:center !important;
+	vertical-align: middle !important;
+}
+.scrollable {
+  max-height: 170px;
+  padding-right:10px;
+  overflow-y: auto;
+}
+.nav-tabs {
+	margin-bottom:10px;
+}

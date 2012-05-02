@@ -1,3 +1,0 @@
-ARANOVAVendorBundle_homepage:
-    pattern:  /vendor
-    defaults: { _controller: ARANOVAVendorBundle:Default:index }

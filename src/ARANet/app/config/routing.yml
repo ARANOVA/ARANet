@@ -1,13 +1,21 @@
-ARANOVAVendorBundle:
-    resource: "@ARANOVAVendorBundle/Resources/config/routing.yml"
-    prefix:   /
-
-ARANOVADashboardBundle:
-    resource: "@ARANOVADashboardBundle/Resources/config/routing.yml"
-    prefix:   /
+ARANOVAContactBundle:
+    resource: "@ARANOVAContactBundle/Controller/"
+    type:     annotation
+    prefix:   /contacts
 
 ARANOVAClientBundle:
-    resource: "@ARANOVAClientBundle/Resources/config/routing.yml"
+    resource: "@ARANOVAClientBundle/Controller/"
+    type:     annotation
+    prefix:   /clients
+
+ARANOVAVendorBundle:
+    resource: "@ARANOVAVendorBundle/Controller/"
+    type:     annotation
+    prefix:   /vendors
+
+ARANOVADashboardBundle:
+    resource: "@ARANOVADashboardBundle/Controller/"
+    type:     annotation
     prefix:   /
 
 # Internal routing configuration to handle ESI

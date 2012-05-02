@@ -1,1 +1,201 @@
-Vendor Bundle
+{% extends 'ARANOVAARANetBundle::index.html.twig' %}
+
+{% block title %}ARANet - Proveedores{% endblock %}
+
+{% block content_header %}
+	<div class="page-header">
+  		<h1>Proveedores <small>Listado de proveedores</small></h1>
+  	</div>
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span9">
+    	<!--
+      	<div class="pull-right span7" style="text-align:right">
+			{% block filters %}
+				{% for filter in ["Nombre: xxxx", "CIF: xxx", "Compras 2012 (>): xxx", "Compras 2011 (>): xxx", "Otros: xxxx", "Alta (>): 12/03/2011"] %}
+				<button type="button" class="btn btn-mini btn-inverse"><i class="icon-minus-sign icon-white"></i> {{ filter }}</button>
+				{% endfor %}
+			{% endblock %}
+		</div>
+		-->
+
+		<div class="tabbable">
+			        <ul class="nav nav-tabs">
+			        	{% for idx in range(0, pages|length - 1) %}
+			        		{% if pages[idx] == "All" %}
+			        			{% set active = " active" %}
+			            	{% else %}
+			            		{% set active = "" %}
+			            	{% endif %}
+					        <li class="{{ active }}"><a href="#{{ pages[idx] }}" data-toggle="tab">{{ pages[idx] }} <span class="badge badge-pill">{{ pager[idx].getNbResults }}</span></a></li>
+					    {% endfor %}
+			        </ul>
+			        
+			        <div class="tab-content">
+			        	{% for idx in range(0, pages|length - 1) %}	
+			        		{% if pages[idx] == "All" %}
+			        			{% set active = " active" %}
+			            	{% else %}
+			            		{% set active = "" %}
+			            	{% endif %}
+			            	<div class="tab-pane{{ active }}" id="{{ pages[idx] }}">
+						      <table class="table table-bordered table-striped table-condensed">
+						      	<colgroup>
+						      		<col class="span1">
+						      		<col class="span1">
+						      		<col class="span3">
+						      		<col class="span3">
+						      		<col class="span1">
+						      		<col class="span3">
+						      		<col class="span1">
+						      		<col class="span1">
+						      	</colgroup>
+					    		<thead>
+					    			<tr>
+					    				<th><input type="checkbox"></th>
+					    				<th>Acciones</th>
+					    				<th>Empresa <i class="icon-arrow-up"></i></th>
+					    				<th>Contacto principal</th>
+					    				<th>Teléfono</th>
+					    				<th>Dirección</th>
+					    				<th>{{ stat[0] }}</th>
+					    				<th>{{ stat[1] }}</th>
+					    				<th>Compras (totales)</th>
+					    			</tr>
+					    		</thead>
+					    		<tbody>
+					    			{% set total_0 = 0 %}
+					    			{% set total_1 = 0 %}
+					    			{% set total_2 = 0 %}
+					    			{% for vendor in pager[idx].getCurrentPageResults %}
+					    			<tr>
+					    				<td class="centered"><input type="checkbox"></td>
+					    				<td class="centered"><a href="{{ path('_vendor_show', {'id': vendor.id}) }}"><i class="icon-eye-open"></i></a> <a href="{{ path('_vendor_edit', {'id': vendor.id}) }}"><i class="icon-edit"></i></a> <a href="{{ path('_vendor_remove', {'id': vendor.id}) }}"><i class="icon-remove"></i></a></td>
+					    				<td><a href="{{ path('_vendor_show', {'id': vendor.id}) }}">{{ vendor.vendorCompanyName }}</a></td>
+					    				<td>
+					    					{% set contact = vendor.defaultContact %}
+					    					{% if contact %}
+					    						{{ contact.contact }}
+					    						{% set phone = contact.contact.contactPhone %}
+					    					{% else %}
+					    						{% set phone = "" %}
+					    					{% endif %}
+					    				</td>
+					    				<td>{{ phone }}</td>
+					    				<td>
+					    					{% set address = vendor.defaultAddress %}
+					    					{% if address %}
+					    						{{ address.address|raw }}
+					    					{% endif %}
+										</td>
+					    				<td class="righted">
+					    					{% if vendor.statistics|length > 0 %}
+					    						{% for statistic in vendor.statistics %}
+					    							{% if statistic.statistic == stat[0] %}
+					    								{{ statistic.value }} €
+					    								{% set total_0 = total_0 + statistic.value %}
+					    							{% endif %}
+					    					{% endfor %}
+					    					{% else %}
+					    						-- €
+					    					{% endif %}
+					    				</td>
+					    				<td class="righted">
+					    				{% if vendor.statistics|length > 0 %}
+					    						{% for statistic in vendor.statistics %}
+					    							{% if statistic.statistic == stat[1] %}
+					    								{{ statistic.value }} €
+					    								{% set total_1 = total_1 + statistic.value %}
+					    							{% endif %}
+					    					{% endfor %}
+					    					{% else %}
+					    						-- €
+					    					{% endif %}
+					    				</td>
+					    				<td class="righted">
+					    					{% if vendor.statistics|length > 0 %}
+					    						{% for statistic in vendor.statistics %}
+					    							{% if statistic.statistic == stat[2] %}
+					    								{{ statistic.value }} €
+					    								{% set total_2 = total_2 + statistic.value %}
+					    							{% endif %}
+					    					{% endfor %}
+					    					{% else %}
+					    						-- €
+					    					{% endif %}
+					    				</td>
+					    			</tr>
+					    			{% endfor %}
+					    		</tbody>
+					    		<tfoot>
+					    			<tr>
+					    				<th colspan="6" class="lefted">
+					    				Resultados por página: 
+					  	  	{% for pages in [10, 15, 20, 50, 100, "Todos"] %}
+					  	  		<a href="#{{ pages }}Results">
+					  	  		{% if pages == 10 %}
+					  	  			<span class="badge badge-inverse">
+					  	  		{% else %}
+					  	  			<span class="badge badge-info">
+					  	  		{% endif %}
+					  	  		{{ pages }}</span></a> 
+					  	  	{% endfor %}
+					    				<div style="float:right">Totales</div></th>
+					    				<th class="righted">{{ total_0 }} €</th>
+					    				<th class="righted">{{ total_1 }} €</th>
+					    				<th class="righted">{{ total_2 }} €</th>
+					    			</tr>
+					    		</tfoot>
+					    	</table>
+					  	  	<p>Para los elementos seleccionados:  
+					  	  		<button type="button" class="btn btn-mini btn-warning"><i class="icon-remove icon-white"></i> Eliminar</button>
+					  	  	</p>
+
+					  	  <!-- Pagination -->		
+					  	  {{ pagination.render(pager[idx], router, {
+    						'proximity': 2,
+							'prev_message': '←',
+							'next_message': '→',
+							'css_container_class': 'pagination pagination-centered'}) | raw }}
+					    	
+					    	</div>
+					  	  {% endfor %}
+					  	  
+						<div> <!-- tabcontent? -->
+					  	  
+					  </div> <!-- tabpanel? -->
+					  	  
+			        </div>
+
+				</div>
+    </div> <!-- fin de span9 -->
+    
+	<div class="span3">
+		<h5>Filtros: </h5>
+		<div style="margin-bottom: 9px;">
+		{% for filter in ["Nombre: xxxx", "CIF: xxx", "Compras 2012 (>): xxx", "Compras 2011 (>): xxx", "Otros: xxxx", "Alta (>): 12/03/2011"] %}
+			<button type="button" class="btn btn-mini btn-inverse"><i class="icon-minus-sign icon-white"></i> {{ filter }}</button>
+		{% endfor %}
+		<button type="button" class="btn btn-mini btn-warning"><i class="icon-minus-sign icon-white"></i> Eliminar todos</button>
+		</div>
+		<form class="well">
+		  <label>Nombre</label>
+		  <input type="text" placeholder="Empresa…">
+		  
+		  <label>CIF</label>
+		  <input type="text" placeholder="CIF…">
+		  
+		  <label>Otro</label>
+		  <select>
+		  	<option>2012</option>
+		  	<option>2011</option>
+		  	<option>2010</option>
+		  	<option>2009</option>
+		  </select>
+		  <button type="submit" class="btn btn-primary"><i class="icon-refresh icon-white"></i> Añadir filtros</button>
+		</form>
+	</div>
+</div>
+{% endblock %}

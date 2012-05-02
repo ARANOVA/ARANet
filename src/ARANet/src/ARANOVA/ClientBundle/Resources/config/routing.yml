@@ -1,3 +1,0 @@
-ARANOVAClientBundle_homepage:
-    pattern:  /client
-    defaults: { _controller: ARANOVAClientBundle:Default:index }
