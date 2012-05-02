@@ -74,7 +74,9 @@
                                     {% for vendor in pager[idx].getCurrentPageResults %}
                                     <tr>
                                         <td class="centered"><input type="checkbox"></td>
-                                        <td class="centered"><a href="{{ path('_vendor_show', {'id': vendor.id}) }}"><i class="icon-eye-open"></i></a> <a href="{{ path('_vendor_edit', {'id': vendor.id}) }}"><i class="icon-edit"></i></a> <a href="{{ path('_vendor_remove', {'id': vendor.id}) }}"><i class="icon-remove"></i></a></td>
+                                        <td class="centered"><a href="{{ path('_vendor_show', {'id': vendor.id}) }}"><i class="icon-eye-open"></i></a> <a href="{{ path('_vendor_edit', {'id': vendor.id}) }}"><i class="icon-edit"></i></a> 
+                                            <a data-toggle="modal" href="#deleteModal" class="delete" title="{{ vendor.vendorCompanyName }}"><i class="icon-remove"></i></a>
+                                        </td>
                                         <td><a href="{{ path('_vendor_show', {'id': vendor.id}) }}">{{ vendor.vendorCompanyName }}</a></td>
                                         <td>{{ vendor.vendorCIF }}</td>
                                         <td>
@@ -179,11 +181,11 @@
     
     <div class="span3">
         <h5>Filtros: </h5>
-        <div style="margin-bottom: 9px;">
-        {% for filter in ["Nombre: *Prueba*", "CIF: *1*", "Compras 2012 (>): 0 €", "Compras 2011 (>): 0 €"] %}
-            <button type="button" class="btn btn-mini btn-inverse"><i class="icon-minus-sign icon-white"></i> {{ filter }}</button>
-        {% endfor %}
-        <button type="button" class="btn btn-mini btn-warning"><i class="icon-minus-sign icon-white"></i> Eliminar todos</button>
+        <div id="activeFilters" style="margin-bottom: 9px;">
+            {% for filter in ["Nombre: *Prueba*", "CIF: *1*", "Compras 2012 (>): 0 €", "Compras 2011 (>): 0 €"] %}
+                <button id="test" type="button" class="btn btn-mini btn-inverse" style="margin-bottom:5px"><i class="icon-minus-sign icon-white"></i> {{ filter }}</button>
+            {% endfor %}
+            <button type="button" class="btn btn-mini btn-warning" id="clearAllFilters"><i class="icon-minus-sign icon-white"></i> Eliminar todos</button>
         </div>
         <form class="well form-vertical">
             <fieldset>
@@ -193,33 +195,105 @@
                 <label>CIF</label>
                 <input type="text" placeholder="CIF…">
 
-                <div class="input-append">          
-                    <label>Compras 2012 (>)</label>
-                    <input type="text" placeholder="0">
-                    <span class="add-on">€</span>
-                </div>
+               <div class="control-group">
+                   <label class="control-label">Compras (2011)</label>
+                   <div class="controls">
+                       <div class="input-prepend input-append">
+                           <span class="add-on">&lt;</span><input class="span2" id="appendedPrependedInput" size="16" type="text">
+                           <span class="add-on">&euro;</span>
+                       </div>
+                   </div>
+                   <div class="controls">
+                       <div class="input-prepend input-append">
+                           <span class="add-on">&gt;</span><input class="span2" id="appendedPrependedInput" size="16" type="text">
+                           <span class="add-on">&euro;</span>
+                       </div>
+                   </div>
+               </div>
 
-                <div class="input-append">          
-                    <label>Compras 2012 (<)</label>
-                    <input type="text" placeholder="0">
-                    <span class="add-on">€</span>
-                </div>
+               <div class="control-group">
+                   <label class="control-label">Compras (2012)</label>
+                   <div class="controls">
+                       <div class="input-prepend input-append">
+                           <span class="add-on">&lt;</span><input class="span2" id="appendedPrependedInput" size="16" type="text">
+                           <span class="add-on">&euro;</span>
+                       </div>
+                   </div>
+                   <div class="controls">
+                       <div class="input-prepend input-append">
+                           <span class="add-on">&gt;</span><input class="span2" id="appendedPrependedInput" size="16" type="text">
+                           <span class="add-on">&euro;</span>
+                       </div>
+                   </div>
+               </div>
 
-                <div class="input-append">
-                    <label>Compras totales (>)</label>
-                    <input type="text" placeholder="0">
-                    <span class="add-on">€</span>
-                </div>
+               <div class="control-group">
+                   <label class="control-label">Compras (totales)</label>
+                   <div class="controls">
+                       <div class="input-prepend input-append">
+                           <span class="add-on">&lt;</span><input class="span2" id="appendedPrependedInput" size="16" type="text">
+                           <span class="add-on">&euro;</span>
+                       </div>
+                   </div>
+                   <div class="controls">
+                       <div class="input-prepend input-append">
+                           <span class="add-on">&gt;</span><input class="span2" id="appendedPrependedInput" size="16" type="text">
+                           <span class="add-on">&euro;</span>
+                       </div>
+                   </div>
+               </div>
 
-                <div class="input-append">
-                    <label>Compras totales (<)</label>
-                    <input type="text" placeholder="0">
-                    <span class="add-on">€</span>
-                </div>
 
                 <button type="submit" class="btn btn-primary"><i class="icon-refresh icon-white"></i> Añadir filtros</button>
             </fieldset>
         </form>
-    </div>
+
+    </div> <!-- fin de span3 -->
+    
+    <div class="modal hide" id="deleteModal">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">×</a>
+                <h3>Confirmación necesaria</h3>
+            </div>
+            <div class="modal-body">
+                <p>Vas a eliminar el proveedor "<span id="rowTitle"></span>". ¿Estás seguro?</p>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary">Sí</a>
+                <a href="#" class="btn" data-dismiss="modal">No</a>
+            </div>
+        </div>
+        
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.modal').modal({
+                show: false,
+                backdrop: true
+            })
+            $(".delete").on('click', function () {
+                $("#rowTitle").text(this.title);
+            })
+            $("#activeFilters button").click(function() {
+                if ($(this).attr('id') == "clearAllFilters") {
+                    $("#activeFilters button").hide('fast', function() {
+                        $(this).remove();
+                    });
+                } else {
+                    $(this).hide('fast', function() {
+                        $(this).remove();
+                        if ($("#activeFilters button").length == 1) {
+                            $("#clearAllFilters").hide('fast', function() {
+                                $(this).remove();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 {% endblock %}

@@ -1,18 +1,18 @@
 <table class="table table-bordered table-striped table-condensed">
-	<thead>
-		<tr>
-			<th>Nombre</th>
-			<th>E-mail</th>
-			<th>Teléfono</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for contact in vendor.contacts %}
-		<tr>
-			<td>{{ contact.contact }}</td>
-			<td>{{ contact.contact.contactEmail }}</td>
-			<td class="centered">{{ contact.contact.contactPhone }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>E-mail</th>
+            <th>Teléfono</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for contact in vendor.contacts %}
+        <tr>
+            <td>{{ contact.contact }}</td>
+            <td>{{ contact.contact.contactEmail }}</td>
+            <td class="centered">{{ contact.contact.contactPhone }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>

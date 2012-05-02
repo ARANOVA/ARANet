@@ -88,7 +88,7 @@ class DefaultController extends Controller
     public function showAction($id)
     {
       $vendor = $this->getDoctrine()
-          ->getRepository('ARANOVAARANetBundle:AranetVendor')
+          ->getRepository('ARANOVAVendorBundle:AranetVendor')
           ->findOneById($id);
 
         return array(

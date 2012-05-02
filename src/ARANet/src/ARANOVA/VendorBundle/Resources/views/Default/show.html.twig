@@ -1,146 +1,147 @@
-{% extends 'ARANOVAARANetBundle::layout.html.twig' %}
+{% extends '::layout.html.twig' %}
 
 {% block title %}ARANet - Proveedores - Mostrando "%s"{% endblock %}
 
 {% block content_header %}
-	<div class="page-header">
-  		<h1><a href="{{ path('_vendors') }}">Proveedores</a> <small>Mostrando "{{ vendor.vendorUniqueName }}"</small></h1>
-  	</div>
+    <div class="page-header">
+        <h1><a href="{{ path('_vendors') }}">Proveedores</a> <small>Mostrando "{{ vendor.vendorUniqueName }}"</small></h1>
+    </div>
 {% endblock %}
 
 {% block content %}
-		<div class="well well-small">
-    		<div class="row-fluid">
-    			<div class="span5">
-					<address>
-        				<h2>{{ vendor.vendorCompanyName }}</h2>
-        				{% set address = vendor.defaultAddress %}
-					    {% if address %}
-					    	{{ address.address|raw }}
-					    {% endif %}
-      				</address>
-      				<h3>Contacto principal</h3>
-      				<address>
-      					{% set contact = vendor.defaultContact %}
-					    {% if contact %}
-					    	<strong>{{ contact.contact }}</strong><br/>
-					    	{{ contact.objectcontactRol }}<br/>
-					    	<abbr title="Phone">P:</abbr> {{ contact.contact.contactPhone }}
-					    	{% if contact.contact.contactEmail %} - <a href="mailto:{{ contact.contact.contactEmail }}">{{ contact.contact.contactEmail }}</a>{% endif %}
-					    {% endif %}
-      				</address>
-				</div>
-				<div class="span7">
-					<div class="well well-inverted well-small">
-					{% include 'ARANOVAARANetBundle:Vendor:_showtabs.html.twig' %}
-					</div>
-				</div>
-			</div>
-			<div class="row-fluid">
-    			<div class="span12 centered">
-					<button type="button" class="btn btn-mini btn-primary"><i class="icon-edit icon-white"></i> Editar</button>&nbsp;&nbsp;
-					<button type="button" class="btn btn-mini btn-warning"><i class="icon-remove icon-white"></i> Eliminar</button>
-				</div>
-			</div>
-		</div>
-		
-		<div class="tabbable">
-		  <ul class="nav nav-tabs">
-		  	<li class="active"><a href="#pedidos" data-toggle="tab">Pedidos <span class="badge badge-pill">{{ projects | length }}</span></a></li>
-		  	<li><a href="#pagos" data-toggle="tab">Pagos <span class="badge badge-pill">{{ projects | length }}</span></a></li>
-		    <li><a href="#projects" data-toggle="tab">Proyectos <span class="badge badge-pill">{{ projects | length }}</span></a></li>
-		    <li><a href="#budgets" data-toggle="tab">Presupuestos <span class="badge badge-pill">{{ budgets | length }}</span></a></li>
-		    <li><a href="#invoices" data-toggle="tab">Facturas <span class="badge badge-pill">{{ invoices | length }}</span></a></li>
-		    
-		  </ul>
+        <div class="well well-small">
+            <div class="row-fluid">
+                <div class="span5">
+                    <address>
+                        <h2>{{ vendor.vendorCompanyName }}</h2>
+                        {% set address = vendor.defaultAddress %}
+                        {% if address %}
+                            {{ address.address|raw }}
+                        {% endif %}
+                    </address>
+                    <h3>Contacto principal</h3>
+                    <address>
+                        {% set contact = vendor.defaultContact %}
+                        {% if contact %}
+                            <strong>{{ contact.contact }}</strong><br/>
+                            {{ contact.objectcontactRol }}<br/>
+                            <abbr title="Phone">P:</abbr> {{ contact.contact.contactPhone }}
+                            {% if contact.contact.contactEmail %} - <a href="mailto:{{ contact.contact.contactEmail }}">{{ contact.contact.contactEmail }}</a>{% endif %}
+                        {% endif %}
+                    </address>
+                </div>
+                <div class="span7">
+                    <div class="well well-inverted well-small">
+                    {% include 'ARANOVAVendorBundle:Default:_showtabs.html.twig' %}
+                    </div>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12 centered">
+                    <button type="button" class="btn btn-mini btn-primary"><i class="icon-edit icon-white"></i> Editar</button>&nbsp;&nbsp;
+                    <button type="button" class="btn btn-mini btn-danger"><i class="icon-remove icon-white"></i> Eliminar</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabbable">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#pedidos" data-toggle="tab">Pedidos <span class="badge badge-pill">{{ projects | length }}</span></a></li>
+            <li><a href="#pagos" data-toggle="tab">Pagos <span class="badge badge-pill">{{ projects | length }}</span></a></li>
+            <li><a href="#projects" data-toggle="tab">Proyectos <span class="badge badge-pill">{{ projects | length }}</span></a></li>
+            <li><a href="#budgets" data-toggle="tab">Presupuestos <span class="badge badge-pill">{{ budgets | length }}</span></a></li>
+            <li><a href="#invoices" data-toggle="tab">Facturas <span class="badge badge-pill">{{ invoices | length }}</span></a></li>
+            
+          </ul>
 
-		  <div class="tab-content">
-		    <div class="tab-pane active" id="pedidos">
-		      {% include 'ARANOVAARANetBundle:Project:_minilist.html.twig' %}
-		    </div>
-		    <div class="tab-pane" id="pagos">
-		      {% include 'ARANOVAARANetBundle:Project:_minilist.html.twig' %}
-		    </div>
-		    <div class="tab-pane" id="projects">
-		      {% include 'ARANOVAARANetBundle:Project:_minilist.html.twig' %}
-		    </div>
-		    <div class="tab-pane" id="budgets">
-		      <p>Howdy, I'm in Section 2.</p>
-		    </div>
-		    <div class="tab-pane" id="invoices">
-		      <p>Howdy, I'm in Section 3.</p>
-		    </div>
-		  </div>
-		</div>
+          <div class="tab-content">
+            <div class="tab-pane active" id="pedidos">
+                <p>Pedidos</p>
+            </div>
+            <div class="tab-pane" id="pagos">
+                <p>Pagos</p>
+            </div>
+            <div class="tab-pane" id="projects">
+                <p>Proyectos</p>
+            </div>
+            <div class="tab-pane" id="budgets">
+                <p>Presupuestos</p>
+            </div>
+            <div class="tab-pane" id="invoices">
+                <p>Facturas</p>
+            </div>
+          </div>
+        </div>
 
 
-		<!-- Ejemplo ajax -->
-		<div id="content">
-  <form id="myForm" action="{{path('test_ajax')}}" method="POST" >
-    Write your name here: 
-    <input type="text" name="name" id="nameId" value="" /><br />
-    <input type="submit" value="Send" />
-  </form>
- </div>
- <div id="output"></div>
+        <!-- Ejemplo ajax -->
+        <div id="content">
+            <form id="myForm" action="{{path('test_ajax')}}" method="POST" >
+                Write your name here: 
+                <input type="text" name="name" id="nameId" value="" /><br />
+                <input type="submit" value="Send" />
+            </form>
+        </div>
+        <div id="output"></div>
 
-	{% block javascripts %}
-		{{ parent() }}<script type="text/javascript" src="{{ asset('bundles/aranovaaranet/js/test.js') }}" ></script>
-	{% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script type="text/javascript" src="{{ asset('js/test.js') }}" ></script>
+    {% endblock %}
 
 {% endblock %}
 
 {% block sidebar %}    
-	<h4>Histórico de compras</h4>
-	<table class="table table-bordered table-striped table-condensed">
-		<thead>
-			<tr>
-				<th>Año</th>
-				<th>Cantidad</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% set total = 0 %}
-			{% for statistic in vendor.compras %}
-			{% set total = total + statistic.value %}
-			<tr>
-				<td class="centered">{{ statistic.year }}</td>
-				<td class="righted">{{ statistic.value }} €</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-		<tfoot>
-			<tr>
-				<th colspan="2" class="righted">Total: {{ total }} €</th>
-			</tr>
-		</tfoot>
-	</table>
+    <h4>Histórico de compras</h4>
+    <table class="table table-bordered table-striped table-condensed">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set total = 0 %}
+            {% for statistic in vendor.compras %}
+            {% set total = total + statistic.value %}
+            <tr>
+                <td class="centered">{{ statistic.year }}</td>
+                <td class="righted">{{ statistic.value }} €</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="2" class="righted">Total: {{ total }} €</th>
+            </tr>
+        </tfoot>
+    </table>
 
-	<h4>Pagos pendientes</h4>
-	<table class="table table-bordered table-striped table-condensed">
-		<thead>
-			<tr>
-				<th>Factura</th>
-				<th>Vencimiento</th>
-				<th>Cantidad</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td class="centered">F-199-200</td>
-				<td class="centered">13/09/12</td>
-				<td class="righted">34567 €</td>
-			</tr>
-		</tbody>
-		<tfoot>
-			<tr>
-				<th colspan="3" class="righted">Total: 56734 €</th>
-			</tr>
-		</tfoot>
-	</table>
-	
-	<div class="well">
-		Acciones
-	</div>
+    <h4>Pagos pendientes</h4>
+    <table class="table table-bordered table-striped table-condensed">
+        <thead>
+            <tr>
+                <th>Factura</th>
+                <th>Vencimiento</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="centered">F-199-200</td>
+                <td class="centered">13/09/12</td>
+                <td class="righted">34567 €</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3" class="righted">Total: 34567 €</th>
+            </tr>
+        </tfoot>
+    </table>
+    
+    <div class="well">
+        Acciones
+    </div>
 {% endblock %}
-	
+    

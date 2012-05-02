@@ -1,10 +1,10 @@
 <table class="table table-bordered table-striped table-condensed">
-	<tbody>
-		{% for address in vendor.addresses %}
-		<tr>
-			<th>{% if address.objectaddressName %}{{ address.objectaddressName }}{% else %}Principal{% endif %}</th>
-			<td>{{ address.address|raw }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
+    <tbody>
+        {% for address in vendor.addresses %}
+        <tr>
+            <th>{% if address.objectaddressName %}{{ address.objectaddressName }}{% else %}Principal{% endif %}</th>
+            <td>{{ address.address|raw }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
