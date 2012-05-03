@@ -153,7 +153,7 @@ class AranetVendor
     public function getDefaultContact()
     {
         foreach ($this->contacts as $contact) {
-        	if ($contact->getObjectcontactIsDefault()) {
+        	if ($contact->getContactIsDefault()) {
         		return $contact;
         	}
         }
@@ -188,7 +188,7 @@ class AranetVendor
         		array_push($data, $statistic);
         	}
         }
-        // TODO: Ordenar por años
+        // TODO: Ordenar por aï¿½os
         return $data;
     }
     

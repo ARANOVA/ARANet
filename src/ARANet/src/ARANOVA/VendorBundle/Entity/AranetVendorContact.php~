@@ -4,6 +4,7 @@ namespace ARANOVA\VendorBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * ARANOVA\VendorBundle\Entity\AranetVendorContact
@@ -23,9 +24,9 @@ class AranetVendorContact
     private $id;
 
     /**
-     * @var integer $contact
+     * @var ARANOVA\ContactBundle\Entity\AranetContact $contact
      *
-     * @ORM\OneToOne(targetEntity="ARANOVA\ContactBundle\Entity\AranetContact")
+     * @ORM\ManyToOne(targetEntity="ARANOVA\ContactBundle\Entity\AranetContact")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="contact_id", referencedColumnName="id")
      * })
@@ -33,7 +34,7 @@ class AranetVendorContact
     private $contact;
     
     /**
-     * @var $vendor
+     * @var ARANOVA\VendorBundle\Entity\AranetVendor $vendor
      *
      * @ORM\ManyToOne(targetEntity="AranetVendor")
      * @ORM\JoinColumns({
@@ -43,22 +44,23 @@ class AranetVendorContact
     private $vendor;
     
     /**
-     * @var string $objectcontactRol
+     * @var string $contactRol
      *
-     * @ORM\Column(name="objectcontact_rol", type="string", length=128, nullable=true)
+     * @ORM\Column(name="contact_rol", type="string", length=128, nullable=true)
      */
-    private $objectcontactRol;
+    private $contactRol;
 
     /**
-     * @var integer $objectcontactIsDefault
+     * @var integer $contactIsDefault
      *
-     * @ORM\Column(name="objectcontact_is_default", type="integer", nullable=true)
+     * @ORM\Column(name="contact_is_default", type="integer", nullable=true)
      */
-    private $objectcontactIsDefault;
+    private $contactIsDefault;
 
     /**
      * @var datetime $createdAt
      *
+     * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="created_at", type="datetime", nullable=true)
      */
     private $createdAt;
@@ -73,6 +75,7 @@ class AranetVendorContact
     /**
      * @var datetime $updatedAt
      *
+     * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
@@ -96,43 +99,43 @@ class AranetVendorContact
     }
 
     /**
-     * Set objectcontactRol
+     * Set contactRol
      *
-     * @param string $objectcontactRol
+     * @param string $contactRol
      */
-    public function setObjectcontactRol($objectcontactRol)
+    public function setContactRol($contactRol)
     {
-        $this->objectcontactRol = $objectcontactRol;
+        $this->contactRol = $contactRol;
     }
 
     /**
-     * Get objectcontactRol
+     * Get contactRol
      *
      * @return string 
      */
-    public function getObjectcontactRol()
+    public function getContactRol()
     {
-        return $this->objectcontactRol;
+        return $this->contactRol;
     }
 
     /**
-     * Set objectcontactIsDefault
+     * Set contactIsDefault
      *
-     * @param integer $objectcontactIsDefault
+     * @param integer $contactIsDefault
      */
-    public function setObjectcontactIsDefault($objectcontactIsDefault)
+    public function setContactIsDefault($contactIsDefault)
     {
-        $this->objectcontactIsDefault = $objectcontactIsDefault;
+        $this->contactIsDefault = $contactIsDefault;
     }
 
     /**
-     * Get objectcontactIsDefault
+     * Get contactIsDefault
      *
      * @return integer 
      */
-    public function getObjectcontactIsDefault()
+    public function getContactIsDefault()
     {
-        return $this->objectcontactIsDefault;
+        return $this->contactIsDefault;
     }
 
     /**
