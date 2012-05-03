@@ -5,3 +5,11 @@
     <h1>Contactos <small>Listado de contactos</small></h1>
 </div>
 {% endblock %}
+
+{% block content %}
+{% if app.user %}
+    {{ contact.createdAt | date("d/m/Y g:i a", app.user.timezone) }}
+{% else %}
+    {{ contact.createdAt | date("d/m/Y g:i a") }}
+{% endif %}
+{% endblock %}

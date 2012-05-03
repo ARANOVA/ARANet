@@ -81,7 +81,7 @@ class DefaultController extends Controller
     return new Response($return,200);
     }
     
-  /**
+    /**
      * @Route("/show/{id}", name="_vendor_show")
      * @Template()
      */
@@ -114,6 +114,12 @@ class DefaultController extends Controller
      */
     public function editAction($id)
     {
-        return array('id' => $id);
+        $vendor = $this->getDoctrine()
+          ->getRepository('ARANOVAVendorBundle:AranetVendor')
+          ->findOneById($id);
+
+        return array(
+          "vendor" => $vendor
+        );
     }
 }

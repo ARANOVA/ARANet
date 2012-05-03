@@ -1,6 +1,6 @@
 {% extends '::layout.html.twig' %}
 
-{% block title %}ARANet - Proveedores - Mostrando "%s"{% endblock %}
+{% block title %}ARANet - Proveedores - Mostrando "{{ vendor.vendorUniqueName }}"{% endblock %}
 
 {% block content_header %}
     <div class="page-header">
@@ -25,8 +25,8 @@
                         {% if contact %}
                             <strong>{{ contact.contact }}</strong><br/>
                             {{ contact.objectcontactRol }}<br/>
-                            <abbr title="Phone">P:</abbr> {{ contact.contact.contactPhone }}
-                            {% if contact.contact.contactEmail %} - <a href="mailto:{{ contact.contact.contactEmail }}">{{ contact.contact.contactEmail }}</a>{% endif %}
+                            <abbr title="Phone">P:</abbr> {{ contact.contact.phone }}
+                            {% if contact.contact.email %} - <a href="mailto:{{ contact.contact.email }}">{{ contact.contact.email }}</a>{% endif %}
                         {% endif %}
                     </address>
                 </div>

@@ -14,6 +14,12 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return array();
+        $repository = $this->getDoctrine()
+            ->getRepository('ARANOVAContactBundle:AranetContact');
+
+        $contact = $repository->findOneByRandom();
+        return array(
+            'contact' => $contact
+        );
     }
 }

@@ -25,7 +25,7 @@ class AranetVendorContact
     /**
      * @var integer $contact
      *
-     * @ORM\OneToOne(targetEntity="AranetContact")
+     * @ORM\OneToOne(targetEntity="ARANOVA\ContactBundle\Entity\AranetContact")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="contact_id", referencedColumnName="id")
      * })
@@ -218,9 +218,9 @@ class AranetVendorContact
     /**
      * Set contact
      *
-     * @param ARANOVA\VendorBundle\Entity\AranetContact $contact
+     * @param ARANOVA\ContactBundle\Entity\AranetContact $contact
      */
-    public function setContact(\ARANOVA\VendorBundle\Entity\AranetContact $contact)
+    public function setContact(\ARANOVA\ContactBundle\Entity\AranetContact $contact)
     {
         $this->contact = $contact;
     }
@@ -228,7 +228,7 @@ class AranetVendorContact
     /**
      * Get contact
      *
-     * @return ARANOVA\VendorBundle\Entity\AranetContact 
+     * @return ARANOVA\ContactBundle\Entity\AranetContact 
      */
     public function getContact()
     {

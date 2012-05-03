@@ -1,6 +1,7 @@
 imports:
     - { resource: parameters.ini }
     - { resource: security.yml }
+    - { resource: doctrine_extensions.yml }
 
 framework:
     #esi:             ~
@@ -43,10 +44,30 @@ doctrine:
         user:     %database_user%
         password: %database_password%
         charset:  UTF8
+        types: 
+            datetime: ARANOVA\DoctrineExtensions\DBAL\Types\UTCDateTimeType
 
     orm:
         auto_generate_proxy_classes: %kernel.debug%
         auto_mapping: true
+        # only these lines are added additionally 
+        mappings:
+            translatable:
+                type: annotation
+                alias: Gedmo
+                prefix: Gedmo\Translatable\Entity
+                # make sure vendor library location is correct
+                dir: "%kernel.root_dir%/../vendor/gedmo-doctrine-extensions/lib/Gedmo/Translatable/Entity/MappedSuperclass"
+            loggable:
+                type: annotation
+                alias: Gedmo
+                prefix: Gedmo\Loggable\Entity
+                dir: "%kernel.root_dir%/../vendor/gedmo-doctrine-extensions/lib/Gedmo/Loggable/Entity"
+            tree:
+                type: annotation
+                alias: Gedmo
+                prefix: Gedmo\Tree\Entity
+                dir: "%kernel.root_dir%/../vendor/gedmo-doctrine-extensions/lib/Gedmo/Tree/Entity"
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -58,3 +79,8 @@ swiftmailer:
 jms_security_extra:
     secure_controllers:  true
     secure_all_services: false
+
+stof_doctrine_extensions:
+    default_locale: es_ES
+    orm:
+        default: ~

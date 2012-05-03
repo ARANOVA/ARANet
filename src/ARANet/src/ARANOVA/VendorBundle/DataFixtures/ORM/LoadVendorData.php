@@ -2,9 +2,10 @@
 namespace ARANOVA\VendorBundle\DataFixtures\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use ARANOVA\ContactBundle\Entity\AranetContact;
 use ARANOVA\VendorBundle\Entity\AranetVendor;
-use ARANOVA\VendorBundle\Entity\AranetContact;
 use ARANOVA\VendorBundle\Entity\AranetKindOfCompany;
 use ARANOVA\VendorBundle\Entity\AranetVendorContact;
 use ARANOVA\VendorBundle\Entity\AranetVendorStatistic;
@@ -12,7 +13,7 @@ use ARANOVA\VendorBundle\Entity\AranetAddress;
 use ARANOVA\VendorBundle\Entity\AranetVendorAddress;
 
 
-class LoadVendorData implements FixtureInterface
+class LoadVendorData extends AbstractFixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
@@ -27,12 +28,8 @@ class LoadVendorData implements FixtureInterface
         $vendor1->setVendorKindOfCompany($kind_of_company);
         $manager->persist($vendor1);
         
-        $contact1 = new AranetContact();
-        $contact1->setContactFirstName("Pablo");
-        $contact1->setContactLastName("Sanchez");
-        $contact1->setContactPhone("phone");
-        $manager->persist($contact1);
-        
+        $contact1 = $this->getReference('contact'.strval(rand(0,10)));
+
         $vendor_contact = new AranetVendorContact();
         $vendor_contact->setContact($contact1);
         $vendor_contact->setVendor($vendor1);
@@ -66,6 +63,16 @@ class LoadVendorData implements FixtureInterface
         $vendor2->setVendorKindOfCompany($kind_of_company);
         $manager->persist($vendor2);
         
+        $contact2 = $this->getReference('contact'.strval(rand(0,10)));
+        
+        $vendor_contact2 = new AranetVendorContact();
+        $vendor_contact2->setContact($contact2);
+        $vendor_contact2->setVendor($vendor2);
+        $vendor_contact2->setObjectcontactIsDefault(1);
+        $manager->persist($vendor_contact2);
+        
+        $vendor2->addAranetVendorContact($vendor_contact2);
+
         $address1 = new AranetAddress();
         $address1->setAddressLine1("Calle mi calle");
         $address1->setAddressLocation("Zaragoza");
@@ -83,5 +90,10 @@ class LoadVendorData implements FixtureInterface
         $vendor1->addAranetVendorAddress($vendor_address1);
         
         $manager->flush();
+    }
+    
+    public function getOrder()
+    {
+        return 2; // the order in which fixtures will be loaded
     }
 }

@@ -83,7 +83,7 @@
                                             {% set contact = vendor.defaultContact %}
                                             {% if contact %}
                                                 {{ contact.contact }}
-                                                {% set phone = contact.contact.contactPhone %}
+                                                {% set phone = contact.contact.phone %}
                                             {% else %}
                                                 {% set phone = "" %}
                                             {% endif %}

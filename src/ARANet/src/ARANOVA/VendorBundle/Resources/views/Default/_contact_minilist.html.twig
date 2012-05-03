@@ -10,8 +10,8 @@
         {% for contact in vendor.contacts %}
         <tr>
             <td>{{ contact.contact }}</td>
-            <td>{{ contact.contact.contactEmail }}</td>
-            <td class="centered">{{ contact.contact.contactPhone }}</td>
+            <td>{{ contact.contact.email }}</td>
+            <td class="centered">{{ contact.contact.phone }}</td>
         </tr>
         {% endfor %}
     </tbody>
