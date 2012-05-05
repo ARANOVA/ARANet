@@ -2,7 +2,11 @@
 app/bootstrap*
 
 # Symfony directories
+<<<<<<< HEAD
 #vendor/*
+=======
+# vendor/*
+>>>>>>> vendors
 */logs/*
 */cache/*
 web/uploads/*
