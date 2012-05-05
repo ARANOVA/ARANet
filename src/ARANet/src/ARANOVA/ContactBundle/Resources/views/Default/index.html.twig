@@ -7,9 +7,229 @@
 {% endblock %}
 
 {% block content %}
+<div class="row-fluid">
+    <div class="span9">
+		<div class="alert hide" id="message">
+			<a class="close" data-dismiss="alert" href="#">×</a>
+  			<span id="messageInner"></span>
+		</div>
+
+        <div class="tabbable">
+                    <ul class="nav nav-tabs">
+                        {% for idx in range(0, pages|length - 1) %}
+                            {% if pages[idx] == "All" %}
+                                {% set active = " active" %}
+                            {% else %}
+                                {% set active = "" %}
+                            {% endif %}
+                            <li class="{{ active }}"><a href="#{{ pages[idx] }}" data-toggle="tab">{{ pages[idx] }} <span class="badge badge-pill">{{ pager[idx].getNbResults }}</span></a></li>
+                        {% endfor %}
+                    </ul>
+                    
+                    <div class="tab-content">
+                        {% for idx in range(0, pages|length - 1) %} 
+                            {% if pages[idx] == "All" %}
+                                {% set active = " active" %}
+                            {% else %}
+                                {% set active = "" %}
+                            {% endif %}
+                            <div class="tab-pane{{ active }}" id="{{ pages[idx] }}">
+                              <table class="table table-bordered table-striped table-condensed">
+                                <colgroup>
+                                    <col class="span1">
+                                    <col class="span1">
+                                    <col class="span2">
+                                    <col class="span2">
+                                    <col class="span1">
+                                    <col class="span1">
+                                    <col class="span3">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox"></th>
+                                        <th>Acciones</th>
+                                        <th>Nombre <i class="icon-arrow-up"></i></th>
+                                        <th>Email</th>
+                                        <th>Teléfono / Fax</th>
+                                        <th>Móvil</th>
+                                        <th>Dirección</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for contact in pager[idx].getCurrentPageResults %}
+                                    <tr id="contactRow{{ contact.id }}">
+                                        <td class="centered"><input type="checkbox"></td>
+                                        <td class="centered"><a href="{{ path('_contact_show', {'id': contact.id}) }}"><i class="icon-eye-open"></i></a> <a href="{{ path('_contact_edit', {'id': contact.id}) }}"><i class="icon-edit"></i></a> 
+                                            <a data-toggle="modal" data-contact-id="{{ contact.id }}" data-contact-name="{{ contact }}" href="#" class="delete" title="¿Eliminar {{ contact }}?"><i class="icon-remove"></i></a>
+                                        </td>
+                                        <td><a href="{{ path('_contact_show', {'id': contact.id}) }}">{{ contact }}</a></td>
+                                        <td>{{ contact.email }}</td>
+                                        <td class="no-whitespace">Tel. {{ contact.phone }}
+                                            {% if contact.fax %}
+                                                <br/>Fax. {{ contact.fax }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="no-whitespace">{{ contact.mobile }}</td>
+                                        <td>
+                                            {% set address = contact.defaultAddress %}
+                                            {% if address %}
+                                                {{ address.address|raw }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="7" class="lefted">
+                                        Resultados por página: 
+                            {% for pages in [10, 15, 20, 50, 100, "Todos"] %}
+                                <a href="#{{ pages }}Results">
+                                {% if pages == 10 %}
+                                    <span class="badge badge-inverse">
+                                {% else %}
+                                    <span class="badge badge-info">
+                                {% endif %}
+                                {{ pages }}</span></a> 
+                            {% endfor %}
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <p>Para los elementos seleccionados:  
+                                <button type="button" class="btn btn-mini btn-danger"><i class="icon-remove icon-white"></i> Eliminar</button>
+                            </p>
+
+                          <!-- Pagination -->       
+                          {% if pager[idx].haveToPaginate %}
+                          {{ pagination.render(pager[idx], router, {
+                            'proximity': 2,
+                            'prev_message': '←',
+                            'next_message': '→',
+                            'css_container_class': 'pagination pagination-centered'}) | raw }}
+                          {% endif %}
+                          
+                            </div>
+                          {% endfor %}
+                          
+                        <div> <!-- tabcontent? -->
+                          
+                      </div> <!-- tabpanel? -->
+                          
+                    </div>
+
+                </div>
+    </div> <!-- fin de span9 -->
+    
+    <div class="span3">
+        <h5>Filtros: </h5>
+        <div id="activeFilters" style="margin-bottom: 9px;">
+            {% for filter in ["Nombre: *Prueba*", "CIF: *1*", "Compras 2012 (>): 0 €", "Compras 2011 (>): 0 €"] %}
+                <button id="test" type="button" class="btn btn-mini btn-inverse" style="margin-bottom:5px"><i class="icon-minus-sign icon-white"></i> {{ filter }}</button>
+            {% endfor %}
+            <button type="button" class="btn btn-mini btn-warning" id="clearAllFilters"><i class="icon-minus-sign icon-white"></i> Eliminar todos</button>
+        </div>
+        <form class="well form-vertical">
+            <fieldset>
+                <label>Nombre</label>
+                <input type="text" placeholder="Nombre…">
+
+                <label>Email</label>
+                <input type="text" placeholder="Email…">
+
+                <label>Teléfono / Fax / Móvil</label>
+                <input type="text" placeholder="Teléfono…">
+
+                <button type="submit" class="btn btn-primary"><i class="icon-refresh icon-white"></i> Añadir filtros</button>
+            </fieldset>
+        </form>
+
+    </div> <!-- fin de span3 -->
+    
+    <div class="modal hide fade" id="deleteModal">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">×</a>
+                <h3>Confirmación necesaria</h3>
+            </div>
+            <div class="modal-body">
+                <p>Vas a eliminar el contacto "<span id="ajaxContact"></span>". ¿Estás seguro?</p>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary" id="ajaxConfirmation">Sí</a>
+                <a href="#" class="btn" data-dismiss="modal">No</a>
+            </div>
+        </div>
+        
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+	<script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+        	$('.modal').modal({
+                show: false,
+                backdrop: true
+            })
+            $(".delete").on('click', function () {
+            	$('#deleteModal').modal();
+                $("#ajaxContact").text($(this).data("contactName"));
+                $("#ajaxConfirmation").data().contactId = $(this).data("contactId");
+                $("#ajaxConfirmation").on('click', function() {
+                	//window.location = Routing.generate('_contact_delete',{ "id": $(this).data('contactId') });
+                	$.ajax({
+        		  		url: Routing.generate('_contact_delete',{ "id": $(this).data('contactId') }),
+        		  		dataType: 'json',
+          				success: function(data){
+            				$("#messageInner").html("<strong>¡Conseguido!</strong> " + data.message);
+            				$("#message").removeClass("alert-error alert-warning").addClass("alert-success").show();
+            				$("#deleteModal").modal('hide');
+            				$("#contactRow" + data.id).hide("slow");
+          				}
+        			});
+        
+                });
+                
+            })
+            $("#activeFilters button").click(function() {
+                if ($(this).attr('id') == "clearAllFilters") {
+                    $("#activeFilters button").hide('fast', function() {
+                        $(this).remove();
+                    });
+                } else {
+                    $(this).hide('fast', function() {
+                        $(this).remove();
+                        if ($("#activeFilters button").length == 1) {
+                            $("#clearAllFilters").hide('fast', function() {
+                                $(this).remove();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+<script type="text/javascript">
+	//<![CDATA[	
+ 
+		// Sacar un dialogo de confirmacion y redireccionar al borrado, si procede.
+		function estasSeguro(id){
+			window.location = Routing.generate('_contact_delete',{ "id": id });
+		}
+ 
+	//]]> 
+	
+	</script>
+Routing.generate('_contacts', { page: $page })
+
 {% if app.user %}
-    {{ contact.createdAt | date("d/m/Y g:i a", app.user.timezone) }}
+    {#{ contact.createdAt | date("d/m/Y g:i a", app.user.timezone) }#}
 {% else %}
-    {{ contact.createdAt | date("d/m/Y g:i a") }}
+    {#{ contact.createdAt | date("d/m/Y g:i a") }#}
 {% endif %}
+<a id="test2" data-contactId="39" data-contact-id="39" href="#" class="delete" title=""><i class="icon-remove"></i></a>
+
+<div id="ddd" data-role="page" data-last-value="43" data-hidden="true" data-options='{"name":"John"}'></div>
 {% endblock %}

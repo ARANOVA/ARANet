@@ -5,6 +5,7 @@ namespace ARANOVA\VendorBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\Response;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
@@ -20,7 +21,7 @@ class DefaultController extends Controller
     {
         $maxPerPage = 10;
         $currentPage = 1;
-        $pages = array("All","0-E","F-Ñ","O-Z");
+        $pages = array("All","0-E","F-Ã‘","O-Z");
         $repository = $this->getDoctrine()
             ->getRepository('ARANOVAVendorBundle:AranetVendor');
         $pager = array();

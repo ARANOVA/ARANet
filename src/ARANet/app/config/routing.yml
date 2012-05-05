@@ -1,3 +1,6 @@
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
 ARANOVAContactBundle:
     resource: "@ARANOVAContactBundle/Controller/"
     type:     annotation

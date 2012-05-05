@@ -26,6 +26,9 @@ body {
 	text-align: right !important;
 	white-space:nowrap;
 }
+.no-whitespace {
+	white-space:nowrap;
+}
 .lefted {
 	text-align: left !important;
 }

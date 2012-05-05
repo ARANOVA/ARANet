@@ -1,0 +1,6 @@
+ARANOVA\ContactBundle\Entity\Contact:
+    properties:
+        firstName:
+            - NotBlank:  {message: "El nombre de pila no puede ser nulo"}
+            - MaxLength: {limit: 20, message: "El nombre de pila no puede tener más de {{ limit }} caracteres" }
+            - MinLength: {limit: 1, message: "El nombre de pila no puede tener menos de {{ limit }} caracteres" }

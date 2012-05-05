@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Symfony\Bundle\DoctrineFixturesBundle\DoctrineFixturesBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new ARANOVA\ClientBundle\ARANOVAClientBundle(),
             new ARANOVA\DashboardBundle\ARANOVADashboardBundle(),
             new ARANOVA\VendorBundle\ARANOVAVendorBundle(),

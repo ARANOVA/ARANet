@@ -139,6 +139,16 @@ class AranetContact
         return $this->firstName . " " . $this->lastName;
     }
 
+	/**
+     * Get default address
+     *
+     * @return ARANOVA/ContactBundle/Entity/AranetContactAddress 
+     */
+    public function getDefaultAddress()
+    {
+        return null;
+    }
+
     /**
      * Get id
      *

@@ -28,7 +28,7 @@ class AranetVendorContact
      *
      * @ORM\ManyToOne(targetEntity="ARANOVA\ContactBundle\Entity\AranetContact")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="contact_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="contact_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $contact;
