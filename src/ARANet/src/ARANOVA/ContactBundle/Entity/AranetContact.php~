@@ -86,6 +86,13 @@ class AranetContact
     private $orgUnit;
 
     /**
+     * @var string $comments
+     *
+     * @ORM\Column(name="comments", type="text", nullable=true)
+     */
+    private $comments;
+    
+    /**
      * @var datetime $createdAt
      *
      * @Gedmo\Timestampable(on="create")

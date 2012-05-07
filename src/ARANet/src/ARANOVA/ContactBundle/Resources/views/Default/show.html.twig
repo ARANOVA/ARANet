@@ -1,0 +1,107 @@
+{% extends '::layout.html.twig' %}
+
+{% block title %}ARANet - Contactos - Mostrando "{{ contact }}"{% endblock %}
+
+{% block content_header %}
+    <div class="page-header">
+        <h1><a href="{{ path('_contacts') }}">Contactos</a> <small>Mostrando "{{ contact }}"</small></h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+        <div class="well well-small" id="contactId" data-contact-id="{{ contact.id }}">
+            <div class="row-fluid">
+                <div class="span5">
+                <div class="row-fluid">
+                <div class="span3">
+                	<ul class="thumbnails">
+                		<li>
+                	<div class="thumbnail">
+            			<img src="http://placehold.it/90x120" alt="">
+          			</div>
+          				</li>
+          			</ul>
+          			</div>
+          			<div class="span9">
+                    <h2>{{ contact }}</h2>
+                    </div>
+                    </div>
+                </div>
+                <div class="span7">
+                    <div class="well well-inverted well-small">
+                    	<table class="table table-condensed">
+                    		<colgroup>
+                    			<col class="span3">
+                    			<col class="span9">
+                    		</colgroup>
+                    		<tr>
+                    			<th class="righted">Móvil:</th>
+                    			<td><span class="editable">{{ contact.mobile }}</span></td>
+                    		</tr>
+                    		<tr>
+                    			<th class="righted">Fax:</th>
+                    			<td>{{ contact.fax }}</td>
+                    		</tr>
+                    		<tr>
+                    			<th class="righted">Cumpleaños:</th>
+                    			<td>{{ contact.birthday | date("d/m/Y") }}</td>
+                    		</tr>
+                    		<tr>
+                    			<th class="righted">Dirección:</th>
+                    			<td><span class="editable"></span></td>
+                    		</tr>
+                    		<tr>
+                    			<th class="righted">Comentarios:</th>
+                    			<td>{{ contact.comments }}</td>
+                    		</tr>
+                    		<tr>
+                    			<th class="righted">Etiquetas:</th>
+                    			<td></td>
+                    		</tr>
+                    	</table>
+                    </div>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12 centered">
+                    <button type="button" class="btn btn-mini btn-primary"><i class="icon-edit icon-white"></i> Editar</button>&nbsp;&nbsp;
+                    <button type="button" class="btn btn-mini btn-danger"><i class="icon-remove icon-white"></i> Eliminar</button>
+                </div>
+            </div>
+        </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="well">
+        Acciones
+    </div>
+{% endblock %}
+    
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+	<script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery.inlineedit.js') }}" ></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+        	$('.editable').inlineEdit({
+    			buttons: '<button class="save btn btn-primary">save</button>',
+      			cancelOnBlur: true,
+      			save: function(event, data) {
+            		var html = $.ajax({
+            			url: Routing.generate('_contact_edit',{ "id": $("#contactId").data('contactId') }),
+            			data: { 'field': 'mobile', 'value': data.value },
+        		  		dataType: 'html',
+          				success: function(data){
+	          				alert("ok");
+	            		},
+	            		error: function(data, err){
+	            			alert(data);
+	            			alert(err);
+	            		}
+	            	}).responseText;
+    			}
+  			});
+        });
+    </script>
+{% endblock %} 

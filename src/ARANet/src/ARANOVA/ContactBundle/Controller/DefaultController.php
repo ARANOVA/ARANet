@@ -68,7 +68,7 @@ class DefaultController extends Controller
      */
     public function showAction($id)
     {
-      $vendor = $this->getDoctrine()
+      $contact = $this->getDoctrine()
           ->getRepository('ARANOVAContactBundle:AranetContact')
           ->findOneById($id);
 
@@ -78,7 +78,7 @@ class DefaultController extends Controller
     }
     
     /**
-     * @Route("/edit/{id}", name="_contact_edit")
+     * @Route("/edit/{id}", name="_contact_edit", options={"expose"=true})
      * @Template()
      */
     public function editAction($id)

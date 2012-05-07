@@ -86,6 +86,13 @@ class AranetContact
     private $orgUnit;
 
     /**
+     * @var string $comments
+     *
+     * @ORM\Column(name="comments", type="text", nullable=true)
+     */
+    private $comments;
+    
+    /**
      * @var datetime $createdAt
      *
      * @Gedmo\Timestampable(on="create")
@@ -457,5 +464,25 @@ class AranetContact
     public function getDeletedBy()
     {
         return $this->deletedBy;
+    }
+
+    /**
+     * Set comments
+     *
+     * @param text $comments
+     */
+    public function setComments($comments)
+    {
+        $this->comments = $comments;
+    }
+
+    /**
+     * Get comments
+     *
+     * @return text 
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 }

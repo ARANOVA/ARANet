@@ -97,6 +97,7 @@
                             </table>
                             <p>Para los elementos seleccionados:  
                                 <button type="button" class="btn btn-mini btn-danger"><i class="icon-remove icon-white"></i> Eliminar</button>
+                                <button type="button" class="btn btn-mini"><i class="icon-magnet"></i> Fusionar</button>
                             </p>
 
                           <!-- Pagination -->       
@@ -146,20 +147,24 @@
     </div> <!-- fin de span3 -->
     
     <div class="modal hide fade" id="deleteModal">
-            <div class="modal-header">
-                <a class="close" data-dismiss="modal">×</a>
-                <h3>Confirmación necesaria</h3>
-            </div>
-            <div class="modal-body">
-                <p>Vas a eliminar el contacto "<span id="ajaxContact"></span>". ¿Estás seguro?</p>
-            </div>
-            <div class="modal-footer">
-                <a href="#" class="btn btn-primary" id="ajaxConfirmation">Sí</a>
-                <a href="#" class="btn" data-dismiss="modal">No</a>
-            </div>
+    	<div class="modal-header">
+        	<a class="close" data-dismiss="modal">×</a>
+            <h3>Confirmación necesaria</h3>
         </div>
+        <div class="modal-body">
+        	<p>Vas a eliminar el contacto "<span id="ajaxContact"></span>". ¿Estás seguro?</p>
+        	<div class="alert">
+				<strong>¡Cuidado!</strong> Se eliminarán todos los registros asociados de este contacto.
+			</div>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn btn-primary" id="ajaxConfirmation">Sí</a>
+            <a href="#" class="btn" data-dismiss="modal">No</a>
+        </div>
+    </div>
         
 </div>
+<a href="#" class="btn btn-primary" id="test-ajax-paginator">Page 2</a>
 {% endblock %}
 
 {% block javascripts %}
@@ -182,11 +187,15 @@
                 	$.ajax({
         		  		url: Routing.generate('_contact_delete',{ "id": $(this).data('contactId') }),
         		  		dataType: 'json',
+        		  		error: function(data, err){
+	            			alert(data);
+	            			alert(err);
+	            		},
           				success: function(data){
             				$("#messageInner").html("<strong>¡Conseguido!</strong> " + data.message);
             				$("#message").removeClass("alert-error alert-warning").addClass("alert-success").show();
             				$("#deleteModal").modal('hide');
-            				$("#contactRow" + data.id).hide("slow");
+            				$("#contactRow" + data.id).remove();
           				}
         			});
         
@@ -194,6 +203,7 @@
                 
             })
             $("#activeFilters button").click(function() {
+            	// TODO: volver a buscar en la lista
                 if ($(this).attr('id') == "clearAllFilters") {
                     $("#activeFilters button").hide('fast', function() {
                         $(this).remove();
@@ -209,27 +219,20 @@
                     });
                 }
             });
+            $("#test-ajax-paginator").click(function() {
+            	$.ajax({
+        		  		url: Routing.generate('_contacts',{ "page": 2 }),
+        		  		dataType: 'html',
+          				success: function(data){
+            				$("#All").html(data);
+          				}
+        			});
         });
     </script>
-<script type="text/javascript">
-	//<![CDATA[	
- 
-		// Sacar un dialogo de confirmacion y redireccionar al borrado, si procede.
-		function estasSeguro(id){
-			window.location = Routing.generate('_contact_delete',{ "id": id });
-		}
- 
-	//]]> 
-	
-	</script>
-Routing.generate('_contacts', { page: $page })
 
 {% if app.user %}
     {#{ contact.createdAt | date("d/m/Y g:i a", app.user.timezone) }#}
 {% else %}
     {#{ contact.createdAt | date("d/m/Y g:i a") }#}
 {% endif %}
-<a id="test2" data-contactId="39" data-contact-id="39" href="#" class="delete" title=""><i class="icon-remove"></i></a>
-
-<div id="ddd" data-role="page" data-last-value="43" data-hidden="true" data-options='{"name":"John"}'></div>
 {% endblock %}
