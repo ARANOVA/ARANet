@@ -9,10 +9,10 @@
 {% block content %}
 <div class="row-fluid">
     <div class="span9">
-		<div class="alert hide" id="message">
-			<a class="close" data-dismiss="alert" href="#">×</a>
-  			<span id="messageInner"></span>
-		</div>
+        <div class="alert hide" id="message">
+            <a class="close" data-dismiss="alert" href="#">×</a>
+            <span id="messageInner"></span>
+        </div>
 
         <div class="tabbable">
                     <ul class="nav nav-tabs">
@@ -102,10 +102,10 @@
 
                           <!-- Pagination -->       
                           {% if pager[idx].haveToPaginate %}
-                          	{{ pagerfanta(pager[idx], 'twitter_bootstrap_translated', {
-                          		'proximity': 2,
-                            	'prev_message': '←',
-                            	'next_message': '→',
+                            {{ pagerfanta(pager[idx], 'twitter_bootstrap_translated', {
+                                'proximity': 2,
+                                'prev_message': '←',
+                                'next_message': '→',
                             'css_container_class': 'pagination pagination-centered'
                             }) }}
                           {% endif %}
@@ -148,15 +148,15 @@
     </div> <!-- fin de span3 -->
     
     <div class="modal hide fade" id="deleteModal">
-    	<div class="modal-header">
-        	<a class="close" data-dismiss="modal">×</a>
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
             <h3>Confirmación necesaria</h3>
         </div>
         <div class="modal-body">
-        	<p>Vas a eliminar el contacto "<span id="ajaxContact"></span>". ¿Estás seguro?</p>
-        	<div class="alert">
-				<strong>¡Cuidado!</strong> Se eliminarán todos los registros asociados de este contacto.
-			</div>
+            <p>Vas a eliminar el contacto "<span id="ajaxContact"></span>". ¿Estás seguro?</p>
+            <div class="alert">
+                <strong>¡Cuidado!</strong> Se eliminarán todos los registros asociados de este contacto.
+            </div>
         </div>
         <div class="modal-footer">
             <a href="#" class="btn btn-primary" id="ajaxConfirmation">Sí</a>
@@ -171,40 +171,40 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-	<script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
-        	$('.modal').modal({
+            $('.modal').modal({
                 show: false,
                 backdrop: true
             })
             $(".delete").on('click', function () {
-            	$('#deleteModal').modal();
+                $('#deleteModal').modal();
                 $("#ajaxContact").text($(this).data("contactName"));
                 $("#ajaxConfirmation").data().contactId = $(this).data("contactId");
                 $("#ajaxConfirmation").on('click', function() {
-                	//window.location = Routing.generate('_contact_delete',{ "id": $(this).data('contactId') });
-                	$.ajax({
-        		  		url: Routing.generate('_contact_delete',{ "id": $(this).data('contactId') }),
-        		  		dataType: 'json',
-        		  		error: function(data, err){
-	            			alert(data);
-	            			alert(err);
-	            		},
-          				success: function(data){
-            				$("#messageInner").html("<strong>¡Conseguido!</strong> " + data.message);
-            				$("#message").removeClass("alert-error alert-warning").addClass("alert-success").show();
-            				$("#deleteModal").modal('hide');
-            				$("#contactRow" + data.id).remove();
-          				}
-        			});
+                    //window.location = Routing.generate('_contact_delete',{ "id": $(this).data('contactId') });
+                    $.ajax({
+                        url: Routing.generate('_contact_delete',{ "id": $(this).data('contactId') }),
+                        dataType: 'json',
+                        error: function(data, err){
+                            alert(data);
+                            alert(err);
+                        },
+                        success: function(data){
+                            $("#messageInner").html("<strong>¡Conseguido!</strong> " + data.message);
+                            $("#message").removeClass("alert-error alert-warning").addClass("alert-success").show();
+                            $("#deleteModal").modal('hide');
+                            $("#contactRow" + data.id).remove();
+                        }
+                    });
         
                 });
                 
             })
             $("#activeFilters button").click(function() {
-            	// TODO: volver a buscar en la lista
+                // TODO: volver a buscar en la lista
                 if ($(this).attr('id') == "clearAllFilters") {
                     $("#activeFilters button").hide('fast', function() {
                         $(this).remove();
@@ -221,27 +221,27 @@
                 }
             });
             function rowBuilder(contact) {
-            	var fax;
-            	if (contact.fax) {
-            	    fax = "<br/>Fax. " + contact.fax; 
-            	} else {
-            		fax = "";
-            	}
-            	var route = Routing.generate('_contact_show',{ "id": contact.id });
-      			return {%- include 'ARANOVAContactBundle:Default:_contact_row.html.twig' -%};
-			};
+                var fax;
+                if (contact.fax) {
+                    fax = "<br/>Fax. " + contact.fax; 
+                } else {
+                    fax = "";
+                }
+                var route = Routing.generate('_contact_show',{ "id": contact.id });
+                return {%- include 'ARANOVAContactBundle:Default:_contact_row.html.twig' -%};
+            };
             $("#test-ajax-paginator").click(function() {
-            	$.ajax({
-        		  		url: 'contacts/json',
-        		  		dataType: 'json',
-        		  		success: function(data){
-        		  			$('#All table tbody').html("");
-        		  			$.each(data.contacts, function(){
-      							$('#All table tbody').append(rowBuilder(this));
-							});
-          				},
-        			});
-        		});
+                $.ajax({
+                        url: 'contacts/json',
+                        dataType: 'json',
+                        success: function(data){
+                            $('#All table tbody').html("");
+                            $.each(data.contacts, function(){
+                                $('#All table tbody').append(rowBuilder(this));
+                            });
+                        },
+                    });
+                });
         });
     </script>
 
