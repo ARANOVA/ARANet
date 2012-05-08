@@ -43,47 +43,40 @@ class LoadVendorData extends AbstractFixture implements OrderedFixtureInterface
         	$vendor_contact->setContactIsDefault(1);
         	$vendor->addAranetVendorContact($vendor_contact);
         	$manager->persist($vendor_contact);
-        }
-		    	
-        $stat1 = new AranetVendorStatistic();
-        $stat1->setVendor($vendor);
-        $stat1->setStatistic("Compras (2011)");
-        $stat1->setValue(43);
-        $manager->persist($stat1);
-        
-        $stat2 = new AranetVendorStatistic();
-        $stat2->setVendor($vendor);
-        $stat2->setStatistic("Compras (2012)");
-        $stat2->setValue(211);
-        $manager->persist($stat2);
-        
-        $stat3 = new AranetVendorStatistic();
-        $stat3->setVendor($vendor);
-        $stat3->setStatistic("Compras (totales)");
-        $stat3->setValue(300);
-        $manager->persist($stat3);
-        
-        $address1 = new AranetAddress();
-        $address1->setAddressLine1("Calle mi calle");
-        $address1->setAddressLocation("Zaragoza");
-        $address1->setAddressState("Zaragoza");
-        $address1->setAddressCountry("ES");
-        $address1->setAddressPostalCode("50015");
-        $manager->persist($address1);
-        
-        $vendor_address1 = new AranetVendorAddress();
-        $vendor_address1->setAddress($address1);
-        $vendor_address1->setVendor($vendor);
-        $vendor_address1->setObjectaddressIsDefault(1);
-        $manager->persist($vendor_address1);
-        
-        $vendor->addAranetVendorAddress($vendor_address1);
-        
+        	
+        	// addresses
+        	$address = $this->getReference('address'.strval(rand(0, 49)));
+	        $vendor_address = new AranetVendorAddress();
+	        $vendor_address->setAddress($address);
+	        $vendor_address->setVendor($vendor);
+	        $vendor_address->setObjectaddressIsDefault(1);
+	        $manager->persist($vendor_address);
+	        $vendor->addAranetVendorAddress($vendor_address);
+
+        	// Stats
+        	$total = 0;
+        	for ($year=2005; $year<=date("Y"); $year++) {
+	        	$stat = new AranetVendorStatistic();
+	        	$stat->setVendor($vendor);
+	        	$stat->setStatistic("Compras (". $year .")");
+	        	$stat->setValue(rand(0, 5000));
+	        	$manager->persist($stat);
+	        	$total += $stat->getValue();
+        	}
+	        
+	        $stat = new AranetVendorStatistic();
+	        $stat->setVendor($vendor);
+	        $stat->setStatistic("Compras (totales)");
+	        $stat->setValue($total);
+	        $manager->persist($stat);
+	    }
+		
+	    
         $manager->flush();
     }
     
     public function getOrder()
     {
-        return 2; // the order in which fixtures will be loaded
+        return 3; // the order in which fixtures will be loaded
     }
 }

@@ -13,6 +13,30 @@ use Pagerfanta\View\TwitterBootstrapView;
 
 class DefaultController extends Controller
 {
+	/**
+     * @Route("/json", name="_contact_json")
+     */
+    public function jsonAction()
+    {
+    	$request = $this->getRequest();
+    	$page = 1;
+    	$em = $this->getDoctrine()->getEntityManager();
+    	$p = $em->createQuery("SELECT u, a FROM ARANOVAContactBundle:AranetContact u LEFT JOIN u.addresses a GROUP BY u.id")->getArrayResult();
+    	
+    	$repository = $this->getDoctrine()
+            ->getRepository('ARANOVAContactBundle:AranetContact');
+    	$p2 = $repository->createQueryBuilder('p')
+        	->orderBy('p.firstName', 'ASC')
+            ->getQuery()->getArrayResult();
+
+        //$contactArray = $p->toArray();
+		$contacts = json_encode(array('contacts' => $p));
+
+      	$response = new Response($contacts);
+	  	$response->headers->set('Content-Type', 'application/json');
+      	return $response;
+    }
+	
     /**
      * @Route("/{page}", defaults={"page"=1}, name="_contacts", options={"expose"=true})
      * @Template()
@@ -46,24 +70,15 @@ class DefaultController extends Controller
               ->setCurrentPage($currentPage, false, true);
           array_push($pager, $pagerfanta);
         }
-
-        $view = new TwitterBootstrapView();
-        $router = $this->get('router');
-        $routeGenerator = function($page) {
-        	//return Routing.generate('_contacts', { page: $page });
-            return $page;
-        };
     
         return array(
             "pager" => $pager,
-            "pages" => $pages,
-            "pagination" => $view,
-            "router" => $routeGenerator
+            "pages" => $pages
         );
     }
-    
+        
     /**
-     * @Route("/show/{id}", name="_contact_show")
+     * @Route("/show/{id}", name="_contact_show", options={"expose"=true})
      * @Template()
      */
     public function showAction($id)

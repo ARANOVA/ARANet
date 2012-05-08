@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\DoctrineFixturesBundle\DoctrineFixturesBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
+            new WhiteOctober\PagerfantaBundle\WhiteOctoberPagerfantaBundle(),
             new ARANOVA\ClientBundle\ARANOVAClientBundle(),
             new ARANOVA\DashboardBundle\ARANOVADashboardBundle(),
             new ARANOVA\VendorBundle\ARANOVAVendorBundle(),

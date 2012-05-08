@@ -1,0 +1,98 @@
+<?php
+
+namespace ARANOVA\ContactBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Mapping\Annotation as Gedmo;
+
+/**
+ * ARANOVA\ContactBundle\Entity\AranetContactAddress
+ *
+ * @ORM\Table(name="aranet_contact_address")
+ * @ORM\Entity
+ */
+class AranetContactAddress
+{
+    /**
+     * @var integer $id
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var ARANOVA\VendorBundle\Entity\AranetAddress $address
+     *
+     * @ORM\OneToOne(targetEntity="ARANOVA\VendorBundle\Entity\AranetAddress")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="address_id", referencedColumnName="id")
+     * })
+     */
+    private $address;
+    
+    /**
+     * @var $contact
+     *
+     * @ORM\ManyToOne(targetEntity="AranetContact")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="contact_id", referencedColumnName="id")
+     * })
+     */
+    private $contact;
+    
+    /**
+     * @var string $addressName
+     *
+     * @ORM\Column(name="address_name", type="string", length=128, nullable=true)
+     */
+    private $addressName;
+
+    /**
+     * @var string $addressType
+     *
+     * @ORM\Column(name="address_type", type="string", length=16, nullable=true)
+     */
+    private $addressType;
+    
+    /**
+     * @var integer $addressIsDefault
+     *
+     * @ORM\Column(name="address_is_default", type="integer", nullable=true)
+     */
+    private $addressIsDefault;
+
+    /**
+     * @var datetime $createdAt
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="created_at", type="datetime", nullable=true)
+     */
+    private $createdAt;
+
+    /**
+     * @var integer $createdBy
+     *
+     * @ORM\Column(name="created_by", type="integer", nullable=true)
+     */
+    private $createdBy;
+
+    /**
+     * @var datetime $updatedAt
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
+    /**
+     * @var integer $updatedBy
+     *
+     * @ORM\Column(name="updated_by", type="integer", nullable=true)
+     */
+    private $updatedBy;
+
+
+}

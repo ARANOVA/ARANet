@@ -1,17 +1,18 @@
 <?php
 
-namespace ARANOVA\VendorBundle\Entity;
+namespace ARANOVA\ContactBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * ARANOVA\VendorBundle\Entity\AranetVendorAddress
+ * ARANOVA\ContactBundle\Entity\AranetContactAddress
  *
- * @ORM\Table(name="aranet_vendor_address")
+ * @ORM\Table(name="aranet_contact_address")
  * @ORM\Entity
  */
-class AranetVendorAddress
+class AranetContactAddress
 {
     /**
      * @var integer $id
@@ -23,49 +24,50 @@ class AranetVendorAddress
     private $id;
 
     /**
-     * @var integer $address
+     * @var ARANOVA\VendorBundle\Entity\AranetAddress $address
      *
-     * @ORM\ManyToOne(targetEntity="AranetAddress")
+     * @ORM\OneToOne(targetEntity="ARANOVA\VendorBundle\Entity\AranetAddress")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="address_id", referencedColumnName="id", onDelete="CASCADE")
+     *   @ORM\JoinColumn(name="address_id", referencedColumnName="id")
      * })
      */
     private $address;
     
     /**
-     * @var $vendor
+     * @var $contact
      *
-     * @ORM\ManyToOne(targetEntity="AranetVendor")
+     * @ORM\ManyToOne(targetEntity="AranetContact")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="vendor_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="contact_id", referencedColumnName="id")
      * })
      */
-    private $vendor;
+    private $contact;
     
     /**
-     * @var string $objectaddressName
+     * @var string $addressName
      *
-     * @ORM\Column(name="objectaddress_name", type="string", length=128, nullable=true)
+     * @ORM\Column(name="address_name", type="string", length=128, nullable=true)
      */
-    private $objectaddressName;
+    private $addressName;
 
     /**
-     * @var string $objectaddressType
+     * @var string $addressType
      *
-     * @ORM\Column(name="objectaddress_type", type="string", length=16, nullable=true)
+     * @ORM\Column(name="address_type", type="string", length=16, nullable=true)
      */
-    private $objectaddressType;
+    private $addressType;
     
     /**
-     * @var integer $objectaddressIsDefault
+     * @var integer $addressIsDefault
      *
-     * @ORM\Column(name="objectaddress_is_default", type="integer", nullable=true)
+     * @ORM\Column(name="address_is_default", type="integer", nullable=true)
      */
-    private $objectaddressIsDefault;
+    private $addressIsDefault;
 
     /**
      * @var datetime $createdAt
      *
+     * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="created_at", type="datetime", nullable=true)
      */
     private $createdAt;
@@ -80,6 +82,7 @@ class AranetVendorAddress
     /**
      * @var datetime $updatedAt
      *
+     * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
@@ -90,6 +93,7 @@ class AranetVendorAddress
      * @ORM\Column(name="updated_by", type="integer", nullable=true)
      */
     private $updatedBy;
+
 
     /**
      * Get id
@@ -102,63 +106,63 @@ class AranetVendorAddress
     }
 
     /**
-     * Set objectaddressName
+     * Set addressName
      *
-     * @param string $objectaddressName
+     * @param string $addressName
      */
-    public function setObjectaddressName($objectaddressName)
+    public function setAddressName($addressName)
     {
-        $this->objectaddressName = $objectaddressName;
+        $this->addressName = $addressName;
     }
 
     /**
-     * Get objectaddressName
-     *
-     * @return string 
-     */
-    public function getObjectaddressName()
-    {
-        return $this->objectaddressName;
-    }
-
-    /**
-     * Set objectaddressType
-     *
-     * @param string $objectaddressType
-     */
-    public function setObjectaddressType($objectaddressType)
-    {
-        $this->objectaddressType = $objectaddressType;
-    }
-
-    /**
-     * Get objectaddressType
+     * Get addressName
      *
      * @return string 
      */
-    public function getObjectaddressType()
+    public function getAddressName()
     {
-        return $this->objectaddressType;
+        return $this->addressName;
     }
 
     /**
-     * Set objectaddressIsDefault
+     * Set addressType
      *
-     * @param integer $objectaddressIsDefault
+     * @param string $addressType
      */
-    public function setObjectaddressIsDefault($objectaddressIsDefault)
+    public function setAddressType($addressType)
     {
-        $this->objectaddressIsDefault = $objectaddressIsDefault;
+        $this->addressType = $addressType;
     }
 
     /**
-     * Get objectaddressIsDefault
+     * Get addressType
+     *
+     * @return string 
+     */
+    public function getAddressType()
+    {
+        return $this->addressType;
+    }
+
+    /**
+     * Set addressIsDefault
+     *
+     * @param integer $addressIsDefault
+     */
+    public function setAddressIsDefault($addressIsDefault)
+    {
+        $this->addressIsDefault = $addressIsDefault;
+    }
+
+    /**
+     * Get addressIsDefault
      *
      * @return integer 
      */
-    public function getObjectaddressIsDefault()
+    public function getAddressIsDefault()
     {
-        return $this->objectaddressIsDefault;
+        return $this->addressIsDefault;
     }
 
     /**
@@ -262,22 +266,22 @@ class AranetVendorAddress
     }
 
     /**
-     * Set vendor
+     * Set contact
      *
-     * @param ARANOVA\VendorBundle\Entity\AranetVendor $vendor
+     * @param ARANOVA\ContactBundle\Entity\AranetContact $contact
      */
-    public function setVendor(\ARANOVA\VendorBundle\Entity\AranetVendor $vendor)
+    public function setContact(\ARANOVA\ContactBundle\Entity\AranetContact $contact)
     {
-        $this->vendor = $vendor;
+        $this->contact = $contact;
     }
 
     /**
-     * Get vendor
+     * Get contact
      *
-     * @return ARANOVA\VendorBundle\Entity\AranetVendor 
+     * @return ARANOVA\ContactBundle\Entity\AranetContact 
      */
-    public function getVendor()
+    public function getContact()
     {
-        return $this->vendor;
+        return $this->contact;
     }
 }

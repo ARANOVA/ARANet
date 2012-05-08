@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use ARANOVA\ContactBundle\Entity\AranetContact;
-
+use ARANOVA\ContactBundle\Entity\AranetContactAddress;
 
 class LoadContactData extends AbstractFixture implements OrderedFixtureInterface
 {
@@ -34,6 +34,15 @@ class LoadContactData extends AbstractFixture implements OrderedFixtureInterface
             $contact->setEmail(strtolower($this->elimina_acentos($contact->getFirstName())) . "." . strtolower($this->elimina_acentos($contact->getLastName())) . "@" . $domains[rand(0, count($domains)-1)]);
             $contact->setBirthday(new \DateTime("2010-07-05T06:00:00Z"));
             $manager->persist($contact);
+            // addresses
+        	$address = $this->getReference('address'.strval(rand(0, 49)));
+	        $contact_address = new AranetContactAddress();
+	        $contact_address->setAddress($address);
+	        $contact_address->setContact($contact);
+	        $contact_address->setAddressIsDefault(1);
+	        $manager->persist($contact_address);
+	        $contact->addAranetContactAddress($contact_address);
+	        
             $this->addReference('contact'.$i, $contact);
         }
 
@@ -42,6 +51,6 @@ class LoadContactData extends AbstractFixture implements OrderedFixtureInterface
 
     public function getOrder()
     {
-        return 1; // the order in which fixtures will be loaded
+        return 2; // the order in which fixtures will be loaded
     }
 }

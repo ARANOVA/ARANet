@@ -102,11 +102,12 @@
 
                           <!-- Pagination -->       
                           {% if pager[idx].haveToPaginate %}
-                          {{ pagination.render(pager[idx], router, {
-                            'proximity': 2,
-                            'prev_message': '←',
-                            'next_message': '→',
-                            'css_container_class': 'pagination pagination-centered'}) | raw }}
+                          	{{ pagerfanta(pager[idx], 'twitter_bootstrap_translated', {
+                          		'proximity': 2,
+                            	'prev_message': '←',
+                            	'next_message': '→',
+                            'css_container_class': 'pagination pagination-centered'
+                            }) }}
                           {% endif %}
                           
                             </div>
@@ -219,14 +220,28 @@
                     });
                 }
             });
+            function rowBuilder(contact) {
+            	var fax;
+            	if (contact.fax) {
+            	    fax = "<br/>Fax. " + contact.fax; 
+            	} else {
+            		fax = "";
+            	}
+            	var route = Routing.generate('_contact_show',{ "id": contact.id });
+      			return {%- include 'ARANOVAContactBundle:Default:_contact_row.html.twig' -%};
+			};
             $("#test-ajax-paginator").click(function() {
             	$.ajax({
-        		  		url: Routing.generate('_contacts',{ "page": 2 }),
-        		  		dataType: 'html',
-          				success: function(data){
-            				$("#All").html(data);
-          				}
+        		  		url: 'contacts/json',
+        		  		dataType: 'json',
+        		  		success: function(data){
+        		  			$('#All table tbody').html("");
+        		  			$.each(data.contacts, function(){
+      							$('#All table tbody').append(rowBuilder(this));
+							});
+          				},
         			});
+        		});
         });
     </script>
 

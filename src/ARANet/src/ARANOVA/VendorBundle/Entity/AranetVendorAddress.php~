@@ -25,9 +25,9 @@ class AranetVendorAddress
     /**
      * @var integer $address
      *
-     * @ORM\OneToOne(targetEntity="AranetAddress")
+     * @ORM\ManyToOne(targetEntity="AranetAddress")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="address_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="address_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $address;

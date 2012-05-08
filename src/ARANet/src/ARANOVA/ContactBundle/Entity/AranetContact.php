@@ -3,6 +3,7 @@
 namespace ARANOVA\ContactBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
@@ -136,6 +137,16 @@ class AranetContact
      */
     private $deletedBy;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AranetContactAddress", mappedBy="contact")
+     **/
+    protected $addresses = null;
+    
+	public function __construct()
+    {
+        $this->addresses = new ArrayCollection();
+    }
+    
     /**
      * Get id
      *
@@ -484,5 +495,25 @@ class AranetContact
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * Add addresses
+     *
+     * @param ARANOVA\ContactBundle\Entity\AranetContactAddress $addresses
+     */
+    public function addAranetContactAddress(\ARANOVA\ContactBundle\Entity\AranetContactAddress $addresses)
+    {
+        $this->addresses[] = $addresses;
+    }
+
+    /**
+     * Get addresses
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getAddresses()
+    {
+        return $this->addresses;
     }
 }
