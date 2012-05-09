@@ -26,7 +26,7 @@ class AranetContactAddress
     /**
      * @var ARANOVA\VendorBundle\Entity\AranetAddress $address
      *
-     * @ORM\OneToOne(targetEntity="ARANOVA\VendorBundle\Entity\AranetAddress")
+     * @ORM\ManyToOne(targetEntity="ARANOVA\VendorBundle\Entity\AranetAddress")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="address_id", referencedColumnName="id")
      * })

@@ -164,7 +164,12 @@ class AranetContact
      */
     public function getDefaultAddress()
     {
-        return null;
+        foreach ($this->addresses as $address) {
+          if ($address->getAddressIsDefault()) {
+            return $address;
+          }
+        }
+        return "";
     }
 
     /**

@@ -35,7 +35,7 @@ class LoadContactData extends AbstractFixture implements OrderedFixtureInterface
             $contact->setBirthday(new \DateTime("2010-07-05T06:00:00Z"));
             $manager->persist($contact);
             // addresses
-            $address = $this->getReference('address'.$i);//strval(rand(0, 49)));
+            $address = $this->getReference('address'.strval(rand(0, 49)));
             $contact_address = new AranetContactAddress();
             $contact_address->setAddress($address);
             $contact_address->setContact($contact);
