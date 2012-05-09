@@ -17,8 +17,8 @@ $loader->registerNamespaces(array(
     'Doctrine\\Common\\DataFixtures' => __DIR__.'/../vendor/doctrine-data-fixtures/lib',
     'Stof'             => __DIR__.'/../vendor/bundles',
     'Gedmo'            => __DIR__.'/../vendor/gedmo-doctrine-extensions/lib',
-	'FOS' 			   => __DIR__.'/../vendor/bundles',
-	'WhiteOctober\PagerfantaBundle' => __DIR__.'/../vendor/bundles',
+    'FOS'              => __DIR__.'/../vendor/bundles',
+    'WhiteOctober\PagerfantaBundle' => __DIR__.'/../vendor/bundles',
     'Pagerfanta'       => __DIR__.'/../vendor/pagerfanta/src',
 ));
 $loader->registerPrefixes(array(

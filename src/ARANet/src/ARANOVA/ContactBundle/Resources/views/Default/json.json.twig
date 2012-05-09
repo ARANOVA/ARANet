@@ -1,0 +1,12 @@
+{
+    "sEcho": {{ sEcho }},
+    "iTotalRecords": 20,
+    "iTotalDisplayRecords": 20,
+    "aaData": [
+    {% for contact in contacts %}
+        ["<input type='checkbox'>","Internet Explorer 4.0","Win 95+","4","X", "d", "w"]
+        {% if loop.index < contacts|length %},{% endif %}
+
+    {% endfor %}
+    ]
+}

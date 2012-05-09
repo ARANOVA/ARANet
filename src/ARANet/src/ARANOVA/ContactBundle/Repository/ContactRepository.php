@@ -19,4 +19,5 @@ class ContactRepository extends EntityRepository
             ->setMaxResults(1)
             ->getOneOrNullResult();
     }
+    
 }

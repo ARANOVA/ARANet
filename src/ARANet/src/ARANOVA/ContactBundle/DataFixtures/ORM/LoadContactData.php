@@ -23,7 +23,7 @@ class LoadContactData extends AbstractFixture implements OrderedFixtureInterface
         $firstnames = array("Pablo", "César", "Juan", "Pedro", "Ana", "Eva", "Laura", "Jaime", "Francisco", "María", "Susana", "Ángel", "Manuel", "José");
         $lastnames = array("Sánchez", "Martínez", "Díaz", "Venegas", "Rojas");
         $domains = array("gmail.com", "hotmail.com", "aranova.es");
-        $nb_contacts = 10;
+        $nb_contacts = 20;
         for ($i=0; $i<$nb_contacts; $i++) {
             $contact = new AranetContact();
             $contact->setFirstName($firstnames[rand(0, count($firstnames)-1)]);
@@ -35,14 +35,14 @@ class LoadContactData extends AbstractFixture implements OrderedFixtureInterface
             $contact->setBirthday(new \DateTime("2010-07-05T06:00:00Z"));
             $manager->persist($contact);
             // addresses
-        	$address = $this->getReference('address'.strval(rand(0, 49)));
-	        $contact_address = new AranetContactAddress();
-	        $contact_address->setAddress($address);
-	        $contact_address->setContact($contact);
-	        $contact_address->setAddressIsDefault(1);
-	        $manager->persist($contact_address);
-	        $contact->addAranetContactAddress($contact_address);
-	        
+            $address = $this->getReference('address'.$i);//strval(rand(0, 49)));
+            $contact_address = new AranetContactAddress();
+            $contact_address->setAddress($address);
+            $contact_address->setContact($contact);
+            $contact_address->setAddressIsDefault(1);
+            $manager->persist($contact_address);
+            $contact->addAranetContactAddress($contact_address);
+
             $this->addReference('contact'.$i, $contact);
         }
 
