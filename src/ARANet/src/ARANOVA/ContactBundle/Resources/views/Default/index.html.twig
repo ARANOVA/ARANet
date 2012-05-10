@@ -179,19 +179,17 @@
                 $("#ajaxContact").text($(this).data("contactName"));
                 $("#ajaxConfirmation").data().contactId = $(this).data("contactId");
                 $("#ajaxConfirmation").on('click', function() {
-                    //window.location = Routing.generate('_contact_delete',{ "id": $(this).data('contactId') });
                     $.ajax({
                         url: Routing.generate('_contact_delete',{ "id": $(this).data('contactId') }),
                         dataType: 'json',
                         error: function(data, err){
-                            alert(data);
                             alert(err);
                         },
                         success: function(data){
                             $("#messageInner").html("<strong>¡Conseguido!</strong> " + data.message);
                             $("#message").removeClass("alert-error alert-warning").addClass("alert-success").show();
-                            $("#deleteModal").modal('hide');
-                            $("#contactRow" + data.id).remove();
+                            //$("#deleteModal").modal('hide');
+                            //$("#contactRow" + data.id).remove();
                         }
                     });
         

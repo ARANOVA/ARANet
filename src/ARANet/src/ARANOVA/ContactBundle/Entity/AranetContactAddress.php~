@@ -28,7 +28,7 @@ class AranetContactAddress
      *
      * @ORM\ManyToOne(targetEntity="ARANOVA\VendorBundle\Entity\AranetAddress")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="address_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="address_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $address;
@@ -38,7 +38,7 @@ class AranetContactAddress
      *
      * @ORM\ManyToOne(targetEntity="AranetContact")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="contact_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="contact_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $contact;

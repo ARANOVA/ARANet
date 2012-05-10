@@ -37,7 +37,7 @@ class AranetVendorAddress
      *
      * @ORM\ManyToOne(targetEntity="AranetVendor")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="vendor_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="vendor_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $vendor;

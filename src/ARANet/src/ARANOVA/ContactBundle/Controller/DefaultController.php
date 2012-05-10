@@ -7,9 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Pagerfanta\Pagerfanta;
-use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
-use Pagerfanta\View\TwitterBootstrapView;
 
 class DefaultController extends Controller
 {
@@ -119,32 +117,31 @@ class DefaultController extends Controller
         );
     }
     
-  /**
+    /**
      * @Route("/delete/{id}", name="_contact_delete", options={"expose"=true})
      */
     public function deleteAction($id){
-  // borrado de tarea de la BD
-    if (!$id){
-      throw $this->createNotFoundException('No se puede borrar un contacto si no se especifica su ID');
-    }
-    $em = $this->getDoctrine()->getEntityManager();
-    $contact = $em->getRepository('ARANOVAContactBundle:AranetContact')->findOneById($id);
+        // borrado de tarea de la BD
+        if (!$id){
+            throw $this->createNotFoundException('No se puede borrar un contacto si no se especifica su ID');
+        }
+        $em = $this->getDoctrine()->getEntityManager();
+        $contact = $em->getRepository('ARANOVAContactBundle:AranetContact')->findOneById($id);
    
-    if (!$contact){
-      throw $this->createNotFoundException('No se ha encontrado el contacto '.$id.' en la BD');
-    }
+        if (!$contact){
+            throw $this->createNotFoundException('No se ha encontrado el contacto '.$id.' en la BD');
+        }
    
-    // contacto exists
-    // so, delete it
-    $em->remove($contact); 
-    $em->flush(); 
+        // contacto exists
+        // so, delete it
+        $em->remove($contact); 
+        $em->flush(); 
     
-    $request = $this->get('request');
-    $return=array("responseCode"=>200, 
-      "message"=>"Contacto eliminado correctamente",
-      "id" => $id
-    );
-    $return = json_encode($return);//jscon encode the array
-      return new Response($return, 200);
-  }
+        $request = $this->get('request');
+        $return = array("responseCode"=>200, 
+            "message"=>"Contacto eliminado correctamente",
+            "id" => $id
+        );
+        return new Response(json_encode($return), 200);
+    }
 }
