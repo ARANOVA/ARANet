@@ -1,4 +1,3 @@
-src/ARANet/app/config/parameters.ini
-
 # Mac OSX
 .DS_Store
+/src/aranet-2025/packages/aranova-react-ui
