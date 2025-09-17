@@ -25,10 +25,6 @@ export const mapSearchModelToFilters = (searches: SearchDTO[], filters: Filters[
         const isSameField = filter.fieldName.toLowerCase() === search.field.toLowerCase();
         const isSameOperator = filter.operator.toLowerCase() === search.operator.toLowerCase() || (filter.operator === SearchOperators.like && search.operator === SearchOperators.empty);
         const filterOperatorIsLikeAndSearchModelOperatorIsEmpty = filter.operator === SearchOperators.like && search.operator === SearchOperators.like;
-
-        console.log({search, isSameField, isSameOperator, filterOperatorIsLikeAndSearchModelOperatorIsEmpty})
-        
-
         if (isSameField && (isSameOperator || filterOperatorIsLikeAndSearchModelOperatorIsEmpty)) {
           filter.value = search.value;
         }

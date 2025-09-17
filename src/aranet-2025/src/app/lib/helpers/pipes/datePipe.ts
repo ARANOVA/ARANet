@@ -19,11 +19,22 @@ export function dateColumn<T>(
       const date = raw ? new Date(raw) : null;
       return date
         ? date.toLocaleDateString(locale, {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          })
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })
         : '';
     },
   });
+}
+
+export const datePipe = (raw: Date | string, locale: string = navigator?.language || 'es-ES'): string => {
+  const date = raw ? (typeof raw === 'string' ? new Date(raw) : raw) : null;
+  return date
+    ? date.toLocaleDateString(locale, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    : '';
 }

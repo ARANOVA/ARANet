@@ -22,6 +22,7 @@ export function numberColumn<T>(
     minFractionDigits = 0,
     maxFractionDigits = 3,
   }: NumberFormatOptions = {},
+  suffix: string = '',
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra: Record<string, any>,
 ): ColumnDef<T, number | null | undefined> {
@@ -39,7 +40,7 @@ export function numberColumn<T>(
         minimumIntegerDigits: minIntegerDigits,
         minimumFractionDigits: minFractionDigits,
         maximumFractionDigits: maxFractionDigits,
-      }).format(value);
+      }).format(value) + suffix;
     },
   });
 }

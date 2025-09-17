@@ -1,1 +1,3 @@
-export * from './dropdown-select-button';
+export * from './DeleteModelButton';
+export * from './DropdownSelectButton';
+export * from './RestoreModelButton';

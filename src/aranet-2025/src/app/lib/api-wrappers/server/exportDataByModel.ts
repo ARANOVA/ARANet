@@ -29,7 +29,6 @@ export const exportDataByModel = async (
         'Content-Type': 'application/json',
       },
     });
-    console.log({res})
     const json = await res.json();
     return json as SingleResponse<ExportData>;
   } catch (err: unknown) {

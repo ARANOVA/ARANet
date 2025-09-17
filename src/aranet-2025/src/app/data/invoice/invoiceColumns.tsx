@@ -5,8 +5,9 @@ import { aranet_invoice } from '@/generated/prisma';
 import { Invoice } from '@/interfaces';
 import { ColumnDef, ColumnMeta, createColumnHelper } from '@tanstack/react-table';
 import clsx from 'clsx';
+import Link from "next/link";
 
-const columnHelper = createColumnHelper<aranet_invoice>()
+const columnHelper = createColumnHelper<aranet_invoice & { aranet_client: { client_company_name: string; } }>()
 
 interface AranovaColumnMeta {
   className?: string;
@@ -68,7 +69,7 @@ const tipoCalendarioCellFormatter = ({ getValue }: { getValue: any }) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const tipoTemporalCellFormatter = ({ getValue }: { getValue: any }) => {
+const prefixAndNumberCellFormatter = ({ getValue }: { getValue: any }) => {
   const raw = getValue();
   switch (raw) {
     case 0:
@@ -85,48 +86,70 @@ const tipoTemporalCellFormatter = ({ getValue }: { getValue: any }) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const invoiceColumns: ColumnDef<Invoice, any>[] = [
+export const invoiceColumns: ColumnDef<any, any>[] = [
   columnHelper.accessor("id", {
     header: "Id",
     size: 60,
     enableHiding: false,
     meta: mix(metaLeft, maxWidth60),
   }),
-  // columnHelper.accessor("Nombre", {
-  //   header: "Nombre",
-  //   size: 170,
-  //   enableResizing: true,
-  //   meta: maxWidth170,
-  // }),
-  // columnHelper.accessor("titulo", {
-  //   header: "Equipo / Empleado",
-  //   size: 170,
-  //   enableSorting: false,
-  //   meta: maxWidth170,
-  //   enableResizing: true,
-  // }),
-  // columnHelper.accessor("TipoCalendario", {
-  //   header: "Tipo Calendario",
-  //   size: 170,
-  //   meta: mix(metaCenter, maxWidth170),
-  //   cell: tipoCalendarioCellFormatter,
-  // }),
-  // columnHelper.accessor("TipoTemporal", {
-  //   header: "Estado",
-  //   size: 90,
-  //   meta: mix(metaCenter, maxWidth90),
-  //   cell: tipoTemporalCellFormatter,
-  // }),
-  // numberColumn<CalendarioListado>('HorasTotales', 'Horas', { minFractionDigits: 0, maxFractionDigits: 2, locale }, {
-  //   size: 90,
-  //   meta: mix(metaRight, maxWidth90),
-  // }),
-  // dateColumn<CalendarioListado>('FechaSolicitud', 'Solicitud', locale, {
-  //   size: 130,
-  //   meta: mix(metaCenter, maxWidth130),
-  // }),
-  // dateColumn<CalendarioListado>('FechaAprobacion', 'Aprobación', locale, {
-  //   size: 130,
-  //   meta: mix(metaCenter, maxWidth130),
-  // }),
+  columnHelper.accessor(
+    row => `${row.invoice_prefix}${row.invoice_number}`, // accessor function
+    {
+      id: "invoice_full_number",
+      header: "Nº",
+      size: 130,
+      meta: mix(metaLeft, maxWidth130),
+      cell: info => {
+        const value = info.getValue();
+        const row = info.row.original;
+        return (
+          <Link
+            title={`${row.invoice_prefix}${row.invoice_number}`}
+            className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+            href={`/invoice/show/${row.id}`}
+          >
+            { value }
+          </Link>
+        );
+      }
+    }
+  ),
+  columnHelper.accessor("invoice_title", {
+    header: "Título",
+    size: 170,
+    enableHiding: false,
+    meta: mix(metaLeft, maxWidth170),
+  }),
+  columnHelper.accessor(
+    row => `${row.aranet_client.client_company_name}`,
+    {
+      id: "client_company_name",
+      header: "Cliente",
+      size: 170,
+      meta: mix(metaLeft, maxWidth170),
+      cell: info => {
+        const value = info.getValue();
+        const row = info.row.original;
+        return (
+          <Link
+            title={row.aranet_client.client_company_name}
+            className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+            href={`/client/show/${row.invoice_client_id}`}
+          >
+            { value }
+          </Link>
+        );
+      }
+    }
+  ),
+  dateColumn<Invoice>('invoice_date', 'Fecha', locale, {
+    size: 130,
+    meta: mix(metaCenter, maxWidth130),
+  }),
+  numberColumn<Invoice>('invoice_total_amount', 'Total', { minFractionDigits: 2, maxFractionDigits: 2, locale }, '€', {
+    size: 130,
+    meta: mix(metaCenter, maxWidth130),
+  }),
+  
 ];

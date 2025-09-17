@@ -41,7 +41,7 @@ export default async function InvoiceListPage({ searchParams }: Props) {
     page === undefined || isNaN(+page) || +page < 1 ? 1 : +page;
 
   const typedSortDir: 'asc' | 'desc' = ({ desc: 'desc', asc: 'asc' }[
-    (sortDir || 'desc').toLowerCase()
+    (sortDir || 'asc').toLowerCase()
   ] || 'desc') as 'asc' | 'desc';
   
   const links: MenuItem[] = [
@@ -59,10 +59,11 @@ export default async function InvoiceListPage({ searchParams }: Props) {
           subtitle="Listado de facturas"
           model="invoice"
           add_button_text="Añadir factura"
+          add_button_href="/invoice/create"
           search_placeholder="Buscar facturas..."
         />
         <ToastStoreAlert />
-        <EditableStoreTable<Invoice & { id?: number }>
+        <EditableStoreTable<any>
           limit={limit}
           page={currentPage - 1}
           pageDataSelection={<PaginationStore />}
@@ -71,7 +72,7 @@ export default async function InvoiceListPage({ searchParams }: Props) {
           viewTitle="Ver factura"
           subtitle="Por favor, completa todos los campos obligatorios"
           model="invoice"
-          editModel="modal"
+          editModel="page"
           showModel="page"
           columns={invoiceColumns}
           filters={invoiceFilters}

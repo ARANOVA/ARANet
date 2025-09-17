@@ -33,3 +33,8 @@ export const isValidUsername = (username: string): boolean => {
   const regex = /^[A-Za-z0-9]+$/;
   return regex.test(username) && username.length < 128;
 }
+
+export const isValidId = (id?: number | string): boolean => {
+  const regex = /^(?:[1-9]\d{0,8}|1\d{9}|20\d{8}|21[0-3]\d{7}|214[0-6]\d{6}|2147[0-3]\d{5}|21474[0-7]\d{4}|214748[0-2]\d{3}|2147483[0-5]\d{2}|21474836[0-3]\d|214748364[0-7])$/;
+  return id !== undefined && regex.test(id.toString()) && !isNaN(Number(id)) && Number(id) > 0;
+}

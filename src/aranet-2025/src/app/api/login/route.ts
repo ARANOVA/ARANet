@@ -23,7 +23,7 @@ export async function POST(
       return NextResponse.json({
         statusCode: 400,
         error: "Bad Request",
-      }, { status: 400 })
+      }, { status: 400 });
     }
 
     const result = await prisma.sf_guard_user.findUnique({

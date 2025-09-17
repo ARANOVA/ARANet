@@ -17,6 +17,9 @@ interface Props {
   add_button_text?: string;
   add_button_href?: string;
   add_button_icon?: React.ReactNode;
+  edit_button_text?: string;
+  edit_button_href?: string;
+  print_button_text?: string;
 }
 
 
