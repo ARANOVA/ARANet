@@ -4,9 +4,9 @@ import { decrypt, encrypt } from './session'
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
  
-export async function createSession(userId: number, userNIF: string, roles: string[], remember: boolean): Promise<void> {
+export async function createSession(id: number, username: string, roles: string[], remember: boolean): Promise<void> {
   const expiresAt = (remember ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) : undefined)
-  const session = await encrypt({ userId, userNIF, roles, expiresAt })
+  const session = await encrypt({ id, username, roles, expiresAt })
   const cookieStore = await cookies()
   cookieStore.set('session', session, {
     httpOnly: true,

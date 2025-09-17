@@ -87,7 +87,7 @@ export async function POST(
       }, { status: 401 });
     }
 
-    logDebug(`/api/login: create session for ${result.username} (${result.id}) ${JSON.stringify(result.sf_guard_user_permission)}`);
+    logDebug(`/api/login: create session for ${result.username} (${result.id}) with roles: ${fullperms.join(", ")}`);
     await createSession(
       result.id,
       result.username,
@@ -107,7 +107,7 @@ export async function POST(
       data,
     }, { status: 200 });
   } catch (err) {
-    logError(`Login error: ${err}`);
+    logError(`Error POST /api/login: ${err}`);
     return NextResponse.json({
       statusCode: 500,
       error: "Internal Server Error",
