@@ -1,8 +1,7 @@
 import { FilterDTO, ListResponse } from "@aranova/aranova-react-ui";
-import { logError } from "../logger";
-import { calendariosFilters, plantillaFilters } from '@/data';
+import { logError } from "../../logger";
 
-type EnumModels = 'calendarios' | 'plantilla';
+type EnumModels = 'no-existe';
 
 export const getListDataByModel = async <T>(
   model: string,
@@ -18,15 +17,15 @@ export const getListDataByModel = async <T>(
   filters: FilterDTO[] = [],
 ): Promise<ListResponse<T>> => {
   // Filtrar filtros válidos y no vacíos
-  const VALID_FIELDS = {
-    calendarios: calendariosFilters.map(f => f.fieldName),
-    plantilla: plantillaFilters.map(f => f.fieldName),
+  const VALID_FIELDS: Record<string, string[]> = {
+    // calendarios: calendariosFilters.map(f => f.fieldName),
+    // plantilla: plantillaFilters.map(f => f.fieldName),
   };
 
   const rightFilters = filters
     .filter((f: FilterDTO) => {
       // Comprobar campo válido
-      if ((model in VALID_FIELDS ? VALID_FIELDS[model as EnumModels] : []).indexOf(f.field) === -1) {
+      if ((model in VALID_FIELDS ? VALID_FIELDS[model] : []).indexOf(f.field) === -1) {
         return false;
       }
       // Comprobar valor válido

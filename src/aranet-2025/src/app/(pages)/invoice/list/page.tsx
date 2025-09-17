@@ -1,8 +1,10 @@
 import { MenuItem, NotAuthorized, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
-import { PageStoreHeader } from "@/app/components";
+import { EditableStoreTable, PageStoreHeader, PaginationStore, ToastStoreAlert } from "@/app/components";
 import { Metadata } from "next";
+import { Invoice } from "@/interfaces";
+import { invoiceColumns, invoiceFilters } from "@/app/data/invoice";
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +12,18 @@ export const metadata: Metadata = {
   title: 'Facturas - Finanzas',
 };
 
-export default async function InvoiceListPage() {
+interface Props {
+  searchParams: Promise<{
+    page?: string;
+    limit?: number;
+    sortField?: string;
+    sortDir?: string;
+    filter?: string;
+    'search[]'?: string[] | string;
+  }>;
+}
+
+export default async function InvoiceListPage({ searchParams }: Props) {
   const session = await getSession();
   if (!session) {
     return <NotAuthorized />;
@@ -21,6 +34,15 @@ export default async function InvoiceListPage() {
   if (!me.data?.id) {
     return <NotAuthorized />;
   }
+
+  const { page, limit, sortField, sortDir } = await searchParams;
+
+  const currentPage =
+    page === undefined || isNaN(+page) || +page < 1 ? 1 : +page;
+
+  const typedSortDir: 'asc' | 'desc' = ({ desc: 'desc', asc: 'asc' }[
+    (sortDir || 'desc').toLowerCase()
+  ] || 'desc') as 'asc' | 'desc';
   
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
@@ -39,6 +61,28 @@ export default async function InvoiceListPage() {
           add_button_text="Añadir factura"
           search_placeholder="Buscar facturas..."
         />
+        <ToastStoreAlert />
+        <EditableStoreTable<Invoice & { id?: number }>
+          limit={limit}
+          page={currentPage - 1}
+          pageDataSelection={<PaginationStore />}
+          editTitle="Editar factura"
+          newTitle="Añadir factura"
+          viewTitle="Ver factura"
+          subtitle="Por favor, completa todos los campos obligatorios"
+          model="invoice"
+          editModel="modal"
+          showModel="page"
+          columns={invoiceColumns}
+          filters={invoiceFilters}
+          idField="id"
+          sortField={sortField || 'invoice_date'}
+          sortDir={typedSortDir}
+        >
+          {/* <NewCalendarForm rrhh={rrhh.data} me={me.data} /> */}
+          {/* <ListFormCalendar rrhh={rrhh.data} me={me.data}/> */}
+          <span>Hola</span>
+        </EditableStoreTable>
       </div>
     </>
   )
