@@ -22,9 +22,11 @@ import { logDebug, logError } from '@/app/lib/logger';
 
 interface Props {
   referer?: string;
+  logo_light: string;
+  logo_dark: string;
 }
 
-export const Login = ({ referer }: Props) => {
+export const Login = ({ referer, logo_light, logo_dark }: Props) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
@@ -65,24 +67,24 @@ export const Login = ({ referer }: Props) => {
     <div className="dark:bg-zinc-800 bg-zinc-200 p-10 rounded-none md:rounded-xl">
       <form className="w-full max-w-sm space-y-8" onSubmit={handleLogin}>
         <div className="flex justify-center">
-          <Image
-            src={process.env.APP_LOGO_LIGHT || ''}
+          {logo_light && <Image
+            src={logo_light}
             alt="Logo"
             width={282}
             height={80}
             priority={true}
             className="hidden dark:block object-contain"
-          />
+          />}
 
           {/* Logo para tema oscuro */}
-          <Image
-            src={process.env.APP_LOGO_DARK || ''}
+          {logo_dark && <Image
+            src={logo_dark}
             alt="Logo"
             width={282}
             height={80}
             priority={true}
             className="block dark:hidden object-contain"
-          />
+          />}
         </div>
         <NotificationAlert
           title="¡Algo fué mal!"
@@ -92,7 +94,7 @@ export const Login = ({ referer }: Props) => {
           <Field className="mt-4">
             <Label
               className="text-base font-bold text-zinc-950 select-none sm:text-sm dark:text-white"
-              htmlFor="dni"
+              htmlFor="username"
             >
               Usuario o Email
             </Label>
@@ -103,7 +105,7 @@ export const Login = ({ referer }: Props) => {
                 name="username"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
-                autoComplete="current-username"
+                autoComplete="username"
                 placeholder="Introduce tu nombre de usuario o email"
                 className="block appearance-none rounded-lg w-full text-zinc-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 sm:text-sm"
               />

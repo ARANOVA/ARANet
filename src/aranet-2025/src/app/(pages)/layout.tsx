@@ -33,23 +33,76 @@ export default async function RootLayout({
     return <NotAuthorized />;
   }
 
-  const navItems: NavbarMenuItem = {
-    header: 'Administración',
-    items: [],
-  };
+  const navItems: NavbarMenuItem[] = [
+    {
+      header: 'Dashboard',
+      items: [
+        { name: 'Informe anual', href: '/', icon: <UsersIcon />, children: []},
+      ],
+    },
+
+  ];
+
+  if (isRole('member', me.data) && navItems[0].items[0].children) {
+    navItems[0].items[0].children.push(...[
+      { name: 'Ingresos', href: '/dashboard/incomes', icon: <UsersIcon /> },
+      { name: 'Gastos', href: '/dashboard/expenses', icon: <UsersIcon /> },
+      { name: 'Presupuestos', href: '/dashboard/budgets', icon: <UsersIcon /> },
+      { name: 'Social', href: '/dashboard/social', icon: <UsersIcon /> },
+    ]);
+  }
+
+  if (isRole('crm', me.data)) {
+    navItems.push({
+      header: 'Empresas',
+      items: [
+        { name: 'Clientes', href: '/client/list', icon: <UsersIcon />, children: [
+          { name: 'Proveedores', href: '/vendor/list', icon: <UsersIcon /> },
+          { name: 'Contactos', href: '/contact/list', icon: <UsersIcon /> },
+        ]},
+      ],
+    })
+  }
+
+  // Project manager
+  if (isRole('pm', me.data)) {
+    navItems.push({
+      header: 'Proyectos',
+      items: [
+        { name: 'Proyectos', href: '/projects/list', icon: <UsersIcon />, children: [
+          { name: 'Presupuestos', href: '/budget/list', icon: <UsersIcon /> },
+          { name: 'Contactos', href: '/contact/list', icon: <UsersIcon /> },
+        ]},
+      ],
+    });
+  }
+
+  if (isRole('financial', me.data)) {
+    navItems.push({
+      header: 'Finanzas',
+      items: [
+        { name: 'Facturas', href: '/invoice/list', icon: <CalendarIcon />, children: [
+          { name: 'Gastos', href: '/expense/list', icon: <UsersIcon /> },
+          { name: 'Ingresos', href: '/income/list', icon: <UsersIcon /> },
+          { name: 'Movimientos de caja', href: '/cash/list', icon: <UsersIcon /> },
+        ]},
+      ],
+    });
+    navItems.push({
+      header: 'Fiscal',
+      items: [
+        { name: 'Modelo 347', href: '/legal/347', icon: <UsersIcon />, children: []},
+      ]
+    });
+  }
 
   if (hasAdminRights(me.data)) {
-    navItems.items.push(
-      { name: 'Menu1', href: '/admin/menu1', icon: <UsersIcon /> },
-    );
-  } else if (isRole('financial', me.data)) {
-    navItems.items.push(
-      {
-        name: 'Facturas',
-        href: '/admin/facturas',
-        icon: <CalendarIcon />,
-      }
-    );
+    navItems.push({
+      header: 'Administración',
+      items: [
+        { name: 'Usuarios', href: '/user/list', icon: <UsersIcon />, children: []},
+      ]
+    });
   }
 
   const userItems: NavbarMenuItem = {
@@ -72,7 +125,7 @@ export default async function RootLayout({
         }}
         title={process.env.APP_TITLE || 'ARANet'}
         subtitle={process.env.APP_CLIENT || 'ARANOVA'}
-        navigation={[navItems]}
+        navigation={navItems}
         actions={[userItems]}
         username={me.data?.username || ''}
         profileUrl="/profile"

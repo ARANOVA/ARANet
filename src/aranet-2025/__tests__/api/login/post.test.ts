@@ -10,7 +10,7 @@ describe('POST /api/login', () => {
   it('Devuelve 200 para login de super-admin', async () => {
     const loginResponse = await request(baseURL)
       .post('/api/login')
-      .send({ username: 'pablo', password: '1234' });
+      .send({ username: 'pablo', email: 'pablo', password: '1234', remember: false });
 
     expect(loginResponse.status).toBe(200);
     const data = loginResponse.body;

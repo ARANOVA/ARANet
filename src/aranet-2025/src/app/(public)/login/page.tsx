@@ -15,7 +15,11 @@ const PageLogin = async () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <Login referer={referer} />
+      <Login
+        referer={referer}
+        logo_light={process.env.APP_LOGO_LIGHT || ''}
+        logo_dark={process.env.APP_LOGO_DARK || ''}
+      />
     </div>
   );
 };

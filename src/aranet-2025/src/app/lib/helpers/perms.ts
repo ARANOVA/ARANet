@@ -1,5 +1,5 @@
-type UserWithRoles = { Roles: string | string[]; roles?: string | string[] } & Record<string, unknown>;
-type UserWithroles = { roles: string | string[]; Roles?: string | string[] } & Record<string, unknown>;
+type UserWithRoles = { Roles: string | string[]; roles?: string | string[]; is_super_admin?: boolean } & Record<string, unknown>;
+type UserWithroles = { roles: string | string[]; Roles?: string | string[]; is_super_admin?: boolean } & Record<string, unknown>;
 
 
 export const hasAdminRights = (user?: UserWithRoles | UserWithroles): boolean => {
@@ -19,5 +19,5 @@ export const isEmployee = (user?: UserWithRoles | UserWithroles): boolean => {
 
 export const isRole = (role: string, user?: UserWithRoles | UserWithroles): boolean => {
   const roles: string | string[] = user?.Roles ?? user?.roles ?? [];
-  return roles.indexOf(role) >= 0;
+  return roles.indexOf(role) >= 0 || roles.indexOf('admin') >= 0 || !!user?.is_super_admin;
 }

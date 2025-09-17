@@ -17,9 +17,9 @@ export async function POST(
 ): Promise<NextResponse<SingleResponse<User>>> {
   try {
     const body = await request.json();
-    const { username, password, remember } = body;
+    const { username, email, password, remember } = body;
 
-    if (!username || !password || !isValidUsername(username)) {
+    if (!username || !password || !email || !isValidUsername(username)) {
       return NextResponse.json({
         statusCode: 400,
         error: "Bad Request",
@@ -48,6 +48,26 @@ export async function POST(
       }, { status: 401 });
     }
 
+    // await prisma.sf_guard_user.update({
+    //   where: {
+    //     id: result.id,
+    //   },
+    //   data: {
+    //     password: await hmacCreatePassword(password, result.salt, result.algorithm),
+    //   },
+    // });
+
+    const validPassword =
+      result.salt &&
+      await hmacCreatePassword(password, result.salt, result.algorithm) === result.password;
+
+    if (!validPassword) {
+      return NextResponse.json({
+        statusCode: 401,
+        error: "Unauthorized",
+      }, { status: 401 });
+    }
+
     const perms = await prisma.sf_guard_permission.findMany();
     const user_perms: string[] = result.sf_guard_user_permission.map(uperm => {
       const found = perms.find(p => p.id === uperm.permission_id);
@@ -67,26 +87,6 @@ export async function POST(
     }
 
     const fullperms = Array.from(new Set(user_perms));
-    // await prisma.sf_guard_user.update({
-    //   where: {
-    //     id: result.id,
-    //   },
-    //   data: {
-    //     password: result.password,
-    //   },
-    // });
-
-    const validPassword =
-      result.salt &&
-      hmacCreatePassword(password, result.salt, result.algorithm) === result.password;
-
-    if (!validPassword) {
-      return NextResponse.json({
-        statusCode: 401,
-        error: "Unauthorized",
-      }, { status: 401 });
-    }
-
     logDebug(`/api/login: create session for ${result.username} (${result.id}) with roles: ${fullperms.join(", ")}`);
     await createSession(
       result.id,
