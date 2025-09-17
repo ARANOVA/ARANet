@@ -69,9 +69,9 @@ export default async function RootLayout({
     navItems.push({
       header: 'Proyectos',
       items: [
-        { name: 'Proyectos', href: '/projects/list', icon: <UsersIcon />, children: [
+        { name: 'Proyectos', href: '/project/list', icon: <UsersIcon />, children: [
           { name: 'Presupuestos', href: '/budget/list', icon: <UsersIcon /> },
-          { name: 'Contactos', href: '/contact/list', icon: <UsersIcon /> },
+          { name: 'Partes de dedicación', href: '/timesheet/list', icon: <UsersIcon /> },
         ]},
       ],
     });
@@ -100,7 +100,7 @@ export default async function RootLayout({
     navItems.push({
       header: 'Administración',
       items: [
-        { name: 'Usuarios', href: '/user/list', icon: <UsersIcon />, children: []},
+        { name: 'Usuarios', href: '/admin/user/list', icon: <UsersIcon />, children: []},
       ]
     });
   }

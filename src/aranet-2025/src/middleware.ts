@@ -5,8 +5,8 @@ import { hasAdminRights } from "@/app/lib/helpers";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 
 // Protegidas: todo excepto /login Y /api/login
-const protectedRoutes = /^(?!\/(login|api\/login|api\/import)$)\/.*$/;
-const publicRoutes = ['/login', '/api/login', '/api/import'];
+const protectedRoutes = /^(?!\/(login|api\/login)$)\/.*$/;
+const publicRoutes = ['/login', '/api/login'];
  
 export default async function middleware(req: NextRequest) {
 
@@ -36,7 +36,7 @@ export default async function middleware(req: NextRequest) {
   // 4. Protect admin pages
   if (session && path.startsWith('/admin')) {
     const dataPlain = ServerDataPlain.getInstance();
-    // Get empleado logueado
+    // Get user logueado
     const me = await dataPlain.useMe(session.userId as number);
     if (!me || !me.data || !hasAdminRights(me.data)) {
       return NextResponse.redirect(new URL('/', req.nextUrl))
