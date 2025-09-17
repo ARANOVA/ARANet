@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getSession, logWarn } from '@/app/lib';
+import prisma from '@/prisma';
+import { logWarn } from '@/app/lib/logger';
 import { User } from '@/interfaces';
 import { SingleResponse } from '@aranova/aranova-react-ui';
-import { getUserById } from '@/app/lib/api-wrappers/server';
-
-const isValidId = (id?: number | string): boolean => {
-  const regex = /^(?:[1-9]\d{0,8}|1\d{9}|20\d{8}|21[0-3]\d{7}|214[0-6]\d{6}|2147[0-3]\d{5}|21474[0-7]\d{4}|214748[0-2]\d{3}|2147483[0-5]\d{2}|21474836[0-3]\d|214748364[0-7])$/;
-  return id !== undefined && regex.test(id.toString()) && !isNaN(Number(id)) && Number(id) > 0;
-}
+import { getSession } from '@/app/lib/session';
+import { isValidId } from '@/app/lib/responses/server/utils';
 
 export async function GET(): Promise<NextResponse<SingleResponse<User>>> {
   const cookie = await getSession();
@@ -18,11 +15,11 @@ export async function GET(): Promise<NextResponse<SingleResponse<User>>> {
     }, { status: 401 });
   }
   
-  if (!cookie.userNIF) {
+  if (!cookie.id) {
     return NextResponse.json({
       statusCode: 400,
       error: "Bad Request",
-    }, { status: 400 });
+    }, { status: 400 })
   }
 
   const isValid = isValidId(cookie.id);
@@ -31,20 +28,32 @@ export async function GET(): Promise<NextResponse<SingleResponse<User>>> {
     return NextResponse.json({
       statusCode: 400,
       error: "Bad Request",
-    }, { status: 400 });
+    }, { status: 400 })
   }
 
   try {
-    const result = await getUserById<User>(cookie.id);
+    const result = prisma.sf_guard_user.findUnique({
+      where: {
+        id: cookie.id
+      },
+      include: {
+        sf_guard_user_permission: true,
+        sf_guard_user_group: true,
+        sf_guard_user_profile_sf_guard_user_profile_created_byTosf_guard_user: true,
+      }
+    });
 
-    if (!result || result.error) {
+    if (!result) {
       return NextResponse.json({
         statusCode: 401,
         error: "Unauthorized",
       }, { status: 401 });
     }
 
-    return NextResponse.json(result);
+    return NextResponse.json({
+      statusCode: 200,
+      data: result as unknown as User || null,
+    }, { status: 200 });
 
   } catch (err) {
     logWarn(`Error GET me: ${err}`);

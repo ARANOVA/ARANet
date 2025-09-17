@@ -1,22 +1,1182 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  username String
-  email    String @unique
+model aranet_address {
+  id                   Int                    @id @default(autoincrement())
+  address_line1        String?                @db.VarChar(255)
+  address_line2        String?                @db.VarChar(255)
+  address_location     String?                @db.VarChar(128)
+  address_state        String?                @db.VarChar(64)
+  address_postal_code  String?                @db.VarChar(10)
+  address_country      String?                @db.VarChar(2)
+  address_distance     Int?
+  aranet_objectaddress aranet_objectaddress[]
+}
+
+model aranet_budget {
+  id                                                    Int                        @id @default(autoincrement())
+  budget_prefix                                         String?                    @db.VarChar(8)
+  budget_number                                         String                     @db.VarChar(11)
+  budget_revision                                       Int                        @default(0)
+  budget_date                                           DateTime                   @db.Date
+  budget_valid_date                                     DateTime                   @db.Date
+  budget_approved_date                                  DateTime?                  @db.Date
+  budget_client_id                                      Int?
+  budget_project_id                                     Int?
+  budget_category_id                                    Int?
+  budget_title                                          String?                    @db.VarChar(255)
+  budget_comments                                       String?                    @db.Text
+  budget_print_comments                                 Int?                       @default(0)
+  budget_tax_rate                                       Float?                     @default(0)
+  budget_freight_charge                                 Float?                     @default(0)
+  budget_total_cost                                     Float?                     @default(0)
+  budget_total_amount                                   Float?                     @default(0)
+  budget_payment_condition_id                           Int?
+  budget_status_id                                      Int?                       @default(0)
+  budget_is_last                                        Int?                       @default(1)
+  created_at                                            DateTime?                  @db.DateTime(0)
+  created_by                                            Int?
+  updated_at                                            DateTime?                  @db.DateTime(0)
+  updated_by                                            Int?
+  deleted_at                                            DateTime?                  @db.DateTime(0)
+  deleted_by                                            Int?
+  aranet_budget_status                                  aranet_budget_status?      @relation(fields: [budget_status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_budget_FK_1")
+  sf_guard_user_aranet_budget_created_byTosf_guard_user sf_guard_user?             @relation("aranet_budget_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_budget_FK_2")
+  sf_guard_user_aranet_budget_updated_byTosf_guard_user sf_guard_user?             @relation("aranet_budget_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_budget_FK_3")
+  sf_guard_user_aranet_budget_deleted_byTosf_guard_user sf_guard_user?             @relation("aranet_budget_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_budget_FK_4")
+  aranet_invoice_category                               aranet_invoice_category?   @relation(fields: [budget_category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "budget_category_id_idx")
+  aranet_client                                         aranet_client?             @relation(fields: [budget_client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "budget_client_id_idx")
+  aranet_payment_condition                              aranet_payment_condition?  @relation(fields: [budget_payment_condition_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "budget_payment_condition_id_idx")
+  aranet_project                                        aranet_project?            @relation(fields: [budget_project_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "budget_project_id_idx")
+  aranet_budget_item                                    aranet_budget_item[]
+  aranet_expense_item                                   aranet_expense_item[]
+  aranet_income_item                                    aranet_income_item[]
+  aranet_invoice                                        aranet_invoice[]
+  aranet_project_milestone                              aranet_project_milestone[]
+  aranet_project_task                                   aranet_project_task[]
+  aranet_timesheet                                      aranet_timesheet[]
+
+  @@index([budget_category_id], map: "FI_get_category_id_idx")
+  @@index([budget_payment_condition_id], map: "FI_get_payment_condition_id_idx")
+  @@index([budget_status_id], map: "aranet_budget_FI_1")
+  @@index([created_by], map: "aranet_budget_FI_2")
+  @@index([updated_by], map: "aranet_budget_FI_3")
+  @@index([deleted_by], map: "aranet_budget_FI_4")
+  @@index([budget_client_id], map: "budget_client_id_index")
+  @@index([budget_number], map: "budget_number_idx")
+  @@index([budget_project_id], map: "budget_project_id_index")
+}
+
+model aranet_budget_item {
+  id                          Int                          @id @default(autoincrement())
+  item_order                  Int                          @default(0)
+  item_type_id                Int?
+  item_is_optional            Int?                         @default(0)
+  item_description            String?                      @db.Text
+  item_quantity               Float?                       @default(0)
+  milestone_task_id           Int?
+  item_task_id                Int?
+  item_cost                   Float?                       @default(0)
+  item_margin                 Float?                       @default(0)
+  item_retail_price           Float?                       @default(0)
+  item_tax_rate               Float?                       @default(0)
+  item_budget_id              Int?
+  item_budget_type_id         Int?
+  aranet_type_of_invoice_item aranet_type_of_invoice_item? @relation(fields: [item_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_budget_item_FK_1")
+  aranet_budget               aranet_budget?               @relation(fields: [item_budget_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "aranet_budget_item_FK_2")
+  aranet_type_of_hour         aranet_type_of_hour?         @relation(fields: [item_budget_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_budget_item_FK_3")
+
+  @@index([item_budget_type_id], map: "aranet_budget_item_FI_3")
+  @@index([item_budget_id], map: "item_budget_id_idx2")
+  @@index([item_type_id], map: "item_type_id_idx2")
+}
+
+model aranet_budget_status {
+  id                  Int             @id
+  budget_status_title String?         @db.VarChar(64)
+  aranet_budget       aranet_budget[]
+}
+
+model aranet_cash_item {
+  id                                                       Int            @id @default(autoincrement())
+  cash_item_name                                           String         @db.VarChar(128)
+  cash_item_comments                                       String?        @db.Text
+  cash_item_date                                           DateTime       @db.Date
+  cash_item_amount                                         Float          @default(0)
+  created_at                                               DateTime?      @db.DateTime(0)
+  created_by                                               Int?
+  updated_at                                               DateTime?      @db.DateTime(0)
+  updated_by                                               Int?
+  deleted_at                                               DateTime?      @db.DateTime(0)
+  deleted_by                                               Int?
+  sf_guard_user_aranet_cash_item_created_byTosf_guard_user sf_guard_user? @relation("aranet_cash_item_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_cash_item_FK_1")
+  sf_guard_user_aranet_cash_item_updated_byTosf_guard_user sf_guard_user? @relation("aranet_cash_item_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_cash_item_FK_2")
+  sf_guard_user_aranet_cash_item_deleted_byTosf_guard_user sf_guard_user? @relation("aranet_cash_item_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_cash_item_FK_3")
+
+  @@index([created_by], map: "aranet_cash_item_FI_1")
+  @@index([updated_by], map: "aranet_cash_item_FI_2")
+  @@index([deleted_by], map: "aranet_cash_item_FI_3")
+  @@index([cash_item_name], map: "cash_item_name_idx")
+}
+
+model aranet_client {
+  id                                                    Int                     @id @default(autoincrement())
+  client_unique_name                                    String                  @unique(map: "client_unique_name_idx") @db.VarChar(128)
+  client_company_name                                   String                  @db.VarChar(255)
+  client_cif                                            String?                 @db.VarChar(20)
+  client_kind_of_company_id                             Int?
+  client_since                                          DateTime?               @db.Date
+  client_website                                        String?                 @db.VarChar(255)
+  client_comments                                       String?                 @db.Text
+  client_has_tags                                       Int?                    @default(0)
+  created_at                                            DateTime?               @db.DateTime(0)
+  created_by                                            Int?
+  updated_at                                            DateTime?               @db.DateTime(0)
+  updated_by                                            Int?
+  deleted_at                                            DateTime?               @db.DateTime(0)
+  deleted_by                                            Int?
+  aranet_budget                                         aranet_budget[]
+  aranet_kind_of_company                                aranet_kind_of_company? @relation(fields: [client_kind_of_company_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_client_FK_1")
+  sf_guard_user_aranet_client_created_byTosf_guard_user sf_guard_user?          @relation("aranet_client_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_client_FK_2")
+  sf_guard_user_aranet_client_updated_byTosf_guard_user sf_guard_user?          @relation("aranet_client_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_client_FK_3")
+  sf_guard_user_aranet_client_deleted_byTosf_guard_user sf_guard_user?          @relation("aranet_client_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_client_FK_4")
+  aranet_invoice                                        aranet_invoice[]
+  aranet_project                                        aranet_project[]
+
+  @@index([client_kind_of_company_id], map: "aranet_client_FI_1")
+  @@index([created_by], map: "aranet_client_FI_2")
+  @@index([updated_by], map: "aranet_client_FI_3")
+  @@index([deleted_by], map: "aranet_client_FI_4")
+  @@index([client_company_name], map: "client_company_name_idx")
+}
+
+model aranet_contact {
+  id                                                     Int                    @id @default(autoincrement())
+  contact_salutation                                     String?                @db.VarChar(6)
+  contact_first_name                                     String?                @db.VarChar(128)
+  contact_last_name                                      String?                @db.VarChar(128)
+  contact_email                                          String?                @db.VarChar(128)
+  contact_phone                                          String?                @db.VarChar(16)
+  contact_fax                                            String?                @db.VarChar(16)
+  contact_mobile                                         String?                @db.VarChar(16)
+  contact_birthday                                       DateTime?              @db.Date
+  contact_org_unit                                       String?                @db.VarChar(128)
+  created_at                                             DateTime?              @db.DateTime(0)
+  created_by                                             Int?
+  updated_at                                             DateTime?              @db.DateTime(0)
+  updated_by                                             Int?
+  deleted_at                                             DateTime?              @db.DateTime(0)
+  deleted_by                                             Int?
+  sf_guard_user_aranet_contact_created_byTosf_guard_user sf_guard_user?         @relation("aranet_contact_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_contact_FK_1")
+  sf_guard_user_aranet_contact_updated_byTosf_guard_user sf_guard_user?         @relation("aranet_contact_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_contact_FK_2")
+  sf_guard_user_aranet_contact_deleted_byTosf_guard_user sf_guard_user?         @relation("aranet_contact_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_contact_FK_3")
+  aranet_objectcontact                                   aranet_objectcontact[]
+
+  @@index([created_by], map: "aranet_contact_FI_1")
+  @@index([updated_by], map: "aranet_contact_FI_2")
+  @@index([deleted_by], map: "aranet_contact_FI_3")
+  @@index([contact_first_name], map: "contact_first_name_idx")
+  @@index([contact_last_name], map: "contact_last_name_idx")
+}
+
+model aranet_default_indicator {
+  id                      Int                @id @default(autoincrement())
+  indicator_name          String             @db.VarChar(255)
+  indicator_key           String             @db.VarChar(255)
+  indicator_description   String?            @db.Text
+  indicator_beautifier    String?            @db.VarChar(255)
+  indicator_unit          String?            @db.VarChar(10)
+  indicator_objects_class String?            @db.VarChar(255)
+  aranet_indicator        aranet_indicator[]
+
+  @@index([indicator_key], map: "indicator_key_idx")
+  @@index([indicator_name], map: "indicator_name_idx")
+}
+
+model aranet_expense_category {
+  id                    Int                   @id @default(autoincrement())
+  category_title        String?               @db.VarChar(64)
+  category_meta_concept String?               @db.VarChar(12)
+  category_show         Int?                  @default(1)
+  aranet_expense_item   aranet_expense_item[]
+
+  @@index([category_meta_concept], map: "category_meta_concept")
+  @@index([category_title], map: "category_title_idx")
+}
+
+model aranet_expense_item {
+  id                                                                   Int                      @id @default(autoincrement())
+  expense_item_name                                                    String                   @db.VarChar(128)
+  expense_item_comments                                                String?                  @db.Text
+  expense_purchase_date                                                DateTime                 @db.Date
+  expense_purchase_by                                                  Int
+  expense_item_category_id                                             Int?
+  expense_item_payment_method_id                                       Int?
+  expense_item_payment_check                                           String?                  @db.VarChar(64)
+  expense_item_reimbursement_id                                        Int?
+  expense_item_project_id                                              Int?
+  expense_item_budget_id                                               Int?
+  expense_item_amount                                                  Float                    @default(0)
+  expense_item_base                                                    Float?                   @default(0)
+  expense_item_tax_rate                                                Float?                   @default(0)
+  expense_item_irpf                                                    Float?                   @default(0)
+  expense_item_invoice_number                                          String?                  @db.VarChar(128)
+  expense_item_vendor_id                                               Int?
+  expense_validate_date                                                DateTime?                @db.Date
+  expense_validate_by                                                  Int?
+  created_at                                                           DateTime?                @db.DateTime(0)
+  created_by                                                           Int?
+  updated_at                                                           DateTime?                @db.DateTime(0)
+  updated_by                                                           Int?
+  deleted_at                                                           DateTime?                @db.DateTime(0)
+  deleted_by                                                           Int?
+  expense_item_periodic                                                Int?                     @default(0)
+  sf_guard_user_aranet_expense_item_expense_purchase_byTosf_guard_user sf_guard_user            @relation("aranet_expense_item_expense_purchase_byTosf_guard_user", fields: [expense_purchase_by], references: [id], onUpdate: Restrict, map: "aranet_expense_item_FK_1")
+  aranet_project                                                       aranet_project?          @relation(fields: [expense_item_project_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "aranet_expense_item_FK_2")
+  aranet_vendor                                                        aranet_vendor?           @relation(fields: [expense_item_vendor_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_expense_item_FK_3")
+  sf_guard_user_aranet_expense_item_expense_validate_byTosf_guard_user sf_guard_user?           @relation("aranet_expense_item_expense_validate_byTosf_guard_user", fields: [expense_validate_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_expense_item_FK_4")
+  sf_guard_user_aranet_expense_item_created_byTosf_guard_user          sf_guard_user?           @relation("aranet_expense_item_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_expense_item_FK_5")
+  sf_guard_user_aranet_expense_item_updated_byTosf_guard_user          sf_guard_user?           @relation("aranet_expense_item_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_expense_item_FK_6")
+  sf_guard_user_aranet_expense_item_deleted_byTosf_guard_user          sf_guard_user?           @relation("aranet_expense_item_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_expense_item_FK_7")
+  aranet_budget                                                        aranet_budget?           @relation(fields: [expense_item_budget_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "expense_item_budget_id_idx")
+  aranet_expense_category                                              aranet_expense_category? @relation(fields: [expense_item_category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "expense_item_category_id_idx")
+  aranet_payment_method                                                aranet_payment_method?   @relation(fields: [expense_item_payment_method_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "expense_item_payment_method_id_idx")
+  aranet_reimbursement                                                 aranet_reimbursement?    @relation(fields: [expense_item_reimbursement_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "expense_item_reimbursement_id_idx")
+
+  @@index([expense_item_budget_id], map: "FI_ense_item_budget_id_idx")
+  @@index([expense_item_category_id], map: "FI_ense_item_category_id_idx")
+  @@index([expense_item_payment_method_id], map: "FI_ense_item_payment_method_id_idx")
+  @@index([expense_item_reimbursement_id], map: "FI_ense_item_reimbursement_id_idx")
+  @@index([expense_purchase_by], map: "aranet_expense_item_FI_1")
+  @@index([expense_validate_by], map: "aranet_expense_item_FI_4")
+  @@index([created_by], map: "aranet_expense_item_FI_5")
+  @@index([updated_by], map: "aranet_expense_item_FI_6")
+  @@index([deleted_by], map: "aranet_expense_item_FI_7")
+  @@index([expense_item_name], map: "expense_item_name_idx")
+  @@index([expense_item_project_id], map: "expense_item_project_id_idx2")
+  @@index([expense_item_vendor_id], map: "expense_item_vendor_id_idx2")
+}
+
+model aranet_graphic {
+  id                                                     Int                   @id @default(autoincrement())
+  graphic_name                                           String?               @db.VarChar(128)
+  data_points                                            Int?
+  start_date                                             DateTime?             @db.DateTime(0)
+  end_date                                               DateTime?             @db.DateTime(0)
+  is_default                                             Int?                  @default(0)
+  created_at                                             DateTime?             @db.DateTime(0)
+  created_by                                             Int?
+  updated_at                                             DateTime?             @db.DateTime(0)
+  updated_by                                             Int?
+  sf_guard_user_aranet_graphic_created_byTosf_guard_user sf_guard_user?        @relation("aranet_graphic_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_graphic_FK_1")
+  sf_guard_user_aranet_graphic_updated_byTosf_guard_user sf_guard_user?        @relation("aranet_graphic_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_graphic_FK_2")
+  aranet_graphic_plot                                    aranet_graphic_plot[]
+
+  @@index([created_by], map: "aranet_graphic_FI_1")
+  @@index([updated_by], map: "aranet_graphic_FI_2")
+}
+
+model aranet_graphic_plot {
+  id             Int             @id @default(autoincrement())
+  graphic_id     Int?
+  plot_id        Int?
+  aranet_graphic aranet_graphic? @relation(fields: [graphic_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "aranet_graphic_plot_FK_1")
+  aranet_plot    aranet_plot?    @relation(fields: [plot_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_graphic_plot_FK_2")
+
+  @@index([graphic_id], map: "aranet_graphic_plot_FI_1")
+  @@index([plot_id], map: "aranet_graphic_plot_FI_2")
+}
+
+model aranet_income_category {
+  id                 Int                  @id @default(autoincrement())
+  category_title     String?              @db.VarChar(64)
+  aranet_income_item aranet_income_item[]
+
+  @@index([category_title], map: "category_title_idx")
+}
+
+model aranet_income_item {
+  id                                                         Int                     @id @default(autoincrement())
+  income_item_name                                           String                  @db.VarChar(128)
+  income_item_comments                                       String?                 @db.Text
+  income_date                                                DateTime                @db.Date
+  income_item_category_id                                    Int?
+  income_item_payment_method_id                              Int?
+  income_item_payment_check                                  String?                 @db.VarChar(64)
+  income_item_reimbursement_id                               Int?
+  income_item_project_id                                     Int?
+  income_item_budget_id                                      Int?
+  income_item_amount                                         Float                   @default(0)
+  income_item_base                                           Float?                  @default(0)
+  income_item_tax_rate                                       Float?                  @default(0)
+  income_item_irpf                                           Float?                  @default(0)
+  income_item_invoice_number                                 String?                 @db.VarChar(128)
+  income_item_vendor_id                                      Int?
+  created_at                                                 DateTime?               @db.DateTime(0)
+  created_by                                                 Int?
+  updated_at                                                 DateTime?               @db.DateTime(0)
+  updated_by                                                 Int?
+  deleted_at                                                 DateTime?               @db.DateTime(0)
+  deleted_by                                                 Int?
+  sf_guard_user_aranet_income_item_created_byTosf_guard_user sf_guard_user?          @relation("aranet_income_item_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_income_item_FK_1")
+  sf_guard_user_aranet_income_item_updated_byTosf_guard_user sf_guard_user?          @relation("aranet_income_item_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_income_item_FK_2")
+  sf_guard_user_aranet_income_item_deleted_byTosf_guard_user sf_guard_user?          @relation("aranet_income_item_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_income_item_FK_3")
+  aranet_budget                                              aranet_budget?          @relation(fields: [income_item_budget_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "income_item_budget_id_idx")
+  aranet_income_category                                     aranet_income_category? @relation(fields: [income_item_category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "income_item_category_id_idx")
+  aranet_payment_method                                      aranet_payment_method?  @relation(fields: [income_item_payment_method_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "income_item_payment_method_id_idx")
+  aranet_project                                             aranet_project?         @relation(fields: [income_item_project_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "income_item_project_id_idx")
+  aranet_reimbursement                                       aranet_reimbursement?   @relation(fields: [income_item_reimbursement_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "income_item_reimbursement_id_idx")
+  aranet_vendor                                              aranet_vendor?          @relation(fields: [income_item_vendor_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "income_item_vendor_id_idx")
+
+  @@index([income_item_budget_id], map: "FI_ome_item_budget_id_idx")
+  @@index([income_item_category_id], map: "FI_ome_item_category_id_idx")
+  @@index([income_item_payment_method_id], map: "FI_ome_item_payment_method_id_idx")
+  @@index([income_item_reimbursement_id], map: "FI_ome_item_reimbursement_id_idx")
+  @@index([created_by], map: "aranet_income_item_FI_1")
+  @@index([updated_by], map: "aranet_income_item_FI_2")
+  @@index([deleted_by], map: "aranet_income_item_FI_3")
+  @@index([income_item_name], map: "income_item_name_idx")
+  @@index([income_item_project_id], map: "income_item_project_id_idx2")
+  @@index([income_item_vendor_id], map: "income_item_vendor_id_idx2")
+}
+
+model aranet_indicator {
+  id                       Int                      @id @default(autoincrement())
+  indicator_id             Int
+  indicator_value          Float?
+  indicator_beautifier     String?                  @db.VarChar(255)
+  indicator_unit           String?                  @db.VarChar(10)
+  indicator_object_id      Int
+  indicator_object_class   String?                  @db.VarChar(64)
+  aranet_default_indicator aranet_default_indicator @relation(fields: [indicator_id], references: [id], onUpdate: Restrict, map: "aranet_indicator_FK_1")
+
+  @@unique([indicator_id, indicator_object_id, indicator_object_class], map: "indicator_unique_idx")
+  @@index([indicator_id], map: "indicator_id_idx")
+  @@index([indicator_object_id], map: "indicator_object_id_idx")
+}
+
+model aranet_invoice {
+  id                                                     Int                       @id @default(autoincrement())
+  invoice_prefix                                         String?                   @db.VarChar(8)
+  invoice_number                                         String                    @db.VarChar(11)
+  invoice_date                                           DateTime                  @db.Date
+  invoice_client_id                                      Int?
+  invoice_project_id                                     Int?
+  invoice_budget_id                                      Int?
+  invoice_category_id                                    Int?
+  invoice_kind_of_invoice_id                             Int?                      @default(1)
+  invoice_title                                          String?                   @db.VarChar(255)
+  invoice_comments                                       String?                   @db.Text
+  invoice_print_comments                                 Int?                      @default(0)
+  invoice_tax_rate                                       Float?                    @default(0)
+  invoice_freight_charge                                 Float?                    @default(0)
+  invoice_payment_condition_id                           Int?
+  invoice_payment_method_id                              Int?
+  invoice_payment_check                                  String?                   @db.VarChar(64)
+  invoice_payment_date                                   DateTime?                 @db.Date
+  invoice_payment_status_id                              Int?
+  invoice_late_fee_percent                               Float?                    @default(0)
+  invoice_total_amount                                   Float?                    @default(0)
+  created_at                                             DateTime?                 @db.DateTime(0)
+  created_by                                             Int?
+  updated_at                                             DateTime?                 @db.DateTime(0)
+  updated_by                                             Int?
+  deleted_at                                             DateTime?                 @db.DateTime(0)
+  deleted_by                                             Int?
+  invoice_periodic                                       Int?                      @default(0)
+  invoice_periodic_current                               Int?                      @default(0)
+  invoice_service_from                                   DateTime?                 @db.Date
+  invoice_service_to                                     DateTime?                 @db.Date
+  aranet_client                                          aranet_client?            @relation(fields: [invoice_client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_1")
+  sf_guard_user_aranet_invoice_deleted_byTosf_guard_user sf_guard_user?            @relation("aranet_invoice_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_10")
+  aranet_kind_of_invoice                                 aranet_kind_of_invoice?   @relation(fields: [invoice_kind_of_invoice_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_11")
+  aranet_project                                         aranet_project?           @relation(fields: [invoice_project_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_2")
+  aranet_budget                                          aranet_budget?            @relation(fields: [invoice_budget_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_3")
+  aranet_invoice_category                                aranet_invoice_category?  @relation(fields: [invoice_category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_4")
+  aranet_payment_condition                               aranet_payment_condition? @relation(fields: [invoice_payment_condition_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_5")
+  aranet_payment_method                                  aranet_payment_method?    @relation(fields: [invoice_payment_method_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_6")
+  aranet_payment_status                                  aranet_payment_status?    @relation(fields: [invoice_payment_status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_7")
+  sf_guard_user_aranet_invoice_created_byTosf_guard_user sf_guard_user?            @relation("aranet_invoice_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_8")
+  sf_guard_user_aranet_invoice_updated_byTosf_guard_user sf_guard_user?            @relation("aranet_invoice_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_invoice_FK_9")
+  aranet_invoice_item                                    aranet_invoice_item[]
+
+  @@index([deleted_by], map: "aranet_invoice_FI_10")
+  @@index([invoice_kind_of_invoice_id], map: "aranet_invoice_FI_11")
+  @@index([invoice_budget_id], map: "aranet_invoice_FI_3")
+  @@index([invoice_category_id], map: "aranet_invoice_FI_4")
+  @@index([invoice_payment_condition_id], map: "aranet_invoice_FI_5")
+  @@index([invoice_payment_method_id], map: "aranet_invoice_FI_6")
+  @@index([invoice_payment_status_id], map: "aranet_invoice_FI_7")
+  @@index([created_by], map: "aranet_invoice_FI_8")
+  @@index([updated_by], map: "aranet_invoice_FI_9")
+  @@index([invoice_client_id], map: "invoice_client_id_index")
+  @@index([invoice_number], map: "invoice_number_idx")
+  @@index([invoice_project_id], map: "invoice_project_id_index")
+}
+
+model aranet_invoice_category {
+  id             Int              @id @default(autoincrement())
+  category_title String?          @db.VarChar(64)
+  aranet_budget  aranet_budget[]
+  aranet_invoice aranet_invoice[]
+
+  @@index([category_title], map: "category_title_idx")
+}
+
+model aranet_invoice_item {
+  id                          Int                          @id @default(autoincrement())
+  item_type_id                Int?
+  item_description            String?                      @db.Text
+  item_quantity               Float?                       @default(0)
+  item_cost                   Float?                       @default(0)
+  item_tax_rate               Float?                       @default(0)
+  item_invoice_id             Int?
+  aranet_invoice              aranet_invoice?              @relation(fields: [item_invoice_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "item_invoice_id_idx")
+  aranet_type_of_invoice_item aranet_type_of_invoice_item? @relation(fields: [item_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "item_type_id_idx")
+
+  @@index([item_invoice_id], map: "item_invoice_id_idx2")
+  @@index([item_type_id], map: "item_type_id_idx2")
+}
+
+model aranet_kind_of_company {
+  id                          Int             @id @default(autoincrement())
+  kind_of_company_title       String?         @db.VarChar(64)
+  kind_of_company_description String?         @db.VarChar(255)
+  aranet_client               aranet_client[]
+  aranet_vendor               aranet_vendor[]
+
+  @@index([kind_of_company_title], map: "kind_of_company_title_idx")
+}
+
+model aranet_kind_of_invoice {
+  id                    Int              @id @default(autoincrement())
+  kind_of_invoice_title String?          @db.VarChar(64)
+  aranet_invoice        aranet_invoice[]
+
+  @@index([kind_of_invoice_title], map: "kind_of_invoice_title_idx")
+}
+
+model aranet_notification {
+  id                                                          Int             @id @default(autoincrement())
+  notification_type                                           Int?
+  notification_application                                    String?         @db.VarChar(255)
+  notification_module                                         String?         @db.VarChar(255)
+  notification_action                                         String?         @db.VarChar(255)
+  notification_from_address                                   String?         @db.VarChar(255)
+  notification_to_address                                     String?         @db.VarChar(255)
+  notification_subject                                        String?         @db.Text
+  notification_content                                        String?         @db.Text
+  notification_html_content                                   String?         @db.Text
+  notification_response_code                                  Int?
+  notification_response                                       String?         @db.Text
+  notification_status                                         Int?            @default(0)
+  notification_project_id                                     Int?
+  created_at                                                  DateTime?       @db.DateTime(0)
+  created_by                                                  Int?
+  updated_at                                                  DateTime?       @db.DateTime(0)
+  updated_by                                                  Int?
+  sf_guard_user_aranet_notification_created_byTosf_guard_user sf_guard_user?  @relation("aranet_notification_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_notification_FK_1")
+  sf_guard_user_aranet_notification_updated_byTosf_guard_user sf_guard_user?  @relation("aranet_notification_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_notification_FK_2")
+  aranet_project                                              aranet_project? @relation(fields: [notification_project_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "notification_project_id_idx")
+
+  @@index([notification_project_id], map: "FI_ification_project_id_idx")
+  @@index([created_by], map: "aranet_notification_FI_1")
+  @@index([updated_by], map: "aranet_notification_FI_2")
+}
+
+model aranet_objectaddress {
+  id                         Int            @id @default(autoincrement())
+  objectaddress_name         String?        @db.VarChar(128)
+  objectaddress_address_id   Int
+  objectaddress_object_id    Int
+  objectaddress_object_class String?        @db.VarChar(64)
+  objectaddress_type         String?        @db.VarChar(16)
+  objectaddress_is_default   Int?           @default(0)
+  aranet_address             aranet_address @relation(fields: [objectaddress_address_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "aranet_objectaddress_FK_1")
+
+  @@unique([objectaddress_address_id, objectaddress_object_id, objectaddress_object_class], map: "objectaddress_unique_idx")
+  @@index([objectaddress_address_id], map: "objectaddress_address_id_idx2")
+  @@index([objectaddress_object_id], map: "objectaddress_object_id_idx2")
+}
+
+model aranet_objectcontact {
+  id                                                           Int            @id @default(autoincrement())
+  objectcontact_contact_id                                     Int
+  objectcontact_object_id                                      Int
+  objectcontact_object_class                                   String?        @db.VarChar(64)
+  objectcontact_rol                                            String?        @db.VarChar(128)
+  objectcontact_is_default                                     Int?           @default(0)
+  created_at                                                   DateTime?      @db.DateTime(0)
+  created_by                                                   Int?
+  updated_at                                                   DateTime?      @db.DateTime(0)
+  updated_by                                                   Int?
+  aranet_contact                                               aranet_contact @relation(fields: [objectcontact_contact_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "aranet_objectcontact_FK_1")
+  sf_guard_user_aranet_objectcontact_created_byTosf_guard_user sf_guard_user? @relation("aranet_objectcontact_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_objectcontact_FK_2")
+  sf_guard_user_aranet_objectcontact_updated_byTosf_guard_user sf_guard_user? @relation("aranet_objectcontact_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_objectcontact_FK_3")
+
+  @@unique([objectcontact_contact_id, objectcontact_object_id, objectcontact_object_class], map: "objectcontact_unique_idx")
+  @@index([created_by], map: "aranet_objectcontact_FI_2")
+  @@index([updated_by], map: "aranet_objectcontact_FI_3")
+  @@index([objectcontact_contact_id], map: "objectcontact_contact_id_idx2")
+  @@index([objectcontact_object_id], map: "objectcontact_object_id_idx2")
+}
+
+model aranet_payment_condition {
+  id                            Int              @id @default(autoincrement())
+  payment_condition_days        Int?
+  payment_condition_payment_day Int?
+  payment_condition_title       String?          @db.VarChar(128)
+  aranet_budget                 aranet_budget[]
+  aranet_invoice                aranet_invoice[]
+
+  @@index([payment_condition_title], map: "payment_condition_title_idx")
+}
+
+model aranet_payment_method {
+  id                   Int                   @id @default(autoincrement())
+  payment_method_title String?               @db.VarChar(128)
+  aranet_expense_item  aranet_expense_item[]
+  aranet_income_item   aranet_income_item[]
+  aranet_invoice       aranet_invoice[]
+
+  @@index([payment_method_title], map: "payment_method_title_idx")
+}
+
+model aranet_payment_status {
+  id                   Int              @id
+  payment_status_title String?          @db.VarChar(64)
+  aranet_invoice       aranet_invoice[]
+
+  @@index([payment_status_title], map: "payment_status_title_idx")
+}
+
+model aranet_plot {
+  id                  Int                   @id @default(autoincrement())
+  plot_name           String?               @db.VarChar(128)
+  plot_color          String?               @db.VarChar(64)
+  plot_type           String?               @db.VarChar(64)
+  plot_criteria       String?               @db.Text
+  plot_date_variable  String?               @db.VarChar(128)
+  plot_class          String?               @db.VarChar(128)
+  plot_function       String?               @db.VarChar(128)
+  plot_callback       String?               @db.VarChar(128)
+  plot_acc_function   String?               @db.VarChar(128)
+  aranet_graphic_plot aranet_graphic_plot[]
+}
+
+model aranet_project {
+  id                                                     Int                      @id @default(autoincrement())
+  project_prefix                                         String?                  @db.VarChar(8)
+  project_number                                         String?                  @db.VarChar(11)
+  project_name                                           String                   @db.VarChar(128)
+  project_url                                            String?                  @db.VarChar(255)
+  project_client_id                                      Int?
+  project_comments                                       String?                  @db.Text
+  project_category_id                                    Int?
+  project_start_date                                     DateTime?                @db.Date
+  project_finish_date                                    DateTime?                @db.Date
+  project_status_id                                      Int?
+  created_at                                             DateTime?                @db.DateTime(0)
+  created_by                                             Int?
+  updated_at                                             DateTime?                @db.DateTime(0)
+  updated_by                                             Int?
+  deleted_at                                             DateTime?                @db.DateTime(0)
+  deleted_by                                             Int?
+  aranet_budget                                          aranet_budget[]
+  aranet_expense_item                                    aranet_expense_item[]
+  aranet_income_item                                     aranet_income_item[]
+  aranet_invoice                                         aranet_invoice[]
+  aranet_notification                                    aranet_notification[]
+  aranet_client                                          aranet_client?           @relation(fields: [project_client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_FK_1")
+  aranet_project_category                                aranet_project_category? @relation(fields: [project_category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_FK_2")
+  aranet_project_status                                  aranet_project_status?   @relation(fields: [project_status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_FK_3")
+  sf_guard_user_aranet_project_created_byTosf_guard_user sf_guard_user?           @relation("aranet_project_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_FK_4")
+  sf_guard_user_aranet_project_updated_byTosf_guard_user sf_guard_user?           @relation("aranet_project_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_FK_5")
+  sf_guard_user_aranet_project_deleted_byTosf_guard_user sf_guard_user?           @relation("aranet_project_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_FK_6")
+  aranet_project_task                                    aranet_project_task[]
+  aranet_timesheet                                       aranet_timesheet[]
+
+  @@unique([project_prefix, project_number], map: "project_fulltitle_idx")
+  @@index([project_client_id], map: "aranet_project_FI_1")
+  @@index([project_category_id], map: "aranet_project_FI_2")
+  @@index([project_status_id], map: "aranet_project_FI_3")
+  @@index([created_by], map: "aranet_project_FI_4")
+  @@index([updated_by], map: "aranet_project_FI_5")
+  @@index([deleted_by], map: "aranet_project_FI_6")
+  @@index([project_name], map: "project_name_idx")
+  @@index([project_number], map: "project_number_idx")
+}
+
+model aranet_project_category {
+  id             Int              @id @default(autoincrement())
+  category_title String?          @db.VarChar(64)
+  aranet_project aranet_project[]
+
+  @@index([category_title], map: "category_title_idx")
+}
+
+model aranet_project_frequently_task {
+  id                                                                     Int            @id @default(autoincrement())
+  task_title                                                             String         @db.VarChar(255)
+  task_description                                                       String?        @db.Text
+  task_priority_id                                                       Int?
+  created_at                                                             DateTime?      @db.DateTime(0)
+  created_by                                                             Int?
+  updated_at                                                             DateTime?      @db.DateTime(0)
+  updated_by                                                             Int?
+  deleted_at                                                             DateTime?      @db.DateTime(0)
+  deleted_by                                                             Int?
+  sf_guard_user_aranet_project_frequently_task_created_byTosf_guard_user sf_guard_user? @relation("aranet_project_frequently_task_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_frequently_task_FK_1")
+  sf_guard_user_aranet_project_frequently_task_updated_byTosf_guard_user sf_guard_user? @relation("aranet_project_frequently_task_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_frequently_task_FK_2")
+  sf_guard_user_aranet_project_frequently_task_deleted_byTosf_guard_user sf_guard_user? @relation("aranet_project_frequently_task_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_frequently_task_FK_3")
+
+  @@index([created_by], map: "aranet_project_frequently_task_FI_1")
+  @@index([updated_by], map: "aranet_project_frequently_task_FI_2")
+  @@index([deleted_by], map: "aranet_project_frequently_task_FI_3")
+  @@index([task_title], map: "task_title_idx")
+}
+
+model aranet_project_milestone {
+  id                                                               Int                   @id @default(autoincrement())
+  milestone_title                                                  String                @db.VarChar(255)
+  milestone_description                                            String?               @db.Text
+  milestone_start_date                                             DateTime              @db.Date
+  milestone_finish_date                                            DateTime              @db.Date
+  milestone_project_id                                             Int?
+  milestone_budget_id                                              Int?
+  milestone_estimated_hours                                        Float?                @default(0)
+  milestone_total_hours                                            Float?                @default(0)
+  milestone_total_hour_costs                                       Float?                @default(0)
+  created_at                                                       DateTime?             @db.DateTime(0)
+  created_by                                                       Int?
+  updated_at                                                       DateTime?             @db.DateTime(0)
+  updated_by                                                       Int?
+  deleted_at                                                       DateTime?             @db.DateTime(0)
+  deleted_by                                                       Int?
+  sf_guard_user_aranet_project_milestone_created_byTosf_guard_user sf_guard_user?        @relation("aranet_project_milestone_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_milestone_FK_1")
+  sf_guard_user_aranet_project_milestone_updated_byTosf_guard_user sf_guard_user?        @relation("aranet_project_milestone_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_milestone_FK_2")
+  sf_guard_user_aranet_project_milestone_deleted_byTosf_guard_user sf_guard_user?        @relation("aranet_project_milestone_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_milestone_FK_3")
+  aranet_budget                                                    aranet_budget?        @relation(fields: [milestone_budget_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "milestone_budget_id_idx")
+  aranet_project_task                                              aranet_project_task[]
+  aranet_timesheet                                                 aranet_timesheet[]
+
+  @@index([milestone_budget_id], map: "FI_estone_budget_id_idx")
+  @@index([created_by], map: "aranet_project_milestone_FI_1")
+  @@index([updated_by], map: "aranet_project_milestone_FI_2")
+  @@index([deleted_by], map: "aranet_project_milestone_FI_3")
+  @@index([milestone_project_id], map: "milestone_project_id_idx2")
+  @@index([milestone_title], map: "milestone_title_idx")
+}
+
+model aranet_project_status {
+  id                   Int              @id
+  project_status_title String?          @db.VarChar(64)
+  aranet_project       aranet_project[]
+
+  @@index([project_status_title], map: "project_status_title_idx")
+}
+
+model aranet_project_task {
+  id                                                          Int                       @id @default(autoincrement())
+  task_title                                                  String                    @db.VarChar(255)
+  task_description                                            String?                   @db.Text
+  task_start_date                                             DateTime?                 @db.Date
+  task_finish_date                                            DateTime?                 @db.Date
+  task_total_duration                                         Float?                    @default(0) @db.Float
+  task_priority_id                                            Int?
+  task_project_id                                             Int?
+  task_milestone_id                                           Int?
+  task_budget_id                                              Int?
+  task_estimated_hours                                        Float?                    @default(0)
+  task_total_hours                                            Float?                    @default(0)
+  task_total_hour_costs                                       Float?                    @default(0)
+  created_at                                                  DateTime?                 @db.DateTime(0)
+  created_by                                                  Int?
+  updated_at                                                  DateTime?                 @db.DateTime(0)
+  updated_by                                                  Int?
+  deleted_at                                                  DateTime?                 @db.DateTime(0)
+  deleted_by                                                  Int?
+  sf_guard_user_aranet_project_task_created_byTosf_guard_user sf_guard_user?            @relation("aranet_project_task_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_task_FK_1")
+  sf_guard_user_aranet_project_task_updated_byTosf_guard_user sf_guard_user?            @relation("aranet_project_task_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_task_FK_2")
+  sf_guard_user_aranet_project_task_deleted_byTosf_guard_user sf_guard_user?            @relation("aranet_project_task_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_project_task_FK_3")
+  aranet_budget                                               aranet_budget?            @relation(fields: [task_budget_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "task_budget_id_idx")
+  aranet_project_milestone                                    aranet_project_milestone? @relation(fields: [task_milestone_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "task_milestone_id_idx")
+  aranet_task_priority                                        aranet_task_priority?     @relation(fields: [task_priority_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "task_priority_idx")
+  aranet_project                                              aranet_project?           @relation(fields: [task_project_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "task_project_id_idx")
+  aranet_timesheet                                            aranet_timesheet[]
+
+  @@index([task_budget_id], map: "FI_k_budget_id_idx")
+  @@index([task_priority_id], map: "FI_k_priority_idx")
+  @@index([created_by], map: "aranet_project_task_FI_1")
+  @@index([updated_by], map: "aranet_project_task_FI_2")
+  @@index([deleted_by], map: "aranet_project_task_FI_3")
+  @@index([task_milestone_id], map: "task_milestone_id_idx2")
+  @@index([task_project_id], map: "task_project_id_idx2")
+  @@index([task_title], map: "task_title_idx")
+}
+
+model aranet_reimbursement {
+  id                  Int                   @id @default(autoincrement())
+  reimbursement_title String?               @db.VarChar(64)
+  aranet_expense_item aranet_expense_item[]
+  aranet_income_item  aranet_income_item[]
+
+  @@index([reimbursement_title], map: "reimbursement_title_idx")
+}
+
+model aranet_report {
+  id                                                    Int                    @id @default(autoincrement())
+  report_name                                           String?                @db.VarChar(128)
+  report_model                                          String?                @db.VarChar(128)
+  created_at                                            DateTime?              @db.DateTime(0)
+  created_by                                            Int?
+  updated_at                                            DateTime?              @db.DateTime(0)
+  updated_by                                            Int?
+  sf_guard_user_aranet_report_created_byTosf_guard_user sf_guard_user?         @relation("aranet_report_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_report_FK_1")
+  sf_guard_user_aranet_report_updated_byTosf_guard_user sf_guard_user?         @relation("aranet_report_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_report_FK_2")
+  aranet_report_column                                  aranet_report_column[]
+
+  @@index([created_by], map: "aranet_report_FI_1")
+  @@index([updated_by], map: "aranet_report_FI_2")
+  @@index([report_model], map: "report_model_idx")
+}
+
+model aranet_report_column {
+  id                 Int            @id @default(autoincrement())
+  report_id          Int?
+  column_php_name    String?        @db.VarChar(255)
+  column_name        String?        @db.VarChar(128)
+  column_order       Int?
+  column_width       Float          @default(0)
+  column_eval_script String         @db.Text
+  aranet_report      aranet_report? @relation(fields: [report_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_report_column_FK_1")
+
+  @@index([report_id], map: "aranet_report_column_FI_1")
+  @@index([column_php_name, column_order], map: "report_column_idx")
+}
+
+model aranet_task_priority {
+  id                  Int                   @id @default(autoincrement())
+  task_priority_title String?               @db.VarChar(64)
+  aranet_project_task aranet_project_task[]
+}
+
+model aranet_timesheet {
+  id                       Int                       @id @default(autoincrement())
+  timesheet_description    String?                   @db.Text
+  timesheet_hours          Float?                    @default(0) @db.Float
+  timesheet_user_id        Int?
+  timesheet_project_id     Int?
+  timesheet_budget_id      Int?
+  timesheet_milestone_id   Int?
+  timesheet_task_id        Int?
+  timesheet_is_billable    Int?                      @default(1)
+  timesheet_type_id        Int?
+  timesheet_date           DateTime?                 @db.Date
+  aranet_budget            aranet_budget?            @relation(fields: [timesheet_budget_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "timesheet_budget_id_idx")
+  aranet_project_milestone aranet_project_milestone? @relation(fields: [timesheet_milestone_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "timesheet_milestone_id_idx")
+  aranet_project           aranet_project?           @relation(fields: [timesheet_project_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "timesheet_project_id_idx")
+  aranet_project_task      aranet_project_task?      @relation(fields: [timesheet_task_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "timesheet_task_id_idx")
+  aranet_type_of_hour      aranet_type_of_hour?      @relation(fields: [timesheet_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "timesheet_type_id_idx")
+  sf_guard_user            sf_guard_user?            @relation(fields: [timesheet_user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "timesheet_user_id_idx")
+
+  @@index([timesheet_budget_id], map: "FI_esheet_budget_id_idx")
+  @@index([timesheet_milestone_id], map: "FI_esheet_milestone_id_idx")
+  @@index([timesheet_project_id], map: "FI_esheet_project_id_idx")
+  @@index([timesheet_task_id], map: "FI_esheet_task_id_idx")
+  @@index([timesheet_type_id], map: "FI_esheet_type_id_idx")
+  @@index([timesheet_user_id], map: "timesheet_user_idx2")
+}
+
+model aranet_type_of_hour {
+  id                       Int                  @id @default(autoincrement())
+  type_of_hour_title       String?              @db.VarChar(64)
+  type_of_hour_description String?              @db.Text
+  type_of_hour_cost        Float?               @default(0) @db.Float
+  aranet_budget_item       aranet_budget_item[]
+  aranet_timesheet         aranet_timesheet[]
+
+  @@index([type_of_hour_title], map: "type_of_hour_title_idx")
+}
+
+model aranet_type_of_invoice_item {
+  id                  Int                   @id @default(autoincrement())
+  type_of_item_title  String?               @db.VarChar(64)
+  aranet_budget_item  aranet_budget_item[]
+  aranet_invoice_item aranet_invoice_item[]
+
+  @@index([type_of_item_title], map: "type_of_item_title_idx")
+}
+
+model aranet_vendor {
+  id                                                    Int                     @id @default(autoincrement())
+  vendor_unique_name                                    String                  @unique(map: "vendor_unique_name_idx") @db.VarChar(128)
+  vendor_company_name                                   String                  @db.VarChar(255)
+  vendor_cif                                            String?                 @db.VarChar(20)
+  vendor_kind_of_company_id                             Int?
+  vendor_since                                          DateTime?               @db.Date
+  vendor_website                                        String?                 @db.VarChar(255)
+  vendor_comments                                       String?                 @db.Text
+  vendor_has_tags                                       Int?                    @default(0)
+  created_at                                            DateTime?               @db.DateTime(0)
+  created_by                                            Int?
+  updated_at                                            DateTime?               @db.DateTime(0)
+  updated_by                                            Int?
+  deleted_at                                            DateTime?               @db.DateTime(0)
+  deleted_by                                            Int?
+  vendor_company_type                                   Int?
+  aranet_expense_item                                   aranet_expense_item[]
+  aranet_income_item                                    aranet_income_item[]
+  aranet_kind_of_company                                aranet_kind_of_company? @relation(fields: [vendor_kind_of_company_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_vendor_FK_1")
+  sf_guard_user_aranet_vendor_created_byTosf_guard_user sf_guard_user?          @relation("aranet_vendor_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_vendor_FK_2")
+  sf_guard_user_aranet_vendor_updated_byTosf_guard_user sf_guard_user?          @relation("aranet_vendor_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_vendor_FK_3")
+  sf_guard_user_aranet_vendor_deleted_byTosf_guard_user sf_guard_user?          @relation("aranet_vendor_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "aranet_vendor_FK_4")
+
+  @@index([vendor_kind_of_company_id], map: "aranet_vendor_FI_1")
+  @@index([created_by], map: "aranet_vendor_FI_2")
+  @@index([updated_by], map: "aranet_vendor_FI_3")
+  @@index([deleted_by], map: "aranet_vendor_FI_4")
+  @@index([vendor_company_name], map: "vendor_company_name_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model fos_user {
+  id                    Int       @id @default(autoincrement())
+  username              String    @db.VarChar(255)
+  username_canonical    String    @unique(map: "UNIQ_957A647992FC23A8") @db.VarChar(255)
+  email                 String    @db.VarChar(255)
+  email_canonical       String    @unique(map: "UNIQ_957A6479A0D96FBF") @db.VarChar(255)
+  enabled               Boolean
+  salt                  String    @db.VarChar(255)
+  password              String    @db.VarChar(255)
+  last_login            DateTime? @db.DateTime(0)
+  locked                Boolean
+  expired               Boolean
+  expires_at            DateTime? @db.DateTime(0)
+  confirmation_token    String?   @db.VarChar(255)
+  password_requested_at DateTime? @db.DateTime(0)
+  roles                 String    @db.LongText
+  credentials_expired   Boolean
+  credentials_expire_at DateTime? @db.DateTime(0)
+}
+
+model migration_versions {
+  version String @id @db.VarChar(255)
+}
+
+model schema_info {
+  version Int @id @default(0) @db.UnsignedInt
+}
+
+model sf_audit {
+  id                Int       @id @default(autoincrement())
+  remote_ip_address String?   @db.VarChar(255)
+  object            String?   @db.VarChar(255)
+  object_key        String?   @db.VarChar(255)
+  object_changes    String?   @db.Text
+  query             String?   @db.Text
+  user              String?   @db.VarChar(255)
+  type              String?   @db.VarChar(255)
+  created_at        DateTime? @db.DateTime(0)
+}
+
+model sf_file_data {
+  file_data_id     Int    @id @default(autoincrement())
+  file_binary_data Bytes?
+  file_info_id     Int?
+
+  @@index([file_info_id], map: "sf_file_data_FI_1")
+}
+
+model sf_file_info {
+  file_id                                                              Int                    @id @default(autoincrement())
+  file_name                                                            String?                @db.VarChar(255)
+  file_title                                                           String?                @db.VarChar(255)
+  file_size                                                            Int?
+  file_mime_type                                                       String?                @db.VarChar(100)
+  file_width                                                           Int?
+  file_height                                                          Int?
+  file_is_cached                                                       Int?
+  created_at                                                           DateTime?              @db.DateTime(0)
+  created_by                                                           Int?
+  updated_at                                                           DateTime?              @db.DateTime(0)
+  updated_by                                                           Int?
+  deleted_at                                                           DateTime?              @db.DateTime(0)
+  deleted_by                                                           Int?
+  sf_guard_user_profile_sf_file_info_created_byTosf_guard_user_profile sf_guard_user_profile? @relation("sf_file_info_created_byTosf_guard_user_profile", fields: [created_by], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "sf_file_info_FK_1")
+  sf_guard_user_profile_sf_file_info_updated_byTosf_guard_user_profile sf_guard_user_profile? @relation("sf_file_info_updated_byTosf_guard_user_profile", fields: [updated_by], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "sf_file_info_FK_2")
+  sf_guard_user_profile_sf_file_info_deleted_byTosf_guard_user_profile sf_guard_user_profile? @relation("sf_file_info_deleted_byTosf_guard_user_profile", fields: [deleted_by], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "sf_file_info_FK_3")
+  sf_file_object                                                       sf_file_object[]
+
+  @@index([created_by], map: "sf_file_info_FI_1")
+  @@index([updated_by], map: "sf_file_info_FI_2")
+  @@index([deleted_by], map: "sf_file_info_FI_3")
+}
+
+model sf_file_object {
+  id                                                                     Int                    @id @default(autoincrement())
+  file_object_id                                                         Int?
+  file_object_class                                                      String?                @db.VarChar(64)
+  file_info_id                                                           Int?
+  created_at                                                             DateTime?              @db.DateTime(0)
+  created_by                                                             Int?
+  updated_at                                                             DateTime?              @db.DateTime(0)
+  updated_by                                                             Int?
+  deleted_at                                                             DateTime?              @db.DateTime(0)
+  deleted_by                                                             Int?
+  sf_file_info                                                           sf_file_info?          @relation(fields: [file_info_id], references: [file_id], onDelete: Cascade, onUpdate: Restrict, map: "sf_file_object_FK_1")
+  sf_guard_user_profile_sf_file_object_created_byTosf_guard_user_profile sf_guard_user_profile? @relation("sf_file_object_created_byTosf_guard_user_profile", fields: [created_by], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "sf_file_object_FK_2")
+  sf_guard_user_profile_sf_file_object_updated_byTosf_guard_user_profile sf_guard_user_profile? @relation("sf_file_object_updated_byTosf_guard_user_profile", fields: [updated_by], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "sf_file_object_FK_3")
+  sf_guard_user_profile_sf_file_object_deleted_byTosf_guard_user_profile sf_guard_user_profile? @relation("sf_file_object_deleted_byTosf_guard_user_profile", fields: [deleted_by], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "sf_file_object_FK_4")
+
+  @@unique([file_info_id, file_object_id, file_object_class], map: "file_object_unique_idx")
+  @@index([file_info_id], map: "file_info_idx2")
+  @@index([file_object_class], map: "file_object_class_idx2")
+  @@index([file_object_id], map: "file_object_id_idx2")
+  @@index([created_by], map: "sf_file_object_FI_2")
+  @@index([updated_by], map: "sf_file_object_FI_3")
+  @@index([deleted_by], map: "sf_file_object_FI_4")
+}
+
+model sf_guard_group {
+  id                        Int                         @id @default(autoincrement())
+  name                      String                      @unique(map: "sf_guard_group_name_unique") @db.VarChar(255)
+  description               String?                     @db.Text
+  sf_guard_group_permission sf_guard_group_permission[]
+  sf_guard_user_group       sf_guard_user_group[]
+}
+
+model sf_guard_group_permission {
+  group_id            Int
+  permission_id       Int
+  sf_guard_group      sf_guard_group      @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sf_guard_group_permission_FK_1")
+  sf_guard_permission sf_guard_permission @relation(fields: [permission_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sf_guard_group_permission_FK_2")
+
+  @@id([group_id, permission_id])
+  @@index([permission_id], map: "sf_guard_group_permission_FI_2")
+}
+
+model sf_guard_permission {
+  id                        Int                         @id @default(autoincrement())
+  name                      String                      @unique(map: "sf_guard_permission_name_unique") @db.VarChar(255)
+  description               String?                     @db.Text
+  sf_guard_group_permission sf_guard_group_permission[]
+  sf_guard_user_permission  sf_guard_user_permission[]
+}
+
+model sf_guard_remember_key {
+  user_id       Int
+  remember_key  String?       @db.VarChar(32)
+  ip_address    String        @db.VarChar(15)
+  created_at    DateTime?     @db.DateTime(0)
+  sf_guard_user sf_guard_user @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sf_guard_remember_key_FK_1")
+
+  @@id([user_id, ip_address])
+}
+
+model sf_guard_user {
+  id                                                                                      Int                              @id @default(autoincrement())
+  username                                                                                String                           @unique(map: "sf_guard_user_username_unique") @db.VarChar(128)
+  algorithm                                                                               String                           @default("sha1") @db.VarChar(128)
+  salt                                                                                    String                           @db.VarChar(128)
+  password                                                                                String                           @db.VarChar(128)
+  created_at                                                                              DateTime?                        @db.DateTime(0)
+  last_login                                                                              DateTime?                        @db.DateTime(0)
+  is_active                                                                               Int                              @default(1)
+  is_super_admin                                                                          Int                              @default(0)
+  deleted_at                                                                              DateTime?                        @db.DateTime(0)
+  deleted_by                                                                              Int?
+  aranet_budget_aranet_budget_created_byTosf_guard_user                                   aranet_budget[]                  @relation("aranet_budget_created_byTosf_guard_user")
+  aranet_budget_aranet_budget_updated_byTosf_guard_user                                   aranet_budget[]                  @relation("aranet_budget_updated_byTosf_guard_user")
+  aranet_budget_aranet_budget_deleted_byTosf_guard_user                                   aranet_budget[]                  @relation("aranet_budget_deleted_byTosf_guard_user")
+  aranet_cash_item_aranet_cash_item_created_byTosf_guard_user                             aranet_cash_item[]               @relation("aranet_cash_item_created_byTosf_guard_user")
+  aranet_cash_item_aranet_cash_item_updated_byTosf_guard_user                             aranet_cash_item[]               @relation("aranet_cash_item_updated_byTosf_guard_user")
+  aranet_cash_item_aranet_cash_item_deleted_byTosf_guard_user                             aranet_cash_item[]               @relation("aranet_cash_item_deleted_byTosf_guard_user")
+  aranet_client_aranet_client_created_byTosf_guard_user                                   aranet_client[]                  @relation("aranet_client_created_byTosf_guard_user")
+  aranet_client_aranet_client_updated_byTosf_guard_user                                   aranet_client[]                  @relation("aranet_client_updated_byTosf_guard_user")
+  aranet_client_aranet_client_deleted_byTosf_guard_user                                   aranet_client[]                  @relation("aranet_client_deleted_byTosf_guard_user")
+  aranet_contact_aranet_contact_created_byTosf_guard_user                                 aranet_contact[]                 @relation("aranet_contact_created_byTosf_guard_user")
+  aranet_contact_aranet_contact_updated_byTosf_guard_user                                 aranet_contact[]                 @relation("aranet_contact_updated_byTosf_guard_user")
+  aranet_contact_aranet_contact_deleted_byTosf_guard_user                                 aranet_contact[]                 @relation("aranet_contact_deleted_byTosf_guard_user")
+  aranet_expense_item_aranet_expense_item_expense_purchase_byTosf_guard_user              aranet_expense_item[]            @relation("aranet_expense_item_expense_purchase_byTosf_guard_user")
+  aranet_expense_item_aranet_expense_item_expense_validate_byTosf_guard_user              aranet_expense_item[]            @relation("aranet_expense_item_expense_validate_byTosf_guard_user")
+  aranet_expense_item_aranet_expense_item_created_byTosf_guard_user                       aranet_expense_item[]            @relation("aranet_expense_item_created_byTosf_guard_user")
+  aranet_expense_item_aranet_expense_item_updated_byTosf_guard_user                       aranet_expense_item[]            @relation("aranet_expense_item_updated_byTosf_guard_user")
+  aranet_expense_item_aranet_expense_item_deleted_byTosf_guard_user                       aranet_expense_item[]            @relation("aranet_expense_item_deleted_byTosf_guard_user")
+  aranet_graphic_aranet_graphic_created_byTosf_guard_user                                 aranet_graphic[]                 @relation("aranet_graphic_created_byTosf_guard_user")
+  aranet_graphic_aranet_graphic_updated_byTosf_guard_user                                 aranet_graphic[]                 @relation("aranet_graphic_updated_byTosf_guard_user")
+  aranet_income_item_aranet_income_item_created_byTosf_guard_user                         aranet_income_item[]             @relation("aranet_income_item_created_byTosf_guard_user")
+  aranet_income_item_aranet_income_item_updated_byTosf_guard_user                         aranet_income_item[]             @relation("aranet_income_item_updated_byTosf_guard_user")
+  aranet_income_item_aranet_income_item_deleted_byTosf_guard_user                         aranet_income_item[]             @relation("aranet_income_item_deleted_byTosf_guard_user")
+  aranet_invoice_aranet_invoice_deleted_byTosf_guard_user                                 aranet_invoice[]                 @relation("aranet_invoice_deleted_byTosf_guard_user")
+  aranet_invoice_aranet_invoice_created_byTosf_guard_user                                 aranet_invoice[]                 @relation("aranet_invoice_created_byTosf_guard_user")
+  aranet_invoice_aranet_invoice_updated_byTosf_guard_user                                 aranet_invoice[]                 @relation("aranet_invoice_updated_byTosf_guard_user")
+  aranet_notification_aranet_notification_created_byTosf_guard_user                       aranet_notification[]            @relation("aranet_notification_created_byTosf_guard_user")
+  aranet_notification_aranet_notification_updated_byTosf_guard_user                       aranet_notification[]            @relation("aranet_notification_updated_byTosf_guard_user")
+  aranet_objectcontact_aranet_objectcontact_created_byTosf_guard_user                     aranet_objectcontact[]           @relation("aranet_objectcontact_created_byTosf_guard_user")
+  aranet_objectcontact_aranet_objectcontact_updated_byTosf_guard_user                     aranet_objectcontact[]           @relation("aranet_objectcontact_updated_byTosf_guard_user")
+  aranet_project_aranet_project_created_byTosf_guard_user                                 aranet_project[]                 @relation("aranet_project_created_byTosf_guard_user")
+  aranet_project_aranet_project_updated_byTosf_guard_user                                 aranet_project[]                 @relation("aranet_project_updated_byTosf_guard_user")
+  aranet_project_aranet_project_deleted_byTosf_guard_user                                 aranet_project[]                 @relation("aranet_project_deleted_byTosf_guard_user")
+  aranet_project_frequently_task_aranet_project_frequently_task_created_byTosf_guard_user aranet_project_frequently_task[] @relation("aranet_project_frequently_task_created_byTosf_guard_user")
+  aranet_project_frequently_task_aranet_project_frequently_task_updated_byTosf_guard_user aranet_project_frequently_task[] @relation("aranet_project_frequently_task_updated_byTosf_guard_user")
+  aranet_project_frequently_task_aranet_project_frequently_task_deleted_byTosf_guard_user aranet_project_frequently_task[] @relation("aranet_project_frequently_task_deleted_byTosf_guard_user")
+  aranet_project_milestone_aranet_project_milestone_created_byTosf_guard_user             aranet_project_milestone[]       @relation("aranet_project_milestone_created_byTosf_guard_user")
+  aranet_project_milestone_aranet_project_milestone_updated_byTosf_guard_user             aranet_project_milestone[]       @relation("aranet_project_milestone_updated_byTosf_guard_user")
+  aranet_project_milestone_aranet_project_milestone_deleted_byTosf_guard_user             aranet_project_milestone[]       @relation("aranet_project_milestone_deleted_byTosf_guard_user")
+  aranet_project_task_aranet_project_task_created_byTosf_guard_user                       aranet_project_task[]            @relation("aranet_project_task_created_byTosf_guard_user")
+  aranet_project_task_aranet_project_task_updated_byTosf_guard_user                       aranet_project_task[]            @relation("aranet_project_task_updated_byTosf_guard_user")
+  aranet_project_task_aranet_project_task_deleted_byTosf_guard_user                       aranet_project_task[]            @relation("aranet_project_task_deleted_byTosf_guard_user")
+  aranet_report_aranet_report_created_byTosf_guard_user                                   aranet_report[]                  @relation("aranet_report_created_byTosf_guard_user")
+  aranet_report_aranet_report_updated_byTosf_guard_user                                   aranet_report[]                  @relation("aranet_report_updated_byTosf_guard_user")
+  aranet_timesheet                                                                        aranet_timesheet[]
+  aranet_vendor_aranet_vendor_created_byTosf_guard_user                                   aranet_vendor[]                  @relation("aranet_vendor_created_byTosf_guard_user")
+  aranet_vendor_aranet_vendor_updated_byTosf_guard_user                                   aranet_vendor[]                  @relation("aranet_vendor_updated_byTosf_guard_user")
+  aranet_vendor_aranet_vendor_deleted_byTosf_guard_user                                   aranet_vendor[]                  @relation("aranet_vendor_deleted_byTosf_guard_user")
+  sf_guard_remember_key                                                                   sf_guard_remember_key[]
+  sf_guard_user                                                                           sf_guard_user?                   @relation("sf_guard_userTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "sf_guard_user_FK_1")
+  other_sf_guard_user                                                                     sf_guard_user[]                  @relation("sf_guard_userTosf_guard_user")
+  sf_guard_user_group                                                                     sf_guard_user_group[]
+  sf_guard_user_permission                                                                sf_guard_user_permission[]
+  sf_guard_user_profile_sf_guard_user_profile_user_idTosf_guard_user                      sf_guard_user_profile?           @relation("sf_guard_user_profile_user_idTosf_guard_user")
+  sf_guard_user_profile_sf_guard_user_profile_owner_user_idTosf_guard_user                sf_guard_user_profile[]          @relation("sf_guard_user_profile_owner_user_idTosf_guard_user")
+  sf_guard_user_profile_sf_guard_user_profile_created_byTosf_guard_user                   sf_guard_user_profile[]          @relation("sf_guard_user_profile_created_byTosf_guard_user")
+  sf_guard_user_profile_sf_guard_user_profile_updated_byTosf_guard_user                   sf_guard_user_profile[]          @relation("sf_guard_user_profile_updated_byTosf_guard_user")
+  sf_guard_user_profile_sf_guard_user_profile_deleted_byTosf_guard_user                   sf_guard_user_profile[]          @relation("sf_guard_user_profile_deleted_byTosf_guard_user")
+
+  @@index([deleted_by], map: "sf_guard_user_FI_1")
+}
+
+model sf_guard_user_group {
+  user_id        Int
+  group_id       Int
+  sf_guard_user  sf_guard_user  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sf_guard_user_group_FK_1")
+  sf_guard_group sf_guard_group @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sf_guard_user_group_FK_2")
+
+  @@id([user_id, group_id])
+  @@index([group_id], map: "sf_guard_user_group_FI_2")
+}
+
+model sf_guard_user_permission {
+  user_id             Int
+  permission_id       Int
+  sf_guard_user       sf_guard_user       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sf_guard_user_permission_FK_1")
+  sf_guard_permission sf_guard_permission @relation(fields: [permission_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sf_guard_user_permission_FK_2")
+
+  @@id([user_id, permission_id])
+  @@index([permission_id], map: "sf_guard_user_permission_FI_2")
+}
+
+model sf_guard_user_profile {
+  id                                                               Int              @id @default(autoincrement())
+  user_id                                                          Int              @unique(map: "user_id_idx")
+  title                                                            String?          @db.VarChar(4)
+  public_title                                                     Int?             @default(1)
+  first_name                                                       String?          @db.VarChar(50)
+  public_first_name                                                Int?             @default(0)
+  last_name                                                        String?          @db.VarChar(100)
+  public_last_name                                                 Int?             @default(0)
+  gender                                                           Int?
+  public_gender                                                    Int?             @default(0)
+  email                                                            String?          @db.VarChar(128)
+  public_email                                                     Int?             @default(0)
+  url                                                              String?          @db.VarChar(255)
+  public_url                                                       Int?             @default(0)
+  openid_url                                                       String?          @db.VarChar(255)
+  street                                                           String?          @db.VarChar(255)
+  public_street                                                    Int?             @default(0)
+  city                                                             String?          @db.VarChar(50)
+  public_city                                                      Int?             @default(0)
+  state                                                            String?          @db.VarChar(50)
+  public_state                                                     Int?             @default(0)
+  code                                                             Int?
+  public_code                                                      Int?             @default(0)
+  country                                                          String?          @default("ES") @db.VarChar(2)
+  public_country                                                   Int?             @default(0)
+  timezone                                                         Int?
+  public_timezone                                                  Int?             @default(0)
+  birthday                                                         DateTime?        @default(dbgenerated("('0000-00-00')")) @db.Date
+  public_birthday                                                  Int?             @default(0)
+  company                                                          String?          @db.VarChar(128)
+  public_company                                                   Int?             @default(0)
+  cif                                                              String?          @db.VarChar(12)
+  public_cif                                                       Int?             @default(0)
+  phone1                                                           String?          @db.VarChar(16)
+  public_phone1                                                    Int?             @default(0)
+  phone2                                                           String?          @db.VarChar(16)
+  public_phone2                                                    Int?             @default(0)
+  fax                                                              String?          @db.VarChar(16)
+  public_fax                                                       Int?             @default(0)
+  notes                                                            String?          @db.Text
+  gravatar                                                         Int?             @default(0)
+  avatar                                                           Bytes?
+  avatar_filetype                                                  String?          @db.VarChar(4)
+  owner_user_id                                                    Int?
+  user_newsletter                                                  Int?             @default(0)
+  preferred_language                                               String?          @default("en_US") @db.VarChar(6)
+  created_at                                                       DateTime?        @db.DateTime(0)
+  created_by                                                       Int?
+  updated_at                                                       DateTime?        @db.DateTime(0)
+  updated_by                                                       Int?
+  deleted_at                                                       DateTime?        @db.DateTime(0)
+  deleted_by                                                       Int?
+  sf_file_info_sf_file_info_created_byTosf_guard_user_profile      sf_file_info[]   @relation("sf_file_info_created_byTosf_guard_user_profile")
+  sf_file_info_sf_file_info_updated_byTosf_guard_user_profile      sf_file_info[]   @relation("sf_file_info_updated_byTosf_guard_user_profile")
+  sf_file_info_sf_file_info_deleted_byTosf_guard_user_profile      sf_file_info[]   @relation("sf_file_info_deleted_byTosf_guard_user_profile")
+  sf_file_object_sf_file_object_created_byTosf_guard_user_profile  sf_file_object[] @relation("sf_file_object_created_byTosf_guard_user_profile")
+  sf_file_object_sf_file_object_updated_byTosf_guard_user_profile  sf_file_object[] @relation("sf_file_object_updated_byTosf_guard_user_profile")
+  sf_file_object_sf_file_object_deleted_byTosf_guard_user_profile  sf_file_object[] @relation("sf_file_object_deleted_byTosf_guard_user_profile")
+  sf_guard_user_sf_guard_user_profile_user_idTosf_guard_user       sf_guard_user    @relation("sf_guard_user_profile_user_idTosf_guard_user", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sf_guard_user_profile_FK_1")
+  sf_guard_user_sf_guard_user_profile_owner_user_idTosf_guard_user sf_guard_user?   @relation("sf_guard_user_profile_owner_user_idTosf_guard_user", fields: [owner_user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "sf_guard_user_profile_FK_2")
+  sf_guard_user_sf_guard_user_profile_created_byTosf_guard_user    sf_guard_user?   @relation("sf_guard_user_profile_created_byTosf_guard_user", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "sf_guard_user_profile_FK_3")
+  sf_guard_user_sf_guard_user_profile_updated_byTosf_guard_user    sf_guard_user?   @relation("sf_guard_user_profile_updated_byTosf_guard_user", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "sf_guard_user_profile_FK_4")
+  sf_guard_user_sf_guard_user_profile_deleted_byTosf_guard_user    sf_guard_user?   @relation("sf_guard_user_profile_deleted_byTosf_guard_user", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "sf_guard_user_profile_FK_5")
+
+  @@index([owner_user_id], map: "sf_guard_user_profile_FI_2")
+  @@index([created_by], map: "sf_guard_user_profile_FI_3")
+  @@index([updated_by], map: "sf_guard_user_profile_FI_4")
+  @@index([deleted_by], map: "sf_guard_user_profile_FI_5")
+}
+
+model sf_setting {
+  id          Int       @id @default(autoincrement())
+  env         String?   @db.VarChar(10)
+  name        String?   @db.VarChar(40)
+  value       String?   @db.Text
+  description String?   @db.VarChar(255)
+  created_at  DateTime? @db.DateTime(0)
+  updated_at  DateTime? @db.DateTime(0)
+}
+
+model sf_tag {
+  id               Int          @id @default(autoincrement())
+  name             String?      @db.VarChar(100)
+  is_triple        Int?
+  triple_namespace String?      @db.VarChar(100)
+  triple_key       String?      @db.VarChar(100)
+  triple_value     String?      @db.VarChar(100)
+  sf_tagging       sf_tagging[]
+
+  @@index([name], map: "name")
+  @@index([triple_namespace], map: "triple1")
+  @@index([triple_key], map: "triple2")
+  @@index([triple_value], map: "triple3")
+}
+
+model sf_tagging {
+  id             Int     @id @default(autoincrement())
+  tag_id         Int
+  taggable_model String? @db.VarChar(30)
+  taggable_id    Int?
+  sf_tag         sf_tag  @relation(fields: [tag_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sf_tagging_FK_1")
+
+  @@index([tag_id], map: "tag")
+  @@index([taggable_model, taggable_id], map: "taggable")
 }
