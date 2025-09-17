@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormUiStore, useSearchStore } from '@/app/store';
+import { useFormUiStore, useSearchStore } from '@/store';
 import { PageHeader } from '@aranova/aranova-react-ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
