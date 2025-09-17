@@ -18,7 +18,7 @@ const metaCenter: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
 };
 
 const metaLeft: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "text-left !pr-0 !pl-0 !px-0",
+  className: "text-left",
 };
 
 const metaRight: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
