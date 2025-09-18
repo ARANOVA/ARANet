@@ -47,6 +47,8 @@ export default async function ClientShowPage({ params }: Props) {
   if (!invoice?.data) {
     notFound();
   }
+  const addresses = await dataPlain.useAddressesByObjectAndObjectId('client', parseInt(id, 10));
+  const contacts = await dataPlain.useContactsByObjectAndObjectId('invoice', parseInt(id, 10));
 
   const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}`;
   let aux = '';
@@ -78,7 +80,11 @@ export default async function ClientShowPage({ params }: Props) {
           }
         />
         <ToastStoreAlert />
-        <InvoiceInfo invoice={invoice.data} />
+        <InvoiceInfo
+          invoice={invoice.data}
+          addresses={addresses?.data?.items || []}
+          contacts={contacts?.data?.items || []}
+        />
       </div>
     </>
   )

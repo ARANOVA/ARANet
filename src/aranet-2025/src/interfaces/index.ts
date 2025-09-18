@@ -6,3 +6,4 @@ export * from './genericUser.interface';
 export * from './invoice.interface';
 export * from './prisma.interface';
 export * from './sesionPayload.interface';
+export * from './ui.interface';

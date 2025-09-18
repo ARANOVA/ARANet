@@ -1,10 +1,10 @@
 'use server';
 
 import { QueryClient } from "@tanstack/react-query";
-import { SingleResponse } from '@aranova/aranova-react-ui';
-import { aranet_invoice_join_client, User } from "@/interfaces";
-import { getUserById, getSingleDataByModel } from "@/app/lib/api-wrappers/server";
-import { aranet_client, aranet_invoice } from "@/generated/prisma";
+import { ListResponse, SingleResponse } from '@aranova/aranova-react-ui';
+import { aranet_invoice_join_client_and_payment, User } from "@/interfaces";
+import { getUserById, getSingleDataByModel, getRelationsByObjectAndObjectId } from "@/app/lib/api-wrappers/server";
+import { aranet_address, aranet_client, aranet_contact, aranet_objectaddress, aranet_objectcontact } from "@/generated/prisma";
 
 class ServerDataPlain {
   private static instance: ServerDataPlain;
@@ -45,10 +45,34 @@ class ServerDataPlain {
     });
   }
 
-  async useInvoiceById(id: number): Promise<SingleResponse<aranet_invoice_join_client>> {
-    return this.queryClient.fetchQuery<SingleResponse<aranet_invoice_join_client>>({
+  async useInvoiceById(id: number): Promise<SingleResponse<aranet_invoice_join_client_and_payment>> {
+    return this.queryClient.fetchQuery<SingleResponse<aranet_invoice_join_client_and_payment>>({
       queryKey: ['invoice', id],
-      queryFn: () => getSingleDataByModel<aranet_invoice_join_client>('invoice', id),
+      queryFn: () => getSingleDataByModel<aranet_invoice_join_client_and_payment>('invoice', id),
+      retry: 3,
+      staleTime: 1000 * 60 * 15, // 15 minutos
+    });
+  }
+
+  async useAddressesByObjectAndObjectId(
+    model: string,
+    id: number
+  ): Promise<ListResponse<(aranet_objectaddress & { aranet_address: aranet_address })>> {
+    return this.queryClient.fetchQuery<ListResponse<(aranet_objectaddress & { aranet_address: aranet_address })>>({
+      queryKey: ['address', model, id, 1, -1, 'objectaddress_is_default', 'desc'],
+      queryFn: () => getRelationsByObjectAndObjectId<(aranet_objectaddress & { aranet_address: aranet_address })>('address', model, id, 1, -1, 'objectaddress_is_default', 'desc'),
+      retry: 3,
+      staleTime: 1000 * 60 * 15, // 15 minutos
+    });
+  }
+
+  async useContactsByObjectAndObjectId(
+    model: string,
+    id: number
+  ): Promise<ListResponse<(aranet_objectcontact & { aranet_contact: aranet_contact })>> {
+    return this.queryClient.fetchQuery<ListResponse<(aranet_objectcontact & { aranet_contact: aranet_contact })>>({
+      queryKey: ['contact', model, id, 1, -1, 'objectcontact_is_default', 'desc'],
+      queryFn: () => getRelationsByObjectAndObjectId<(aranet_objectcontact & { aranet_contact: aranet_contact })>('contact', model, id, 1, -1, 'objectcontact_is_default', 'desc'),
       retry: 3,
       staleTime: 1000 * 60 * 15, // 15 minutos
     });
