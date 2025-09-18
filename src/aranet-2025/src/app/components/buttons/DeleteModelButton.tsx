@@ -21,7 +21,6 @@ export const DeleteModelButton = ({ model, id }: Props) => {
   const queryClient = useQueryClient();
 
   const {
-    items,
     setItems,
     resetItems,
     getItems,
@@ -60,7 +59,8 @@ export const DeleteModelButton = ({ model, id }: Props) => {
           subtitle: nbdeleted === 1 ? 'Registro eliminado' : `${nbdeleted} Registros eliminados`,
         });
         showToast(3000);
-        // Redirigir
+        // Invalidar y redirigir
+        queryClient.invalidateQueries({ queryKey: [model, id] });
         router.push(`/${model}/list`);
       } else {
         setIsOpen(false);

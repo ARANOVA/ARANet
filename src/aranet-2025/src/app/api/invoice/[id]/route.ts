@@ -5,6 +5,8 @@ import { logError, logWarn } from '@/app/lib/logger';
 import { isValidId } from '@/utils';
 import { aranet_invoice_join_client } from '@/interfaces';
 import { getSession } from '@/app/lib/session';
+import { aranet_invoice } from '@/generated/prisma';
+import { UpdateAranetInvoiceDto } from '@/interfaces/dto';
 
 interface Params {
   params: Promise<{
@@ -90,9 +92,7 @@ export async function DELETE(
         deleted_at: new Date(),
         deleted_by: cookie.id,
       },
-
     });
-
 
     return NextResponse.json({
       statusCode: 201,
@@ -114,40 +114,60 @@ export async function DELETE(
   }
 }
 
-// export async function PUT(
-//   request: NextRequest,
-//   { params }: Params
-// ): Promise<
-//   NextResponse<SingleResponse<{ IdCalendario: number; Nombre: string }>>
-// > {
-//   const { id } = await params;
-//   try {
-//     if (!isValidId(id)) {
-//       logWarn('PUT /api/calendarios/[id]: Intento de acceso inválido');
-//       return badRequest();
-//     }
-//     const body: CalendarData = await request.json();
-//     // TODO: Validar con DTO
+export async function PATCH(
+  request: NextRequest,
+  { params }: Params
+): Promise<
+  NextResponse<SingleResponse<aranet_invoice>>
+> {
+  const cookie = await getSession();
+  if (!cookie) {
+    return NextResponse.json({
+      statusCode: 401,
+      error: "Unauthorized",
+    }, { status: 401 });
+  }
 
-//     console.log('estos son los params del PUT: ', id, body.Nombre);
-//     const respuesta = await prisma.calendario.update({
-//       where: { IdCalendario: Number(id) },
-//       data: { Nombre: body.Nombre },
-//       // data: body
-//     });
+  const { id } = await params;
+  try {
+    if (!isValidId(id)) {
+      logWarn('PATCH /api/invoice/[id]: Intento de acceso inválido');
+      return NextResponse.json({
+        statusCode: 400,
+        error: "Bad Request",
+      }, { status: 400 });
+    }
+    const body = await request.json();
+    // TODO: Validar
+    const data = UpdateAranetInvoiceDto.parse(body);
 
-//     return NextResponse.json(
-//       {
-//         statusCode: 201,
-//         data: {
-//           IdCalendario: respuesta.IdCalendario,
-//           Nombre: respuesta.Nombre,
-//         },
-//       },
-//       { status: 200 }
-//     );
-//   } catch (err) {
-//     logError(`Error PUT /api/calendarios/[id]: ${err}`);
-//     return interalError();
-//   }
-// }
+    const invoice = await prisma.aranet_invoice.update({
+      where: {
+        id: parseInt(id, 10),
+      },
+      data,
+    });
+    return NextResponse.json({
+      statusCode: 201,
+      data: invoice,
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    if (err instanceof z.ZodError) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      logWarn(`Validation errors PATCH /api/invoice/${id}: ${err.errors.map((e: any) => `[${e.path.join(".")}] ${e.message}`).join("; ")}`);
+    }
+    if (err.toString().indexOf('No record was found for an update') > -1) {
+      logWarn(`Warn PATCH /api/invoice/${id}: No record was found for an update`);
+      return NextResponse.json({
+        statusCode: 400,
+        error: "Bad Request",
+      }, { status: 400 });
+    }
+    logError(`Error PATCH /api/invoice/${id}: ${err}`);
+    return NextResponse.json({
+      statusCode: 500,
+      error: "Internal Server Error",
+    }, { status: 500 });
+  }
+}

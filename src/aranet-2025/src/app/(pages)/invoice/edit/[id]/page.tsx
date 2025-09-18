@@ -1,10 +1,11 @@
 import { MenuItem, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
-import { PageStoreHeader, DeleteModelButton, ToastStoreAlert } from "@/app/components";
+import { PageStoreHeader, DeleteModelButton, ToastStoreAlert, RestoreModelButton } from "@/app/components";
 import { Metadata } from "next";
 import { notFound, unauthorized } from "next/navigation";
 import { isValidId } from "@/utils";
+import { datePipe } from "@/app/lib/helpers";
 
 export const dynamic = 'force-dynamic';
 
@@ -46,12 +47,18 @@ export default async function ClientShowPage({ params }: Props) {
     if (!invoice?.data) {
     notFound();
   }
+
+  const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}`;
+    let aux = '';
+    if (invoice?.data.deleted_at) {
+      aux = ` (borrado ${datePipe(invoice?.data.deleted_at)})`;
+    }
   
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
     { name: 'Finanzas', href: null },
     { name: 'Facturas', href: '/invoice/list' },
-    { name: `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}`, href: '' },
+    { name: title + aux, href: '' },
   ];
 
   return (
@@ -59,10 +66,13 @@ export default async function ClientShowPage({ params }: Props) {
       <TopBreadcrumb links={links} />
       <div className="flex flex-col flex-1">
         <PageStoreHeader
-          title={`${invoice.data?.invoice_prefix}${invoice.data?.invoice_number} (${invoice.data?.aranet_client?.client_unique_name})`}
+          title={`${title}_${invoice.data?.aranet_client?.client_unique_name}${aux}`}
           subtitle="Editar factura"
           model="invoice"
-          main_button={<DeleteModelButton model="invoice" id={invoice.data?.id} />}
+          main_button={!invoice.data.deleted_at ?
+            (<DeleteModelButton model="invoice" id={Number(id)} />) :
+            (<RestoreModelButton model="invoice" id={Number(id)} />)
+          }
         />
         <ToastStoreAlert />
       </div>

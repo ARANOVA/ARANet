@@ -7,6 +7,7 @@ import { Alert, AlertActions, AlertTitle, Button, SingleResponse } from "@aranov
 import { restoreDataByModel } from "@/app/lib/api-wrappers/client";
 import { logError } from "@/app/lib/logger";
 import { useFormUiStore, useItemsStore } from "@/store";
+import { useRouter } from "next/navigation";
 
 interface Props {
     model: string;
@@ -15,11 +16,11 @@ interface Props {
 
 export const RestoreModelButton = ({ model, id }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const queryClient = useQueryClient();
 
   const {
-    items,
     setItems,
     resetItems,
     getItems,
@@ -58,7 +59,9 @@ export const RestoreModelButton = ({ model, id }: Props) => {
           subtitle: nbrestored === 1 ? 'Registro restaurado' : `${nbrestored} Registros restaurados`,
         });
         showToast(3000);
-        // TODO: Actualizar el invoice
+        // Invalidar y redirigir
+        queryClient.invalidateQueries({ queryKey: [model, id] });
+        router.push(`/${model}/show/${id}`);
       } else {
         setIsOpen(false);
         setToastProps({

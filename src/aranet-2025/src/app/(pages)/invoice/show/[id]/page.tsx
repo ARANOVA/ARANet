@@ -1,7 +1,7 @@
 import { MenuItem, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
-import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert } from "@/app/components";
+import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert, InvoiceInfo } from "@/app/components";
 import { Metadata } from "next";
 import { notFound, unauthorized } from "next/navigation";
 import { isValidId } from "@/utils";
@@ -44,7 +44,6 @@ export default async function ClientShowPage({ params }: Props) {
   // Comprobar permisos/roles (en el middleware)
   const dataPlain = ServerDataPlain.getInstance();
   const invoice = await dataPlain.useInvoiceById(parseInt(id, 10));
-
   if (!invoice?.data) {
     notFound();
   }
@@ -79,6 +78,7 @@ export default async function ClientShowPage({ params }: Props) {
           }
         />
         <ToastStoreAlert />
+        <InvoiceInfo invoice={invoice.data} />
       </div>
     </>
   )
