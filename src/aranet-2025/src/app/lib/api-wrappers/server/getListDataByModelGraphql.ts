@@ -1,5 +1,6 @@
 import { FilterDTO, ListResponse } from "@aranova/aranova-react-ui";
 import { logError } from "../../logger";
+import { LIST_QUERIES } from '@/graphql/queries';
 
 export const getListDataByModelGraphql = async <T>(
   model: string,
@@ -22,33 +23,34 @@ export const getListDataByModelGraphql = async <T>(
     args.sortField = sortField;
     args.sortDir = sortDir;
   }
-  const query = `
-    query GetInvoices($page: Int, $size: Int, $sortField: String, $sortDir: String) {
-      invoices(page: $page, size: $size, sortField: $sortField, sortDir: $sortDir) {
-        statusCode
-        data {
-          items {
-            id
-            invoice_prefix
-            invoice_number
-            invoice_date
-            invoice_title
-            invoice_client_id
-            aranet_client {
-              id
-              client_company_name
-            }
-          }
-          metadata {
-            total
-            page
-            quantity
-            last
-          }
-        }
-      }
-    }
-  `;
+  const query = (LIST_QUERIES as Record<any, string>)[model];
+  // const query = `
+  //   query GetInvoices($page: Int, $size: Int, $sortField: String, $sortDir: String) {
+  //     invoices(page: $page, size: $size, sortField: $sortField, sortDir: $sortDir) {
+  //       statusCode
+  //       data {
+  //         items {
+  //           id
+  //           invoice_prefix
+  //           invoice_number
+  //           invoice_date
+  //           invoice_title
+  //           invoice_client_id
+  //           aranet_client {
+  //             id
+  //             client_company_name
+  //           }
+  //         }
+  //         metadata {
+  //           total
+  //           page
+  //           quantity
+  //           last
+  //         }
+  //       }
+  //     }
+  //   }
+  // `;
 
 
   try {
@@ -61,11 +63,11 @@ export const getListDataByModelGraphql = async <T>(
       if (json.errors) {
         throw new Error(json.errors[0].message);
       }
-      console.log({json: json})
       if (json.error) {
         return json as ListResponse<T>;
       }
-      return json.data.invoices as ListResponse<T>;
+      const keys = Object.keys(json.data);
+      return json.data[keys[0]] as ListResponse<T>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       logError(`Error fetching api/graphql ${query}: ${err}`);
