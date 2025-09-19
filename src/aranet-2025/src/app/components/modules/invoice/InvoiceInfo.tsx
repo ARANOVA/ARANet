@@ -1,7 +1,7 @@
 'use client';
 
 import { aranet_address, aranet_objectaddress, aranet_objectcontact, aranet_contact } from "@/generated/prisma";
-import { aranet_invoice_join_client, Tab } from "@/interfaces"
+import { aranet_invoice_join_all, Tab } from "@/interfaces"
 import { ShowAddress } from "../address";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import clsx from "clsx";
@@ -9,7 +9,7 @@ import { useState } from "react";
 import { ShowInvoiceInfoTab } from "./ShowInvoiceInfoTab";
 
 interface Props {
-  invoice: aranet_invoice_join_client;
+  invoice: aranet_invoice_join_all;
   addresses?: (aranet_objectaddress & { aranet_address: aranet_address })[];
   contacts?: (aranet_objectcontact & { aranet_contact: aranet_contact })[];
 }

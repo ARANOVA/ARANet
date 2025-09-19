@@ -48,11 +48,12 @@ export default async function ClientShowPage({ params }: Props) {
     notFound();
   }
 
-  const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}`;
-    let aux = '';
-    if (invoice?.data.deleted_at) {
-      aux = ` (borrado ${datePipe(invoice?.data.deleted_at)})`;
-    }
+  const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}_${invoice.data.aranet_client?.client_unique_name}`;
+  const prefix = (invoice.data.aranet_kind_of_invoice) ? `${invoice.data.aranet_kind_of_invoice?.kind_of_invoice_title} `: '';
+  let aux = '';
+  if (invoice?.data.deleted_at) {
+    aux = ` (borrado ${datePipe(invoice?.data.deleted_at)})`;
+  }
   
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
@@ -66,8 +67,8 @@ export default async function ClientShowPage({ params }: Props) {
       <TopBreadcrumb links={links} />
       <div className="flex flex-col flex-1">
         <PageStoreHeader
-          title={`${title}_${invoice.data?.aranet_client?.client_unique_name}${aux}`}
-          subtitle="Editar factura"
+          title={`${prefix}${title}${aux}`}
+          subtitle="Editar documento"
           model="invoice"
           main_button={!invoice.data.deleted_at ?
             (<DeleteModelButton model="invoice" id={Number(id)} />) :

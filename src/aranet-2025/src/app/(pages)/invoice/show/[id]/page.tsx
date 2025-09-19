@@ -1,4 +1,4 @@
-import { MenuItem, TopBreadcrumb } from "@aranova/aranova-react-ui";
+import { Divider, MenuItem, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
 import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert, InvoiceInfo } from "@/app/components";
@@ -50,7 +50,9 @@ export default async function ClientShowPage({ params }: Props) {
   const addresses = await dataPlain.useAddressesByObjectAndObjectId('client', parseInt(id, 10));
   const contacts = await dataPlain.useContactsByObjectAndObjectId('invoice', parseInt(id, 10));
 
-  const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}`;
+  const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}_${invoice.data.aranet_client?.client_unique_name}`;
+  const prefix = (invoice.data.aranet_kind_of_invoice) ? `${invoice.data.aranet_kind_of_invoice?.kind_of_invoice_title} `: '';
+
   let aux = '';
   if (invoice?.data.deleted_at) {
     aux = ` (borrado ${datePipe(invoice?.data.deleted_at)})`;
@@ -68,8 +70,8 @@ export default async function ClientShowPage({ params }: Props) {
       <TopBreadcrumb links={links} />
       <div className="flex flex-col flex-1">
         <PageStoreHeader
-          title={`${title}_${invoice.data?.aranet_client?.client_unique_name}${aux}`}
-          subtitle="Vista de detalle de factura"
+          title={`${prefix}${title}${aux}`}
+          subtitle="Vista de detalle del documento"
           model="invoice"
           edit_button_href={`/invoice/edit/${id}`}
           edit_button_text="Editar"
@@ -85,6 +87,7 @@ export default async function ClientShowPage({ params }: Props) {
           addresses={addresses?.data?.items || []}
           contacts={contacts?.data?.items || []}
         />
+        <Divider />
       </div>
     </>
   )

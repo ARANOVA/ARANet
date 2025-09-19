@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma';
 import { logError, logWarn } from '@/app/lib/logger';
 import { isValidId } from '@/utils';
-import { aranet_invoice_join_client_and_payment_and_project } from '@/interfaces';
+import { aranet_invoice_join_all } from '@/interfaces';
 import { getSession } from '@/app/lib/session';
 import { aranet_invoice } from '@/generated/prisma';
 import { UpdateAranetInvoiceDto } from '@/interfaces/dto';
@@ -17,7 +17,7 @@ interface Params {
 export async function GET(
   req: NextRequest,
   { params }: Params
-): Promise<NextResponse<SingleResponse<aranet_invoice_join_client_and_payment_and_project>>> {
+): Promise<NextResponse<SingleResponse<aranet_invoice_join_all>>> {
   const { id } = await params;
 
   try {
@@ -39,6 +39,8 @@ export async function GET(
         aranet_payment_condition: true,
         aranet_payment_status: true,
         aranet_project: true,
+        aranet_budget: true,
+        aranet_kind_of_invoice: true,
       }
     });
     if (!invoice) {

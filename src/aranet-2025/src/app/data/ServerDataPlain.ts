@@ -2,7 +2,7 @@
 
 import { QueryClient } from "@tanstack/react-query";
 import { ListResponse, SingleResponse } from '@aranova/aranova-react-ui';
-import { aranet_invoice_join_client_and_payment, User } from "@/interfaces";
+import { aranet_invoice_join_all, User } from "@/interfaces";
 import { getUserById, getSingleDataByModel, getRelationsByObjectAndObjectId } from "@/app/lib/api-wrappers/server";
 import { aranet_address, aranet_client, aranet_contact, aranet_objectaddress, aranet_objectcontact } from "@/generated/prisma";
 
@@ -45,10 +45,10 @@ class ServerDataPlain {
     });
   }
 
-  async useInvoiceById(id: number): Promise<SingleResponse<aranet_invoice_join_client_and_payment>> {
-    return this.queryClient.fetchQuery<SingleResponse<aranet_invoice_join_client_and_payment>>({
+  async useInvoiceById(id: number): Promise<SingleResponse<aranet_invoice_join_all>> {
+    return this.queryClient.fetchQuery<SingleResponse<aranet_invoice_join_all>>({
       queryKey: ['invoice', id],
-      queryFn: () => getSingleDataByModel<aranet_invoice_join_client_and_payment>('invoice', id),
+      queryFn: () => getSingleDataByModel<aranet_invoice_join_all>('invoice', id),
       retry: 3,
       staleTime: 1000 * 60 * 15, // 15 minutos
     });

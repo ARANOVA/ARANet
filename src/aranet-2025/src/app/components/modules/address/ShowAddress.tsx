@@ -12,10 +12,6 @@ interface Props {
 export const ShowAddress = ({ invoice, addresses, contacts }: Props) => {
 
   const defaultAddress = (addresses || []).find(a => a.objectaddress_is_default);
-  if (!defaultAddress) {
-    return null;
-  }
-
   const defaultContact = (contacts || []).find(c => c.objectcontact_is_default);
 
   return (
@@ -35,34 +31,39 @@ export const ShowAddress = ({ invoice, addresses, contacts }: Props) => {
         >{invoice.aranet_client?.client_company_name}</Link>
       </h2>
     
-      <h3 className="text-sm font-bold mb-2 text-gray-600 dark:text-gray-400">
-        {defaultAddress.objectaddress_name}
-      </h3>
+      {defaultAddress && (
+        <>
+          <h3 className="text-sm font-bold mb-2 text-gray-600 dark:text-gray-400">
+            {defaultAddress.objectaddress_name}
+          </h3>
 
-      {/* Líneas de la dirección */}
-      <div className="text-sm space-y-1">
-        <div>
-          <p itemProp="streetAddress">{defaultAddress.aranet_address.address_line1}</p>
-          {defaultAddress.aranet_address.address_line2 && <p itemProp="streetAddress">{defaultAddress.aranet_address.address_line2}</p>}
-        </div>
-        <div>
-          <span itemProp="postalCode">{defaultAddress.aranet_address.address_postal_code}</span>
-          <span className="mx-1">·</span>
-          <span itemProp="addressLocality">{defaultAddress.aranet_address.address_location}</span>
-          {defaultAddress.aranet_address.address_location !== defaultAddress.aranet_address.address_state ? ' (' : ''}
-          <span
-            className={clsx(defaultAddress.aranet_address.address_location === defaultAddress.aranet_address.address_state ? 'hidden' : '')}
-            itemProp="addressRegion"
-          >{defaultAddress.aranet_address.address_state}</span>
-          {defaultAddress.aranet_address.address_location !== defaultAddress.aranet_address.address_state ? ')' : ''}
-          <span className="mx-1">·</span>
-          <span itemProp="addressCountry">{defaultAddress.aranet_address.address_country}</span>
-        </div>
+          {/* Líneas de la dirección */}
+          <div className="text-sm space-y-1">
+            <div>
+              <p itemProp="streetAddress">{defaultAddress.aranet_address.address_line1}</p>
+              {defaultAddress.aranet_address.address_line2 && <p itemProp="streetAddress">{defaultAddress.aranet_address.address_line2}</p>}
+            </div>
+            <div>
+              <span itemProp="postalCode">{defaultAddress.aranet_address.address_postal_code}</span>
+              <span className="mx-1">·</span>
+              <span itemProp="addressLocality">{defaultAddress.aranet_address.address_location}</span>
+              {defaultAddress.aranet_address.address_location !== defaultAddress.aranet_address.address_state ? ' (' : ''}
+              <span
+                className={clsx(defaultAddress.aranet_address.address_location === defaultAddress.aranet_address.address_state ? 'hidden' : '')}
+                itemProp="addressRegion"
+              >{defaultAddress.aranet_address.address_state}</span>
+              {defaultAddress.aranet_address.address_location !== defaultAddress.aranet_address.address_state ? ')' : ''}
+              <span className="mx-1">·</span>
+              <span itemProp="addressCountry">{defaultAddress.aranet_address.address_country}</span>
+            </div>
+          </div>
+        </>
+      )}
 
         {/* Contacto opcional */}
         {defaultContact && (
           <>
-          <h3 className="text-sm font-bold mt-4 text-gray-600 dark:text-gray-400">
+          <h3 className="text-sm font-bold mt-4 mb-2 text-gray-600 dark:text-gray-400">
             Contacto principal
           </h3>
           <div className="mb-2 space-y-1">
@@ -77,29 +78,28 @@ export const ShowAddress = ({ invoice, addresses, contacts }: Props) => {
               <div className="font-semibold text-gray-900 dark:text-gray-50">
                 {defaultContact.objectcontact_rol}
               </div>
-              <div>
+              {(defaultContact.aranet_contact.contact_mobile || defaultContact.aranet_contact.contact_phone) && <div>
                 Tel:{" "}
                 <a
-                  href="tel:+34123456789"
+                  href={`tel:{defaultContact.aranet_contact.contact_mobile || defaultContact.aranet_contact.contact_phone}`}
                   className="hover:underline"
                 >
-                  +34 912 345 678
+                  {defaultContact.aranet_contact.contact_mobile || defaultContact.aranet_contact.contact_phone}
                 </a>
-              </div>
-              <div>
+              </div>}
+              {defaultContact.aranet_contact.contact_email && <div>
                 Email:{" "}
                 <a
-                  href="mailto:info@aranova.es"
+                  href={`mailto:${defaultContact.aranet_contact.contact_email}`}
                   className="hover:underline"
                 >
-                  info@aranova.es
+                  {defaultContact.aranet_contact.contact_email}
                 </a>
-              </div>
+              </div>}
             </div>
           </div>
         </>
         )}
-      </div>
     </address>
   );
 }
