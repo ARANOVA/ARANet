@@ -1,6 +1,7 @@
 import { createYoga } from 'graphql-yoga'
-import { type GraphQLContext, schema } from '@/graphql/schema'
+import { schema } from '@/graphql/schema'
 import prisma from '@/prisma'
+import { GraphQLContext } from '@/graphql/context';
 
 export const yoga = createYoga<{}, GraphQLContext>({
   schema,

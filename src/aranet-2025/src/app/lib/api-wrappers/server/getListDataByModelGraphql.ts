@@ -1,0 +1,77 @@
+import { FilterDTO, ListResponse } from "@aranova/aranova-react-ui";
+import { logError } from "../../logger";
+
+export const getListDataByModelGraphql = async <T>(
+  model: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  taxonomy = "",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  status = "",
+  page = 1,
+  limit = 3,
+  sortField = '',
+  sortDir: '' | 'asc' | 'desc' = '',
+  searchTerm = "",
+  filters: FilterDTO[] = [],
+): Promise<ListResponse<T>> => {
+  const args: Record<string, unknown> = {
+    page,
+    size: limit
+  };
+  if (sortField && sortDir) {
+    args.sortField = sortField;
+    args.sortDir = sortDir;
+  }
+  const query = `
+    query GetInvoices($page: Int, $size: Int, $sortField: String, $sortDir: String) {
+      invoices(page: $page, size: $size, sortField: $sortField, sortDir: $sortDir) {
+        statusCode
+        data {
+          items {
+            id
+            invoice_prefix
+            invoice_number
+            invoice_date
+            invoice_title
+            invoice_client_id
+            aranet_client {
+              id
+              client_company_name
+            }
+          }
+          metadata {
+            total
+            page
+            quantity
+            last
+          }
+        }
+      }
+    }
+  `;
+
+
+  try {
+      const res = await fetch('/api/graphql', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables: args }),
+      });
+      const json = await res.json();
+      if (json.errors) {
+        throw new Error(json.errors[0].message);
+      }
+      console.log({json: json})
+      if (json.error) {
+        return json as ListResponse<T>;
+      }
+      return json.data.invoices as ListResponse<T>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      logError(`Error fetching api/graphql ${query}: ${err}`);
+      return {
+        statusCode: 500,
+        error: `${err}`,
+      };
+    }
+}

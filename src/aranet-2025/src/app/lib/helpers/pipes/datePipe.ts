@@ -16,7 +16,13 @@ export function dateColumn<T>(
     ...extra,
     cell: ({ getValue }) => {
       const raw = getValue();
-      const date = raw ? new Date(raw) : null;
+      let date!: Date;
+      if (typeof raw === 'string' && parseInt(raw) === Number(raw)) {
+        // TS en string
+        date = new Date(parseInt(raw, 10));
+      } else if (typeof raw === 'string') {
+        date = new Date(raw);
+      }
       return date
         ? date.toLocaleDateString(locale, {
           year: 'numeric',
@@ -29,7 +35,13 @@ export function dateColumn<T>(
 }
 
 export const datePipe = (raw: Date | string, locale: string = navigator?.language || 'es-ES'): string => {
-  const date = raw ? (typeof raw === 'string' ? new Date(raw) : raw) : null;
+  let date!: Date;
+  if (typeof raw === 'string' && parseInt(raw) === Number(raw)) {
+    // TS en string
+    date = new Date(parseInt(raw, 10));
+  } else if (typeof raw === 'string') {
+    date = new Date(raw);
+  }
   return date
     ? date.toLocaleDateString(locale, {
       year: 'numeric',

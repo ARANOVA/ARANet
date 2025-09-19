@@ -12,6 +12,7 @@ import {
   deleteDataByModel,
   exportDataByModel,
   getListDataByModel,
+  getListDataByModelGraphql,
 } from '@/app/lib/api-wrappers/server';
 import { ExportData, Filters } from '@/interfaces';
 import { ListFiltersForm, ToastStoreAlert, DownloadFile } from '@/app/components';
@@ -97,7 +98,7 @@ export const EditableStoreTable = <T extends { id?: number }>({
       <EditableTable<T>
         model={model}
         alert={<ToastStoreAlert />}
-        fetchDataFn={getListDataByModel}
+        fetchDataFn={getListDataByModelGraphql}
         ui={{
           ...formUi,
           items,

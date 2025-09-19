@@ -1,0 +1,35 @@
+import { PrismaClient } from '@/generated/prisma';
+import {
+  queryType,
+  objectType,
+  makeSchema
+} from '@nexus/schema';
+
+const prisma = new PrismaClient()
+
+// Nexus genera tipos GraphQL y TypeScript
+const Invoice = objectType({
+  name: 'Invoice',
+  definition(t) {
+    t.int('id')
+    t.string('invoice_number')
+    t.field('invoice_date', { type: 'DateTime' })
+  },
+})
+
+const Query = queryType({
+  definition(t) {
+    t.list.field('invoices', {
+      type: 'Invoice',
+      resolve: () => prisma.aranet_invoice.findMany(),
+    })
+  },
+})
+
+export const schema = makeSchema({
+  types: [Query, Invoice],
+  outputs: {
+    schema: __dirname + '/schema.graphql',
+    typegen: __dirname + '/nexus-typegen.ts',
+  },
+})

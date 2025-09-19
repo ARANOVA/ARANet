@@ -1,0 +1,49 @@
+query GetInvoices($page: Int, $size: Int) {
+  invoices(page: $page, size: $size) {
+    data {
+      items {
+        id
+        invoice_prefix
+        invoice_number
+        invoice_date
+        invoice_client_id
+        invoice_project_id
+        invoice_budget_id
+        invoice_category_id
+        invoice_kind_of_invoice_id
+        invoice_title
+        invoice_comments
+        invoice_print_comments
+        invoice_tax_rate
+        invoice_freight_charge
+        invoice_payment_condition_id
+        invoice_payment_method_id
+        invoice_payment_check
+        invoice_payment_date
+        invoice_payment_status_id
+        invoice_late_fee_percent
+        invoice_total_amount
+        created_at
+        created_by
+        updated_at
+        updated_by
+        deleted_at
+        deleted_by
+        invoice_periodic
+        invoice_periodic_current
+        invoice_service_from
+        invoice_service_to
+        client {
+          id
+          client_company_name
+        }
+      }
+      metadata {
+        total
+        page
+        quantity
+        last
+      }
+    }
+  }
+}
