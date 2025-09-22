@@ -1,6 +1,7 @@
 'use client';
 
 import { useFormUiStore, useSearchStore } from '@/store';
+import { verifactuFlow } from '@/utils/server/verifactu.utils';
 import { PageHeader } from '@aranova/aranova-react-ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
@@ -20,6 +21,7 @@ interface Props {
   edit_button_text?: string;
   edit_button_href?: string;
   print_button_text?: string;
+  data?: unknown;
 }
 
 type Fn = () => void;
@@ -28,7 +30,9 @@ export const PageStoreHeader = ({
   main_button,
   add_button_href,
   add_button_text,
+  print_button_text,
   state,
+  data,
   ...props
 }: Props) => {
   const { setSearchTerm, openDrawer } = useFormUiStore();
@@ -40,11 +44,22 @@ export const PageStoreHeader = ({
   const add_props: Record<string, string | undefined | null | Fn> = {
     add_button_text,
     add_button_href,
+    print_button_text,
     add_button_click: null,
+    print_button_click: null,
   };
 
   if (!add_button_href && add_button_text) {
     add_props.add_button_click = () => openDrawer({});
+  }
+
+  if (print_button_text) {
+    const printClick = () => {
+      // Test verifactu
+      console.log('print_button_click');
+      verifactuFlow(data as any).then(console.log).catch(console.log);
+    };
+    add_props.print_button_click = printClick; //() => window.print();
   }
 
   // Funcion que se ejecuta al hacer click en buscar

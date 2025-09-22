@@ -73,6 +73,7 @@ export default async function ClientShowPage({ params }: Props) {
           title={`${prefix}${title}${aux}`}
           subtitle="Vista de detalle del documento"
           model="invoice"
+          data={invoice.data}
           edit_button_href={`/invoice/edit/${id}`}
           edit_button_text="Editar"
           print_button_text={invoice.data.deleted_at ? undefined : 'Imprimir'}

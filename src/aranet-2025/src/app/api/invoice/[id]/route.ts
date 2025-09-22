@@ -41,6 +41,7 @@ export async function GET(
         aranet_project: true,
         aranet_budget: true,
         aranet_kind_of_invoice: true,
+        aranet_invoice_item: true,
       }
     });
     if (!invoice) {
