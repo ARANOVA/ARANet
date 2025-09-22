@@ -1,7 +1,21 @@
 export const LIST_QUERIES = {
   invoice: `
-    query ListInvoices($page: Int, $size: Int, $sortField: String, $sortDir: String) {
-      invoices(page: $page, size: $size, sortField: $sortField, sortDir: $sortDir) {
+    query ListInvoices(
+      $page: Int,
+      $size: Int,
+      $sortField: String,
+      $sortDir: String,
+      $search: [SearchInput!],
+      $filters: [String!]
+    ) {
+      invoices(
+        page: $page,
+        size: $size,
+        sortField: $sortField,
+        sortDir: $sortDir,
+        search: $search,
+        filters: $filters
+      ) {
         statusCode
         data {
           items {

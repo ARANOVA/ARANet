@@ -3,7 +3,6 @@ import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
 import { EditableStoreTable, PageStoreHeader, PaginationStore, ToastStoreAlert } from "@/app/components";
 import { Metadata } from "next";
-import { Invoice } from "@/interfaces";
 import { invoiceColumns, invoiceFilters } from "@/app/data/invoice";
 
 export const dynamic = 'force-dynamic';
@@ -36,7 +35,6 @@ export default async function InvoiceListPage({ searchParams }: Props) {
   }
 
   const { page, limit, sortField, sortDir } = await searchParams;
-
   const currentPage =
     page === undefined || isNaN(+page) || +page < 1 ? 1 : +page;
 

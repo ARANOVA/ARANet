@@ -48,12 +48,13 @@ export async function POST(
       }, { status: 401 });
     }
 
+    // const p = await hmacCreatePassword(password, result.salt, result.algorithm);
     // await prisma.sf_guard_user.update({
     //   where: {
     //     id: result.id,
     //   },
     //   data: {
-    //     password: await hmacCreatePassword(password, result.salt, result.algorithm),
+    //     password: p,
     //   },
     // });
 
@@ -90,6 +91,7 @@ export async function POST(
     logDebug(`/api/login: create session for ${result.username} (${result.id}) with roles: ${fullperms.join(", ")}`);
     await createSession(
       result.id,
+      result.username,
       result.username,
       fullperms,
       remember

@@ -1,9 +1,30 @@
-import { ListResponse } from "@aranova/aranova-react-ui";
-import { logError, logWarn } from "../logger";
-import { aranet_invoice, PrismaClient } from "@/generated/prisma";
+import { ListResponse, SearchDTO } from "@aranova/aranova-react-ui";
+import { logDebug, logError } from "../logger";
+import { PrismaClient } from "@/generated/prisma";
+import { INVOICE_VALID_FIELDS, INVOICE_TEXT_FIELDS, INVOICE_NUMBER_FIELDS } from "@/app/data/invoice";
+import { aranet_invoice_join_client } from "@/interfaces";
 
-function filterByValidFields(filter: string, arg1: string): boolean {
-  return true;
+const filterByValidFields = (filter: SearchDTO) => {
+  return INVOICE_VALID_FIELDS.includes(filter.field.toLowerCase()) || filter.field === 'all';
+};
+
+const parseFilter = (value: string) => {
+  const match = value.match(/^([<>]=?|!=|=)?\s*(\d+(\.\d+)?)$/);
+  if (!match) return { contains: value };
+
+  const [, operator, number] = match;
+  const num = parseFloat(number);
+
+  switch (operator) {
+    case ">":  return { gt: num };
+    case ">=": return { gte: num };
+    case "<":  return { lt: num };
+    case "<=": return { lte: num };
+    case "!=": return { not: num };
+    case "=":
+    case undefined: return { equals: num };
+    default: return { equals: num };
+  }
 }
 
 export const listInvoices = async (
@@ -12,39 +33,42 @@ export const listInvoices = async (
   size: number,
   sortField: string,
   sortDir: 'asc' | 'desc',
-  search: string[],
+  search: SearchDTO[],
   filters: string[],
-): Promise<ListResponse<aranet_invoice>> => {
+): Promise<ListResponse<aranet_invoice_join_client>> => {
   
-  let busquedasEncontradas = search;
-  if (search.length > 1) {
-    busquedasEncontradas = search.filter((filter) => filterByValidFields(filter, ':'));
-    if (busquedasEncontradas.length === 0) {
-      logWarn('GET /api/invoice - No se encontraron busquedas válidas, buscando por texto');
-      busquedasEncontradas = search
-    }
-  }
+  console.log("listInvoices")
+  const busquedasEncontradas: Record<string, string> = {};
+  search = search.filter(filter => filterByValidFields(filter))
 
-  const filtrosEncontrados = filters.filter((filter) => filterByValidFields(filter, '|||'));
-
-  // TODO: CREAR CONSULTAS DE BUSQUEDA
+  logDebug(`GET /api/invoice - Búsquedas encontradas: ${JSON.stringify(busquedasEncontradas)}`);
+  // const filtrosEncontrados = filters.filter((filter) => filterByValidFields(filter, '|||'));
 
   // TODO: CREAR FILTROS
   const filtrosExtra: unknown[] = []; // buildFiltrosExtra(filtrosEncontrados, CALENDARIO_MAPSORT);
-  logWarn(`GET /api/invoice - Filtros encontrados: ${JSON.stringify(filtrosEncontrados)}, filtros extra: ${JSON.stringify(filtrosExtra)}`);
+  // logDebug(`GET /api/invoice - Filtros encontrados: ${JSON.stringify(filtrosEncontrados)}, filtros extra: ${JSON.stringify(filtrosExtra)}`);
 
   try {
-    const where = {
-      AND: [
-        { deleted_at: null },
-        ...filtrosEncontrados.map(f => {
-          const aux = f.split('|||');
-          const filter: Record<string, unknown> = {};
-          filter[aux[0]] = aux[1];
-          return filter;
-        })
-      ]
-    };
+    const where: any = { AND: [
+      { deleted_at: null },
+    ] };
+    for (const s of search) {
+      if (s.value === undefined) continue;
+
+      if (s.field === "all") {
+        // OR sobre TEXT_FIELDS
+        where.AND.push({
+          OR: INVOICE_TEXT_FIELDS.map(field => ({
+            [field]: { contains: s.value },
+          })),
+        });
+      } else {
+        // Si es número con operador -> parseFilter
+        const condition = parseFilter(s.value as string);
+        where.AND.push({ [s.field]: condition });
+      }
+    }
+
     const orderBy: Record<string, string> = {};
     orderBy[sortField] = sortDir;
     const nbItems = await prisma.aranet_invoice.count({ where });
@@ -57,6 +81,7 @@ export const listInvoices = async (
       start = (Math.ceil(nbItems / size) - 1) * size;
     }
     if (size > nbItems) size = nbItems;
+    console.log({where: JSON.stringify(where)})
     const invoices = await prisma.aranet_invoice.findMany({
       where,
       orderBy,

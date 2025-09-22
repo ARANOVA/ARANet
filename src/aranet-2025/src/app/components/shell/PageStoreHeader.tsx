@@ -22,6 +22,7 @@ interface Props {
   print_button_text?: string;
 }
 
+type Fn = () => void;
 
 export const PageStoreHeader = ({
   main_button,
@@ -46,28 +47,29 @@ export const PageStoreHeader = ({
     add_props.add_button_click = () => openDrawer({});
   }
 
-  //Funcion que se ejecuta al hacer click en buscar
+  // Funcion que se ejecuta al hacer click en buscar
   const handleSearch = useCallback(
     (term: string) => {
       const searchTerm = setSearchInputValue(props.model, term);
       const params = new URLSearchParams(window.location.search);
       params.delete('search[]');
-
-      router.replace(`${pathname}?${params}${dumpUrl(props.model)}`);
+      const searches = dumpUrl(props.model);
+      const paramsStr = params.toString() ? `?${params.toString()}` : '';
+      const searchesStr = searches ? (paramsStr ? `&${searches}` : `?${searches}`) : '';
+      router.replace(`${pathname}${paramsStr}${searchesStr}`);
       setSearchTerm(searchTerm);
     },
     [dumpUrl, pathname, props.model, router, setSearchInputValue, setSearchTerm]
   );
 
-  //Para actualizar la busqueda segun los parametros de la URL
   useEffect(() => {
-    const urlSearchValues = searchParams.getAll('search[]');
-
-    if (urlSearchValues.length > 0) {
-      const parsed = urlSearchValues.join('; ');
-      handleSearch(parsed);
-    }
-  }, [handleSearch, searchParams]);
+    const params = new URLSearchParams(window.location.search);
+    params.delete('search[]');
+    const searches = dumpUrl(props.model);
+    const paramsStr = params.toString() ? `?${params.toString()}` : '';
+    const searchesStr = searches ? (paramsStr ? `&${searches}` : `?${searches}`) : '';
+    router.replace(`${pathname}${paramsStr}${searchesStr}`);
+  }, [searchParams, dumpUrl, getSearchInputValue, pathname, props.model, router, handleSearch]);
 
   return (
     <>

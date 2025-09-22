@@ -2,10 +2,11 @@
 
 import { SingleResponse } from "@aranova/aranova-react-ui";
 import { cookies } from "next/headers";
+import { logError } from "../../logger";
 
 export const getUserById = async <T>(id?: number): Promise<SingleResponse<T>> => {
+  const endpoint = id ? `/api/users/${id}` : '/api/me';
   try {
-    const endpoint = id ? `/api/users/${id}` : '/api/me';
     let res;
     if (typeof process !== 'undefined') {
       // Server
@@ -29,8 +30,8 @@ export const getUserById = async <T>(id?: number): Promise<SingleResponse<T>> =>
     const json = await res.json() as SingleResponse<T>;
 
     return json;
-  } catch (err: unknown) {
-    console.error(`Error fetching: ${err}`);
+  } catch (err) {
+    logError(`Error getSingleDataByModel ${endpoint}: ${err}`);
     return {
       statusCode: 500,
       data: null,

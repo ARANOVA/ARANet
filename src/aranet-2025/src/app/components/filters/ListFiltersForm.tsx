@@ -28,15 +28,13 @@ export const ListFiltersForm = (props: Props) => {
     params.delete('search[]');
     const searches = dumpUrl(props.model);
     const paramsStr = params ? `?${params}` : '';
-    console.log({paramsStr, searches})
     const searchesStr = searches ? (paramsStr ? `&${searches}` : `?${searches}`) : '';
     router.replace(`${pathname}${paramsStr}${searchesStr}`);
     setSearchTerm(searches);
-
   }
+
   const searchesModel = getSearchesForType(props.model);
   const updateValueFilters = mapSearchModelToFilters(searchesModel, props.filters);
-  console.log('filtros seleccionados ',filters)
   return (
     <FormFilters
       model={props.model}

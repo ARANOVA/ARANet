@@ -1,7 +1,8 @@
-import { FilterDTO, ListResponse } from "@aranova/aranova-react-ui";
+import { FilterDTO, ListResponse, SearchDTO } from "@aranova/aranova-react-ui";
 import { logError } from "../../logger";
 import { LIST_QUERIES } from '@/graphql/queries';
 
+  
 export const getListDataByModelGraphql = async <T>(
   model: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -12,7 +13,7 @@ export const getListDataByModelGraphql = async <T>(
   limit = 3,
   sortField = '',
   sortDir: '' | 'asc' | 'desc' = '',
-  searchTerm = "",
+  searches: SearchDTO[] = [],
   filters: FilterDTO[] = [],
 ): Promise<ListResponse<T>> => {
   const args: Record<string, unknown> = {
@@ -23,36 +24,12 @@ export const getListDataByModelGraphql = async <T>(
     args.sortField = sortField;
     args.sortDir = sortDir;
   }
+  if (searches && searches.length > 0) {
+    args.search = searches;
+  }
+
+  // TODO: Partir a variable search
   const query = (LIST_QUERIES as Record<any, string>)[model];
-  // const query = `
-  //   query GetInvoices($page: Int, $size: Int, $sortField: String, $sortDir: String) {
-  //     invoices(page: $page, size: $size, sortField: $sortField, sortDir: $sortDir) {
-  //       statusCode
-  //       data {
-  //         items {
-  //           id
-  //           invoice_prefix
-  //           invoice_number
-  //           invoice_date
-  //           invoice_title
-  //           invoice_client_id
-  //           aranet_client {
-  //             id
-  //             client_company_name
-  //           }
-  //         }
-  //         metadata {
-  //           total
-  //           page
-  //           quantity
-  //           last
-  //         }
-  //       }
-  //     }
-  //   }
-  // `;
-
-
   try {
       const res = await fetch('/api/graphql', {
         method: "POST",

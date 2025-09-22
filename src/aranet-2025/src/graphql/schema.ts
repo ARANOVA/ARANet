@@ -1,6 +1,7 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
 import { listInvoices } from '@/app/lib/api-helpers';
+import { ListVariables } from '@aranova/aranova-react-ui';
 
 export const schema = createSchema<GraphQLContext>({
   typeDefs: /* GraphQL */ `
@@ -206,6 +207,13 @@ export const schema = createSchema<GraphQLContext>({
       amount: Float!
     }
 
+    input SearchInput {
+      type: String
+      field: String
+      value: String
+      operator: String
+    }
+
     type Metadata {
       total: Int!
       page: Int!
@@ -248,10 +256,12 @@ export const schema = createSchema<GraphQLContext>({
       
     type Query {
       invoices(
-        page: Int = 1
-        size: Int = 10
-        sortField: String = "invoice_date"
-        sortDir: String = "asc"
+        page: Int = 1,
+        size: Int = 10,
+        sortField: String = "invoice_date",
+        sortDir: String = "asc",
+        search: [SearchInput!],
+        filters: [String!]
       ): InvoiceListResponse!
     }
 
@@ -263,11 +273,16 @@ export const schema = createSchema<GraphQLContext>({
     Query: {
       invoices: async (
         _: unknown,
-        { page = 1, size = 10, sortField = 'invoice_date', sortDir = 'asc' }: { page?: number; size?: number, sortField?: string, sortDir?: 'asc' | 'desc' },
+        {
+            page = 1,
+            size = 10,
+            sortField = 'invoice_date',
+            sortDir = 'asc',
+            search = [],
+            filters = [],
+        }: ListVariables,
         context: GraphQLContext,
       ) => {
-        const search: string[] = [];
-        const filters: string[] = [];
         const resp = await listInvoices(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
         return resp;
       },

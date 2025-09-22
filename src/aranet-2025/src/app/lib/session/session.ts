@@ -1,5 +1,5 @@
+import { SessionPayload } from '@/interfaces';
 import { SignJWT, jwtVerify } from 'jose'
-import { SessionPayload } from '@/src/interfaces';
 
 const secretKeStr = (process.env.SESSION_SECRET || 'supersecret') as string;
 const secretKey = new TextEncoder().encode(secretKeStr);

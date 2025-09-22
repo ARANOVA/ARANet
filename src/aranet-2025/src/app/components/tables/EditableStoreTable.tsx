@@ -1,17 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   EditableTable,
   ListResponse,
   SingleResponse,
 } from '@aranova/aranova-react-ui';
 import { ColumnDef } from '@tanstack/react-table';
-import { useFormUiStore, useItemsStore, useFiltersStore } from '@/store';
+import { useFormUiStore, useItemsStore, useFiltersStore, useSearchStore } from '@/store';
 import {
   deleteDataByModel,
   exportDataByModel,
-  getListDataByModel,
   getListDataByModelGraphql,
 } from '@/app/lib/api-wrappers/server';
 import { ExportData, Filters } from '@/interfaces';
@@ -48,6 +47,7 @@ export const EditableStoreTable = <T extends { id?: number }>({
 }: Props<T>) => {
   const formUi = useFormUiStore();
   // Store selected items
+  const { getSearchesForType } = useSearchStore();
   const {
     items,
     setItems,
@@ -107,6 +107,7 @@ export const EditableStoreTable = <T extends { id?: number }>({
           resetItems,
           filters,
           setFilters,
+          getSearchesForType,
           getFiltersByModel,
           getSelectedAll,
           setSelectedAll,

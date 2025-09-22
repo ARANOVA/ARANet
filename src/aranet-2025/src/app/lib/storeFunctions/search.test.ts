@@ -1,4 +1,4 @@
-import { SearchDTO, SearchOperators } from "../../../interfaces";
+import { SearchDTO, SearchOperators } from '@aranova/aranova-react-ui';
 import { addSearch, dumpUrl, getSearchInputValue, removeSearch, setSearchInputValues, setSearches } from './search';
 
 const PLANTILLA_NUMBER_AND_DATE_FIELDS = ['fechanacimiento', 'edad', 'codigoempleado'];
