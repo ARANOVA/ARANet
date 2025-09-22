@@ -11,6 +11,40 @@ import { exec } from "child_process";
 
 import QRCode from "qrcode";
 
+/**
+ * Tipo de factura según Verifactu / Suministro LR.
+ */
+export enum TipoFactura {
+  /** Factura completa / normal */
+  F1 = 'F1',
+  /** Factura rectificativa */
+  F2 = 'F2',
+  /** Factura simplificada */
+  F3 = 'F3',
+  /** Factura recapitulativa / resumen mensual */
+  F4 = 'F4',
+  /** Otro tipo especial (p.ej. factura interna o de ajuste) */
+  F5 = 'F5',
+};
+
+const tipoFactura = (tipoId: number | null): string => {
+  switch (tipoId) {
+    case 1:
+      return TipoFactura.F1;
+    case 5:
+      return TipoFactura.F5;
+    // No usadas
+    // case 4:
+    //   return TipoFactura.F2;
+    // case 3:
+    //   return TipoFactura.F1;
+    // case 4:
+    //   return TipoFactura.F4;
+    default:
+      return TipoFactura.F1;
+  }
+}
+
 const dateToEngFormat = (raw: Date | string): string => {
   let date!: Date;
   if (typeof raw === 'string' && parseInt(raw) === Number(raw)) {
@@ -21,6 +55,19 @@ const dateToEngFormat = (raw: Date | string): string => {
   }
   return date
     ? date.toISOString().split('T')[0]
+    : '';
+}
+
+const dateToIso = (raw: Date | string): string => {
+  let date!: Date;
+  if (typeof raw === 'string' && parseInt(raw) === Number(raw)) {
+    // TS en string
+    date = new Date(parseInt(raw, 10));
+  } else if (typeof raw === 'string') {
+    date = new Date(raw);
+  }
+  return date
+    ? date.toISOString()
     : '';
 }
 
@@ -58,8 +105,7 @@ export const verifactuBuildRegistroAltaXML = async (
     return new Error("La factura debe que tener fecha de emisión");
   }
 
-  const aux = invoice.invoice_prefix || '';
-  const prefix = aux.endsWith("-") ? aux.slice(0, -1) : aux;
+  const prefix = invoice.invoice_prefix || '';
 
   const root = create({ version: '1.0', encoding: 'UTF-8' })
     .ele("soapenv:Envelope", {
@@ -90,7 +136,7 @@ export const verifactuBuildRegistroAltaXML = async (
   .up();
 
   root.ele("sum1:NombreRazonEmisor").txt(process.env.COMPANY_FULLNAME).up();
-  root.ele("sum1:TipoFactura").txt("F1").up();
+  root.ele("sum1:TipoFactura").txt(tipoFactura(invoice.invoice_kind_of_invoice_id)).up();
   root.ele("sum1:DescripcionOperacion").txt(process.env.COMPANY_CIF).up();
 
   root.ele("sum1:Destinatarios")
@@ -106,14 +152,15 @@ export const verifactuBuildRegistroAltaXML = async (
     const desglose = root.ele("sum1:Desglose");
     (invoice.aranet_invoice_item || []).forEach((d) => {
       if (d.item_cost === 0 || d.item_cost === null) return;
-      total_items_tax_amount += Math.round((((d.item_tax_rate || 0) / 100) * d.item_cost)*100) / 100;
+      const tax_amount = Math.round((((d.item_tax_rate || 0) / 100) * d.item_cost)*100) / 100;
+      total_items_tax_amount += tax_amount;
       total_items_base_amount += d.item_cost;
       const detalle = desglose.ele("sum1:DetalleDesglose");
       detalle.ele("sum1:ClaveRegimen").txt('01').up(); // TODO
       detalle.ele("sum1:CalificacionOperacion").txt('S1').up(); // TODO
       detalle.ele("sum1:TipoImpositivo").txt((d.item_tax_rate || 0).toFixed(0)).up(); // TODO
       detalle.ele("sum1:BaseImponibleOimporteNoSujeto").txt(d.item_cost.toFixed(2)).up();
-      detalle.ele("sum1:CuotaRepercutida").txt((d.item_tax_rate || 0).toFixed(0)).up();
+      detalle.ele("sum1:CuotaRepercutida").txt((tax_amount).toFixed(2)).up();
       detalle.up();
     });
     desglose.up();
@@ -152,7 +199,7 @@ export const verifactuBuildRegistroAltaXML = async (
     sistema.up();
   }
 
-  root.ele("sum1:FechaHoraHusoGenRegistro").txt(dateToEngFormat(invoice.created_at)).up();
+  root.ele("sum1:FechaHoraHusoGenRegistro").txt(dateToIso(invoice.created_at)).up();
   root.ele("sum1:TipoHuella").txt('01').up();
   root.ele("sum1:Huella").txt('HUELLA_PLACEHOLDER').up();
 
@@ -170,8 +217,7 @@ export const verifactuCalcHuella = async (invoice: aranet_invoice_join_all, huel
     return new Error("La factura debe que tener fecha de emisión");
   }
 
-  const aux = invoice.invoice_prefix || '';
-  const prefix = aux.endsWith("-") ? aux.slice(0, -1) : aux;
+  const prefix = invoice.invoice_prefix || '';
   if (!invoice.invoice_total_amount) {
     return new Error("Debe tener un importe total válido");
   }
@@ -241,7 +287,6 @@ export const verifactuFlow = async(invoice: aranet_invoice_join_all): Promise<Er
 
   // validar contra XSD (descárgate el XSD oficial y pásalo aquí)
   const xsdPath = path.join(__dirname, '..', '..', 'verifactu-dev', 'xsd', 'SuministroInformacion.xsd').replace('/ROOT/', './');
-  console.log({xsdPath, exist: fs.existsSync(xsdPath)})
   const validation = await verifactuValidateXmlAgainstXsd(xml, xsdPath);
   if (!validation.valid) {
     console.error('XML no válido:', validation.error);
