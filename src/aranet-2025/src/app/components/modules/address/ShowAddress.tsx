@@ -24,11 +24,11 @@ export const ShowAddress = ({ invoice, addresses, contacts }: Props) => {
       {/* Título destacado */}
       <h2 className='font-extrabold mb-2'>
         <Link
-          title={invoice.aranet_client?.client_company_name}
+          title={invoice.client?.client_company_name}
           href={`/client/show/${invoice.invoice_client_id}`}
           className="flex items-center gap-1 text-gray-900 dark:text-gray-50 hover:text-gray-700 hover:dark:text-gray-500 hover:underline"
           itemProp="name"
-        >{invoice.aranet_client?.client_company_name}</Link>
+        >{invoice.client?.client_company_name}</Link>
       </h2>
     
       {defaultAddress && (

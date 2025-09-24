@@ -7,7 +7,7 @@ import { ColumnDef, ColumnMeta, createColumnHelper } from '@tanstack/react-table
 import clsx from 'clsx';
 import Link from "next/link";
 
-const columnHelper = createColumnHelper<aranet_invoice & { aranet_client: { client_company_name: string; } }>()
+const columnHelper = createColumnHelper<aranet_invoice & { client: { client_company_name: string; } }>()
 
 interface AranovaColumnMeta {
   className?: string;
@@ -122,7 +122,7 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
     meta: mix(metaLeft, maxWidth170),
   }),
   columnHelper.accessor(
-    row => `${row.aranet_client.client_company_name}`,
+    row => `${row.client.client_company_name}`,
     {
       id: "client_company_name",
       header: "Cliente",
@@ -133,7 +133,7 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
         const row = info.row.original;
         return (
           <Link
-            title={row.aranet_client.client_company_name}
+            title={row.client.client_company_name}
             className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
             href={`/client/show/${row.invoice_client_id}`}
           >

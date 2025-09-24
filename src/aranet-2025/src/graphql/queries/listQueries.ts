@@ -25,6 +25,12 @@ export const LIST_QUERIES = {
             created_at
             is_super_admin
             is_active
+            profile {
+              id
+              first_name
+              last_name
+              email
+            }
           }
           metadata {
             total
@@ -62,7 +68,7 @@ export const LIST_QUERIES = {
             invoice_date
             invoice_title
             invoice_client_id
-            aranet_client {
+            client {
               id
               client_company_name
             }

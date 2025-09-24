@@ -37,7 +37,7 @@ export default async function middleware(req: NextRequest) {
   if (session && path.startsWith('/admin')) {
     const dataPlain = ServerDataPlain.getInstance();
     // Get user logueado
-    const me = await dataPlain.useMe(session.userId as number);
+    const me = await dataPlain.useMe(session.id as number);
     if (!me || !me.data || !hasAdminRights(me.data)) {
       return NextResponse.redirect(new URL('/', req.nextUrl))
     }

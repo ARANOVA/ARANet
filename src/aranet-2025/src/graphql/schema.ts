@@ -39,7 +39,7 @@ export const schema = createSchema<GraphQLContext>({
       invoice_service_to: String
 
       # Relaciones básicas
-      aranet_client: Client
+      client: Client
       project: Project
       budget: Budget
       category: InvoiceCategory
@@ -83,11 +83,6 @@ export const schema = createSchema<GraphQLContext>({
     type KindOfCompany {
       id: Int!
       name: String!
-    }
-
-    type User {
-      id: Int!
-      username: String!
     }
 
     type Project {
@@ -140,6 +135,83 @@ export const schema = createSchema<GraphQLContext>({
       users: [User!]! 
     }
 
+    type Profile {
+      id: Int!
+      user_id: Int!
+      title: String
+      public_title: Int
+
+      first_name: String
+      public_first_name: Int
+
+      last_name: String
+      public_last_name: Int
+
+      gender: Int
+      public_gender: Int
+
+      email: String
+      public_email: Int
+
+      url: String
+      public_url: Int
+
+      openid_url: String
+
+      street: String
+      public_street: Int
+
+      city: String
+      public_city: Int
+
+      state: String
+      public_state: Int
+
+      code: Int
+      public_code: Int
+
+      country: String
+      public_country: Int
+
+      timezone: Int
+      public_timezone: Int
+
+      birthday: String
+      public_birthday: Int
+
+      company: String
+      public_company: Int
+
+      cif: String
+      public_cif: Int
+
+      phone1: String
+      public_phone1: Int
+
+      phone2: String
+      public_phone2: Int
+
+      fax: String
+      public_fax: Int
+
+      notes: String
+
+      gravatar: Int
+      avatar: String
+      avatar_filetype: String
+
+      owner_user_id: Int
+      user_newsletter: Int
+      preferred_language: String
+
+      created_at: String
+      created_by: Int
+      updated_at: String
+      updated_by: Int
+      deleted_at: String
+      deleted_by: Int
+    }
+
     type User {
       id: Int!
       username: String!
@@ -156,6 +228,7 @@ export const schema = createSchema<GraphQLContext>({
       # Relaciones
       groups: [Group!]!
       permissions: [Permission!]!
+      profile: Profile!
     }
 
 
@@ -230,11 +303,6 @@ export const schema = createSchema<GraphQLContext>({
       status: String!
     }
 
-    type User {
-      id: Int!
-      username: String!
-    }
-
     type InvoiceItem {
       id: Int!
       description: String!
@@ -262,7 +330,7 @@ export const schema = createSchema<GraphQLContext>({
 
     type InvoiceListResponse {
       statusCode: Int!
-      error: String!
+      error: String
       data: InvoiceData!
     }
 
@@ -273,7 +341,7 @@ export const schema = createSchema<GraphQLContext>({
 
     type UserListResponse {
       statusCode: Int!
-      error: String!
+      error: String
       data: UserData!
     }
 
@@ -284,19 +352,19 @@ export const schema = createSchema<GraphQLContext>({
 
     type ClientListResponse {
       statusCode: Int!
-      error: String!
+      error: String
       data: ClientData!
     }
 
-    type ProjecttData {
+    type ProjectData {
       items: [Project!]!
       metadata: Metadata!
     }
 
     type ProjectListResponse {
       statusCode: Int!
-      error: String!
-      data: ProjecttData!
+      error: String
+      data: ProjectData!
     }
       
     type Query {
@@ -308,9 +376,7 @@ export const schema = createSchema<GraphQLContext>({
         search: [SearchInput!],
         filters: [String!]
       ): InvoiceListResponse!
-    }
-
-    type Query {
+    
       users(
         page: Int = 1,
         size: Int = 10,
@@ -358,8 +424,15 @@ export const schema = createSchema<GraphQLContext>({
         return resp;
       },
     },
+    User: {
+      profile: async (parent, _args, context) => {
+        return context.prisma.sf_guard_user_profile.findUnique({
+          where: { user_id: parent.id ?? 0 },
+        })
+      },
+    },
     Invoice: {
-      aranet_client: async (parent, _args, context) => {
+      client: async (parent, _args, context) => {
         return context.prisma.aranet_client.findUnique({
           where: { id: parent.invoice_client_id ?? 0 },
         })

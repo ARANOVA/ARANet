@@ -1,13 +1,12 @@
 'use client'
 
 import { dateColumn } from '@/app/lib/helpers';
-import { sf_guard_user } from '@/generated/prisma';
-import { User } from '@/interfaces';
+import { sf_guard_user_join_profile, User } from '@/interfaces';
 import { ColumnDef, ColumnMeta, createColumnHelper } from '@tanstack/react-table';
 import clsx from 'clsx';
 import Link from "next/link";
 
-const columnHelper = createColumnHelper<sf_guard_user>()
+const columnHelper = createColumnHelper<sf_guard_user_join_profile>()
 
 interface AranovaColumnMeta {
   className?: string;
@@ -85,6 +84,26 @@ export const userColumns: ColumnDef<any, any>[] = [
           </Link>
         );
       }
+    }
+  ),
+  columnHelper.accessor(
+    row => {
+      if (!row.profile) {
+        return '';
+      }
+      let fullname = row.profile.first_name;
+      if (row.profile.last_name) {
+        fullname += ' ' + row.profile.last_name;
+      }
+      return fullname;
+    },
+    {
+      id: "user_fullname",
+      header: "Nombre",
+      size: 170,
+      meta: mix(metaLeft, maxWidth170),
+      cell: info => info.getValue(),
+
     }
   ),
 

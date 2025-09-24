@@ -51,8 +51,8 @@ export default async function ClientShowPage({ params }: Props) {
   const addresses = await dataPlain.useAddressesByObjectAndObjectId('client', parseInt(id, 10));
   const contacts = await dataPlain.useContactsByObjectAndObjectId('invoice', parseInt(id, 10));
 
-  const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}_${invoice.data.aranet_client?.client_unique_name}`;
-  const prefix = (invoice.data.aranet_kind_of_invoice) ? `${invoice.data.aranet_kind_of_invoice?.kind_of_invoice_title} `: '';
+  const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}_${invoice.data.client?.client_unique_name}`;
+  const prefix = (invoice.data.kind_of_invoice) ? `${invoice.data.kind_of_invoice?.kind_of_invoice_title} `: '';
 
   let aux = '';
   if (invoice?.data.deleted_at) {

@@ -19,7 +19,7 @@ export const listUsers = async (
   search: SearchDTO[],
   filters: string[],
 ): Promise<ListResponse<sf_guard_user_join_profile>> => {
-  
+
   const busquedasEncontradas: Record<string, string> = {};
   search = search.filter(filter => filterByValidFields(filter))
 
@@ -31,9 +31,11 @@ export const listUsers = async (
   // logDebug(`GET /api/invoice - Filtros encontrados: ${JSON.stringify(filtrosEncontrados)}, filtros extra: ${JSON.stringify(filtrosExtra)}`);
 
   try {
-    const where: any = { AND: [
-      { deleted_at: null },
-    ] };
+    const where: any = {
+      AND: [
+        { deleted_at: null },
+      ]
+    };
     for (const s of search) {
       if (s.value === undefined) continue;
 
@@ -68,9 +70,9 @@ export const listUsers = async (
       orderBy,
       skip: start,
       take: size,
-      // include: {
-      //   sf_guard_user_profile_sf_guard_user_profile_user_idTosf_guard_user: true,
-      // }
+      include: {
+        sf_guard_user_profile_sf_guard_user_profile_user_idTosf_guard_user: true,
+      }
     });
     if (!users) {
       return {

@@ -1102,7 +1102,7 @@ model sf_guard_user_profile {
   public_country                                                   Int?             @default(0)
   timezone                                                         Int?
   public_timezone                                                  Int?             @default(0)
-  birthday                                                         DateTime?        @default(dbgenerated("('0000-00-00')")) @db.Date
+  birthday                                                         DateTime?        @db.Date
   public_birthday                                                  Int?             @default(0)
   company                                                          String?          @db.VarChar(128)
   public_company                                                   Int?             @default(0)

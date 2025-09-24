@@ -110,7 +110,7 @@ export const verifactuBuildRegistroAltaXML = async (
     return new Error("Faltan valores de entorno de la empresa");
   }
 
-  if (!invoice.aranet_client?.client_company_name || !invoice.aranet_client?.client_cif) {
+  if (!invoice.client?.client_company_name || !invoice.client?.client_cif) {
     return new Error("Faltan valores de entorno del cliente");
   }
 
@@ -173,16 +173,16 @@ export const verifactuBuildRegistroAltaXML = async (
 
   root.ele("sum1:Destinatarios")
     .ele("sum1:IDDestinatario")
-      .ele("sum1:NombreRazon").txt(invoice.aranet_client?.client_company_name).up()
-      .ele("sum1:NIF").txt(invoice.aranet_client?.client_cif).up()
+      .ele("sum1:NombreRazon").txt(invoice.client?.client_company_name).up()
+      .ele("sum1:NIF").txt(invoice.client?.client_cif).up()
     .up()
   .up();
 
   let total_items_tax_amount = 0;
   let total_items_base_amount = 0;
-  if (invoice.aranet_invoice_item || [].length > 0) {
+  if (invoice.invoice_item || [].length > 0) {
     const desglose = root.ele("sum1:Desglose");
-    (invoice.aranet_invoice_item || []).forEach((d) => {
+    (invoice.invoice_item || []).forEach((d) => {
       if (d.item_cost === 0 || d.item_cost === null) return;
       const tax_amount = round2(((d.item_tax_rate || 0) / 100) * d.item_cost);
       total_items_tax_amount += tax_amount;
@@ -312,7 +312,7 @@ export const verifactuValidateXmlAgainstXsd = async (
 // --- 4) generar QR dataURL ---
 // export const verifactuGenQr = async (invoice: aranet_invoice_join_all): Error | any => {
 //   // La URL o contenido exacto del QR viene definido por la AEAT (ver especificación QR).
-//   if (!invoice.aranet_client?.client_cif) {
+//   if (!invoice.client?.client_cif) {
 //     return new Error("El cliente no tiene CIF");
 //   }
 
@@ -323,6 +323,6 @@ export const verifactuValidateXmlAgainstXsd = async (
 //   const aux = invoice.invoice_prefix || '';
 //   const prefix = aux.endsWith("-") ? aux.slice(0, -1) : aux;
 
-//   const qrContent = `https://sede.agenciatributaria.gob.es/cotejo?NIF=${invoice.aranet_client?.client_cif}&S=${prefix}&N=${invoice.invoice_number}&F=${invoiceDate}&I=${invoice.invoice_total_amount.toFixed(2)}`;
+//   const qrContent = `https://sede.agenciatributaria.gob.es/cotejo?NIF=${invoice.client?.client_cif}&S=${prefix}&N=${invoice.invoice_number}&F=${invoiceDate}&I=${invoice.invoice_total_amount.toFixed(2)}`;
 //   return QRCode.toDataURL(qrContent, { errorCorrectionLevel: 'M' });
 // }
