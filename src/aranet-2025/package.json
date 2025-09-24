@@ -8,7 +8,9 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint:fix": "eslint --fix",
+    "test:generate:bdd": "npx cucumber-js",
+    "test:run:bdd": "npx cucumber-js --require-module ts-node/register --require __tests__/features/**/*.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.8",
@@ -41,6 +43,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^12.2.0",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/jest": "^30.0.0",
@@ -50,10 +53,12 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
     "jest": "^30.1.3",
+    "playwright": "^1.55.1",
     "prisma": "^6.16.2",
     "supertest": "^7.1.4",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.2",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   }
 }
