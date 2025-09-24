@@ -2,9 +2,9 @@ import { Filters } from "@/interfaces";
 import { SearchOperators } from "@aranova/aranova-react-ui";
 
 //añadir campos de filtros y busquedas
-export const invoiceFilters: Filters[] = [
+export const userFilters: Filters[] = [
   {
-    fieldName: 'invoice_title',
+    fieldName: 'username',
     label: 'Buscar por nombre',
     type: 'search',
     operator: SearchOperators.like,

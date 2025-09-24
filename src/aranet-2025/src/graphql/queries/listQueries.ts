@@ -1,4 +1,41 @@
 export const LIST_QUERIES = {
+  user: `
+    query ListUsers(
+      $page: Int,
+      $size: Int,
+      $sortField: String,
+      $sortDir: String,
+      $search: [SearchInput!],
+      $filters: [String!]
+    ) {
+      users(
+        page: $page,
+        size: $size,
+        sortField: $sortField,
+        sortDir: $sortDir,
+        search: $search,
+        filters: $filters
+      ) {
+        statusCode
+        data {
+          items {
+            id
+            username
+            last_login
+            created_at
+            is_super_admin
+            is_active
+          }
+          metadata {
+            total
+            page
+            quantity
+            last
+          }
+        }
+      }
+    }
+  `,
   invoice: `
     query ListInvoices(
       $page: Int,

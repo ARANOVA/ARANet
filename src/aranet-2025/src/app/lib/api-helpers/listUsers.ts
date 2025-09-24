@@ -1,15 +1,16 @@
 import { ListResponse, SearchDTO } from "@aranova/aranova-react-ui";
 import { logDebug, logError } from "../logger";
 import { PrismaClient } from "@/generated/prisma";
-import { INVOICE_VALID_FIELDS, INVOICE_TEXT_FIELDS } from "@/app/data/invoice";
-import { aranet_invoice_join_client } from "@/interfaces";
+import { USER_VALID_FIELDS, USER_TEXT_FIELDS } from "@/app/data/user";
 import { parseFilter } from "./utils";
+import { sf_guard_user_join_profile } from "@/interfaces";
 
 const filterByValidFields = (filter: SearchDTO) => {
-  return INVOICE_VALID_FIELDS.includes(filter.field.toLowerCase()) || filter.field === 'all';
+  return USER_VALID_FIELDS.includes(filter.field.toLowerCase()) || filter.field === 'all';
 };
 
-export const listInvoices = async (
+
+export const listUsers = async (
   prisma: PrismaClient,
   page: number,
   size: number,
@@ -17,12 +18,12 @@ export const listInvoices = async (
   sortDir: 'asc' | 'desc',
   search: SearchDTO[],
   filters: string[],
-): Promise<ListResponse<aranet_invoice_join_client>> => {
+): Promise<ListResponse<sf_guard_user_join_profile>> => {
   
   const busquedasEncontradas: Record<string, string> = {};
   search = search.filter(filter => filterByValidFields(filter))
 
-  logDebug(`GET /api/invoice - Búsquedas encontradas: ${JSON.stringify(busquedasEncontradas)}`);
+  logDebug(`GET /api/users - Búsquedas encontradas: ${JSON.stringify(busquedasEncontradas)}`);
   // const filtrosEncontrados = filters.filter((filter) => filterByValidFields(filter, '|||'));
 
   // TODO: CREAR FILTROS
@@ -39,7 +40,7 @@ export const listInvoices = async (
       if (s.field === "all") {
         // OR sobre TEXT_FIELDS
         where.AND.push({
-          OR: INVOICE_TEXT_FIELDS.map(field => ({
+          OR: USER_TEXT_FIELDS.map(field => ({
             [field]: { contains: s.value },
           })),
         });
@@ -52,7 +53,7 @@ export const listInvoices = async (
 
     const orderBy: Record<string, string> = {};
     orderBy[sortField] = sortDir;
-    const nbItems = await prisma.aranet_invoice.count({ where });
+    const nbItems = await prisma.sf_guard_user.count({ where });
     if (size === -1) {
       size = nbItems;
       page = 1;
@@ -62,17 +63,16 @@ export const listInvoices = async (
       start = (Math.ceil(nbItems / size) - 1) * size;
     }
     if (size > nbItems) size = nbItems;
-    console.log({where: JSON.stringify(where)})
-    const invoices = await prisma.aranet_invoice.findMany({
+    const users = await prisma.sf_guard_user.findMany({
       where,
       orderBy,
       skip: start,
       take: size,
-      include: {
-        aranet_client: true,
-      }
+      // include: {
+      //   sf_guard_user_profile_sf_guard_user_profile_user_idTosf_guard_user: true,
+      // }
     });
-    if (!invoices) {
+    if (!users) {
       return {
         statusCode: 400,
         error: "Bad Request",
@@ -82,7 +82,7 @@ export const listInvoices = async (
     return {
       statusCode: 200,
       data: {
-        items: invoices,
+        items: users,
         metadata: {
           page,
           last: size > 0 ? Math.ceil(nbItems / size) : 0,
@@ -92,7 +92,7 @@ export const listInvoices = async (
       }
     };
   } catch (err) {
-    logError(`Error GET /api/invoice: ${err}`);
+    logError(`Error GET /api/users: ${err}`);
     return {
       statusCode: 500,
       error: "Internal Server Error",

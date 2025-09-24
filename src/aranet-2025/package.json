@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "test:bdd": "npx cucumber-js"
+    "test:bdd": "npx cucumber-js",
+    "test:report": "npx tsc scripts/report.ts --outDir scripts; node scripts/report.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.8",
@@ -49,6 +50,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cucumber-html-reporter": "^7.2.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
     "jest": "^30.1.3",

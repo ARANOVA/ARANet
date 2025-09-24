@@ -1,0 +1,324 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "login;usuario-admin-inicia-sesión-correctamente",
+        "keyword": "Scenario",
+        "line": 3,
+        "name": "Usuario admin inicia sesión correctamente",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 112700082
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 29639916
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "el usuario abre la página de login",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 305114000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 5,
+            "name": "el usuario \"pablo\" introduce credenciales válidas de un administrador",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:50"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 107636915
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 6,
+            "name": "presiona el botón \"Acceder\"",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:55"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 33578958
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 7,
+            "name": "debería ver el dashboard",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:68"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 656795875
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 8,
+            "name": "debería ver \"pablo\" en la parte superior derecha",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:84"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6255291
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "debería ver el acceso a la sección de \"Administración\"",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:75"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1406084
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 5301124
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 3761958
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "login;usuario-intenta-iniciar-sesión",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "Usuario intenta iniciar sesión",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 26161665
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 23156207
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 12,
+            "name": "el usuario abre la página de login",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 205081957
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 13,
+            "name": "el usuario introduce credenciales inválidas",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:35"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 80154749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "presiona el botón \"Acceder\"",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:55"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 34404874
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "debería ver un mensaje de error",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:64"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 279941542
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 2569083
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 5143542
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "login;usuario-inicia-sesión-correctamente-pero-no-tiene-permisos-para-el-dashboard",
+        "keyword": "Scenario",
+        "line": 17,
+        "name": "Usuario inicia sesión correctamente pero no tiene permisos para el dashboard",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 22222957
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 21278749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 18,
+            "name": "el usuario abre la página de login",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 165101417
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 19,
+            "name": "el usuario introduce sus credenciales válidas",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:40"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 77827458
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 20,
+            "name": "presiona el botón \"Acceder\"",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:55"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 42084875
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 21,
+            "name": "debería ver el dashboard",
+            "match": {
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:68"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 365639833
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 4771375
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 3110125
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "login",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Login",
+    "tags": [],
+    "uri": "__tests__/features/login.feature"
+  }
+]

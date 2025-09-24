@@ -1,16 +1,28 @@
 import { MenuItem, NotAuthorized, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
-import { PageStoreHeader } from "@/app/components";
+import { EditableStoreTable, PageStoreHeader, PaginationStore, ToastStoreAlert } from "@/app/components";
 import { Metadata } from "next";
+import { userColumns, userFilters } from "@/app/data/user";
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Facturas - Finanzas',
+  title: 'Usuarios - Administración',
 };
 
-export default async function AdminUserListPage() {
+interface Props {
+  searchParams: Promise<{
+    page?: string;
+    limit?: number;
+    sortField?: string;
+    sortDir?: string;
+    filter?: string;
+    'search[]'?: string[] | string;
+  }>;
+}
+
+export default async function AdminUserListPage({ searchParams }: Props) {
   const session = await getSession();
   if (!session) {
     return <NotAuthorized />;
@@ -22,6 +34,14 @@ export default async function AdminUserListPage() {
     return <NotAuthorized />;
   }
   
+  const { page, limit, sortField, sortDir } = await searchParams;
+  const currentPage =
+    page === undefined || isNaN(+page) || +page < 1 ? 1 : +page;
+
+  const typedSortDir: 'asc' | 'desc' = ({ desc: 'desc', asc: 'asc' }[
+    (sortDir || 'asc').toLowerCase()
+  ] || 'desc') as 'asc' | 'desc';
+
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
     { name: 'Administración', href: null },
@@ -35,10 +55,30 @@ export default async function AdminUserListPage() {
         <PageStoreHeader
           title="Usuarios"
           subtitle="Listado de usuarios"
-          model="invoice"
+          model="user"
           add_button_text="Añadir usuario"
           search_placeholder="Buscar usuarios..."
         />
+        <ToastStoreAlert />
+        <EditableStoreTable<any>
+          limit={limit}
+          page={currentPage - 1}
+          pageDataSelection={<PaginationStore />}
+          editTitle="Editar usuario"
+          newTitle="Añadir usuario"
+          viewTitle="Ver usuario"
+          subtitle="Por favor, completa todos los campos obligatorios"
+          model="user"
+          editModel="page"
+          showModel="page"
+          columns={userColumns}
+          filters={userFilters}
+          idField="id"
+          sortField={sortField || 'id'}
+          sortDir={typedSortDir}
+        >
+          <span>Hola</span>
+        </EditableStoreTable>
       </div>
     </>
   )

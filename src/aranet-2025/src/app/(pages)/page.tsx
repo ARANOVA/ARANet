@@ -15,7 +15,7 @@ export default async function HomePage() {
     return <NotAuthorized />;
   }
 
-  const helloTxt = me.data?.name ? `Hola, ${me.data.name}` : 'Hola,';
+  const helloTxt = me.data?.username ? `Hola ${me.data.username},` : 'Hola,';
   const options = [
     { label: '2023', value: 2023, selected: false },
     { label: '2024', value: 2024, selected: false },

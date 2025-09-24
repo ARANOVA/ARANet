@@ -26,6 +26,7 @@ export async function POST(
       }, { status: 400 });
     }
 
+    // console.log(await prisma.sf_guard_user.findMany());
     const result = await prisma.sf_guard_user.findUnique({
       where: {
         username,

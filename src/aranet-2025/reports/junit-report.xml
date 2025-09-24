@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<testsuite name="Cucumber" time="2.913" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-09-24T17:27:11.873Z">
+  <testcase classname="Login" name="Usuario admin inicia sesión correctamente" time="1.264">
+    <system-out><![CDATA[Given el usuario abre la página de login....................................passed
+When el usuario "pablo" introduce credenciales válidas de un administrador..passed
+And presiona el botón "Acceder".............................................passed
+Then debería ver el dashboard...............................................passed
+And debería ver "pablo" en la parte superior derecha........................passed
+And debería ver el acceso a la sección de "Administración"..................passed]]></system-out>
+  </testcase>
+  <testcase classname="Login" name="Usuario intenta iniciar sesión" time="0.658">
+    <system-out><![CDATA[Given el usuario abre la página de login....................................passed
+When el usuario introduce credenciales inválidas............................passed
+And presiona el botón "Acceder".............................................passed
+Then debería ver un mensaje de error........................................passed]]></system-out>
+  </testcase>
+  <testcase classname="Login" name="Usuario inicia sesión correctamente pero no tiene permisos para el dashboard" time="0.702">
+    <system-out><![CDATA[Given el usuario abre la página de login....................................passed
+When el usuario introduce sus credenciales válidas..........................passed
+And presiona el botón "Acceder".............................................passed
+Then debería ver el dashboard...............................................passed]]></system-out>
+  </testcase>
+</testsuite>

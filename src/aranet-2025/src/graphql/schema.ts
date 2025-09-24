@@ -1,6 +1,6 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
-import { listInvoices } from '@/app/lib/api-helpers';
+import { listInvoices, listUsers } from '@/app/lib/api-helpers';
 import { ListVariables } from '@aranova/aranova-react-ui';
 
 export const schema = createSchema<GraphQLContext>({
@@ -124,6 +124,40 @@ export const schema = createSchema<GraphQLContext>({
       tasks: [ProjectTask!]!
       timesheets: [Timesheet!]!
     }
+    
+    type Permission {
+      id: Int!
+      name: String!
+      description: String
+    }
+      
+    type Group {
+      id: Int!
+      name: String!
+      description: String
+
+      permissions: [Permission!]!
+      users: [User!]! 
+    }
+
+    type User {
+      id: Int!
+      username: String!
+      algorithm: String!
+      salt: String!
+      password: String!
+      created_at: String
+      last_login: String
+      is_active: Boolean!
+      is_super_admin: Boolean!
+      deleted_at: String
+      deleted_by: Int
+
+      # Relaciones
+      groups: [Group!]!
+      permissions: [Permission!]!
+    }
+
 
     # Tipos relacionados básicos
     type ProjectCategory {
@@ -232,6 +266,17 @@ export const schema = createSchema<GraphQLContext>({
       data: InvoiceData!
     }
 
+    type UserData {
+      items: [User!]!
+      metadata: Metadata!
+    }
+
+    type UserListResponse {
+      statusCode: Int!
+      error: String!
+      data: UserData!
+    }
+
     type ClientData {
       items: [Client!]!
       metadata: Metadata!
@@ -265,6 +310,17 @@ export const schema = createSchema<GraphQLContext>({
       ): InvoiceListResponse!
     }
 
+    type Query {
+      users(
+        page: Int = 1,
+        size: Int = 10,
+        sortField: String = "id",
+        sortDir: String = "asc",
+        search: [SearchInput!],
+        filters: [String!]
+      ): UserListResponse!
+    }
+
     type Mutation {
       createInvoice(number: String!): Invoice!
     }
@@ -284,6 +340,21 @@ export const schema = createSchema<GraphQLContext>({
         context: GraphQLContext,
       ) => {
         const resp = await listInvoices(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
+        return resp;
+      },
+      users: async (
+        _: unknown,
+        {
+            page = 1,
+            size = 10,
+            sortField = 'id',
+            sortDir = 'asc',
+            search = [],
+            filters = [],
+        }: ListVariables,
+        context: GraphQLContext,
+      ) => {
+        const resp = await listUsers(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
         return resp;
       },
     },
