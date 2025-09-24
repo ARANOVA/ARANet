@@ -1,4 +1,4 @@
-import { aranet_budget, aranet_client, aranet_invoice, aranet_invoice_item, aranet_kind_of_invoice, aranet_payment_condition, aranet_payment_method, aranet_payment_status, aranet_project, sf_guard_user, sf_guard_user_profile } from "@/generated/prisma";
+import { aranet_budget, aranet_client, aranet_contact, aranet_invoice, aranet_invoice_item, aranet_kind_of_invoice, aranet_objectcontact, aranet_payment_condition, aranet_payment_method, aranet_payment_status, aranet_project, sf_guard_user, sf_guard_user_profile } from "@/generated/prisma";
 
 export interface aranet_invoice_join_client extends aranet_invoice {
    client: aranet_client | null;
@@ -30,4 +30,13 @@ export interface aranet_invoice_verifactu extends aranet_invoice_join_all {
 /**** sf_guard_user ****/
 export interface sf_guard_user_join_profile extends sf_guard_user {
    profile?: sf_guard_user_profile | null;
+}
+
+/**** aranet_client ****/
+export interface aranet_objectcontact_join_contact extends aranet_objectcontact {
+   contact: aranet_contact;
+}
+
+export interface aranet_client_join_contacts extends aranet_client {
+   contacts?: aranet_objectcontact_join_contact[];
 }

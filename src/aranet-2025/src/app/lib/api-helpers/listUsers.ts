@@ -2,7 +2,7 @@ import { ListResponse, SearchDTO } from "@aranova/aranova-react-ui";
 import { logDebug, logError } from "../logger";
 import { PrismaClient } from "@/generated/prisma";
 import { USER_VALID_FIELDS, USER_TEXT_FIELDS } from "@/app/data/user";
-import { parseFilter } from "./utils";
+import { parseFilter, searchWhere } from "./utils";
 import { sf_guard_user_join_profile } from "@/interfaces";
 
 const filterByValidFields = (filter: SearchDTO) => {
@@ -19,11 +19,8 @@ export const listUsers = async (
   search: SearchDTO[],
   filters: string[],
 ): Promise<ListResponse<sf_guard_user_join_profile>> => {
-
-  const busquedasEncontradas: Record<string, string> = {};
   search = search.filter(filter => filterByValidFields(filter))
-
-  logDebug(`GET /api/users - Búsquedas encontradas: ${JSON.stringify(busquedasEncontradas)}`);
+  logDebug(`GET /api/users - Búsquedas encontradas: ${JSON.stringify(search)}`);
   // const filtrosEncontrados = filters.filter((filter) => filterByValidFields(filter, '|||'));
 
   // TODO: CREAR FILTROS
@@ -36,22 +33,8 @@ export const listUsers = async (
         { deleted_at: null },
       ]
     };
-    for (const s of search) {
-      if (s.value === undefined) continue;
-
-      if (s.field === "all") {
-        // OR sobre TEXT_FIELDS
-        where.AND.push({
-          OR: USER_TEXT_FIELDS.map(field => ({
-            [field]: { contains: s.value },
-          })),
-        });
-      } else {
-        // Si es número con operador -> parseFilter
-        const condition = parseFilter(s.value as string);
-        where.AND.push({ [s.field]: condition });
-      }
-    }
+    searchWhere(where, search, USER_TEXT_FIELDS);
+    logDebug(`GET /api/user - Where generado: ${JSON.stringify(where)}`);
 
     const orderBy: Record<string, string> = {};
     orderBy[sortField] = sortDir;

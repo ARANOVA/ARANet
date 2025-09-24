@@ -1,6 +1,6 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
-import { listInvoices, listUsers } from '@/app/lib/api-helpers';
+import { listClients, listInvoices, listUsers } from '@/app/lib/api-helpers';
 import { ListVariables } from '@aranova/aranova-react-ui';
 
 export const schema = createSchema<GraphQLContext>({
@@ -385,6 +385,15 @@ export const schema = createSchema<GraphQLContext>({
         search: [SearchInput!],
         filters: [String!]
       ): UserListResponse!
+
+      clients(
+        page: Int = 1,
+        size: Int = 10,
+        sortField: String = "id",
+        sortDir: String = "asc",
+        search: [SearchInput!],
+        filters: [String!]
+      ): ClientListResponse!
     }
 
     type Mutation {
@@ -421,6 +430,21 @@ export const schema = createSchema<GraphQLContext>({
         context: GraphQLContext,
       ) => {
         const resp = await listUsers(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
+        return resp;
+      },
+      clients: async (
+        _: unknown,
+        {
+            page = 1,
+            size = 10,
+            sortField = 'id',
+            sortDir = 'asc',
+            search = [],
+            filters = [],
+        }: ListVariables,
+        context: GraphQLContext,
+      ) => {
+        const resp = await listClients(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
         return resp;
       },
     },

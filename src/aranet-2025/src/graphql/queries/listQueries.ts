@@ -1,4 +1,40 @@
 export const LIST_QUERIES = {
+  client: `
+    query ListClients(
+      $page: Int,
+      $size: Int,
+      $sortField: String,
+      $sortDir: String,
+      $search: [SearchInput!],
+      $filters: [String!]
+    ) {
+      clients(
+        page: $page,
+        size: $size,
+        sortField: $sortField,
+        sortDir: $sortDir,
+        search: $search,
+        filters: $filters
+      ) {
+        statusCode
+        data {
+          items {
+            id
+            client_company_name
+            client_unique_name
+            created_at
+            updated_at
+          }
+          metadata {
+            total
+            page
+            quantity
+            last
+          }
+        }
+      }
+    }
+  `,
   user: `
     query ListUsers(
       $page: Int,
