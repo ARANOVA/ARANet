@@ -37,19 +37,9 @@ When("el usuario introduce credenciales inválidas", async function () {
   await page.fill('input[name="password"]', "1111");
 });
 
-When('el usuario introduce sus credenciales válidas', async function () {
-  await page.fill('input[name="username"]', "pablo");
-  await page.fill('input[name="password"]', "1234");
-});
-
-When("el usuario introduce su email y contraseña", async function () {
-  await page.fill('input[name="username"]', "gracia");
-  await page.fill('input[name="password"]', "1234");
-});
-
-When('el usuario {string} introduce credenciales válidas de un administrador', async function (nombre) {
+When('el usuario {string} introduce la contraseña {string}', async function (nombre, pass) {
   await page.fill('input[name="username"]', nombre);
-  await page.fill('input[name="password"]', "1234");
+  await page.fill('input[name="password"]', pass);
 });
 
 When('presiona el botón {string}', async function (buttonText: string) {
@@ -85,4 +75,13 @@ Then('debería ver {string} en la parte superior derecha', async function (nombr
   const xpathSeccion = `/html/body/div[2]/header/div[2]/nav/div[4]/span[2]/button/span[3]`;
   const nombreWeb = await page.locator(`xpath=${xpathSeccion}`).innerText();
   expect(nombreWeb.trim()).toBe(nombre);
+});
+
+Then('no debería ver el acceso a la sección de {string}', async function (seccion) {
+  if (seccion === 'Administración') {
+    const xpathSeccion = `/html/body/div[2]/header/div[2]/nav/div[2]/div[6]/span/button/span[2]`;
+    const seccionVisible = await page.locator(`xpath=${xpathSeccion}`).isVisible();
+    // Realizamos la aserción
+    expect(seccionVisible).toBe(false);
+  }
 });

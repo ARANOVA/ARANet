@@ -62,6 +62,11 @@ export async function GET(): Promise<NextResponse<SingleResponse<User>>> {
       return found?.name;
     }).filter(p => typeof p === 'string');
     const groups = await prisma.sf_guard_group.findMany({
+      where: {
+        id: {
+          in: result.sf_guard_user_group.map(g => g.group_id)
+        }
+      },
       include: {
         sf_guard_group_permission: true,
       }

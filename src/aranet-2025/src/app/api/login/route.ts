@@ -19,14 +19,13 @@ export async function POST(
     const body = await request.json();
     const { username, email, password, remember } = body;
 
-    if (!username || !password || !email || !isValidUsername(username)) {
+    if (!(username || email) || !password || !isValidUsername(username)) {
       return NextResponse.json({
         statusCode: 400,
         error: "Bad Request",
       }, { status: 400 });
     }
 
-    // console.log(await prisma.sf_guard_user.findMany());
     const result = await prisma.sf_guard_user.findUnique({
       where: {
         username,
@@ -76,6 +75,11 @@ export async function POST(
       return found?.name;
     }).filter(p => typeof p === 'string');
     const groups = await prisma.sf_guard_group.findMany({
+      where: {
+        id: {
+          in: result.sf_guard_user_group.map(g => g.group_id)
+        }
+      },
       include: {
         sf_guard_group_permission: true,
       }

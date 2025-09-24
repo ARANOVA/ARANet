@@ -2,7 +2,7 @@ Feature: Login
 
   Scenario: Usuario admin inicia sesión correctamente
     Given el usuario abre la página de login
-    When el usuario "pablo" introduce credenciales válidas de un administrador
+    When el usuario "pablo" introduce la contraseña "1234"
     And presiona el botón "Acceder"
     Then debería ver el dashboard
     And debería ver "pablo" en la parte superior derecha
@@ -10,12 +10,15 @@ Feature: Login
   
   Scenario: Usuario intenta iniciar sesión 
     Given el usuario abre la página de login
+    When el usuario "gracia" introduce la contraseña "noesesta"
     When el usuario introduce credenciales inválidas
     And presiona el botón "Acceder"
     Then debería ver un mensaje de error
 
-  Scenario: Usuario inicia sesión correctamente pero no tiene permisos para el dashboard
+  Scenario: Usuario inicia sesión correctamente pero no tiene permisos para la administración
     Given el usuario abre la página de login
-    When el usuario introduce sus credenciales válidas
+    When el usuario "gracia" introduce la contraseña "1234"
     And presiona el botón "Acceder"
     Then debería ver el dashboard
+    And debería ver "gracia" en la parte superior derecha
+    And no debería ver el acceso a la sección de "Administración"

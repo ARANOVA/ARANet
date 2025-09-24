@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Field,
@@ -19,6 +19,7 @@ import { loginAuth } from '@/app/lib/auth';
 import { EyeSlashIcon } from '@heroicons/react/24/outline';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { logDebug, logError } from '@/app/lib/logger';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Props {
   referer?: string;
@@ -34,6 +35,11 @@ export const Login = ({ referer, logo_light, logo_dark }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.clear();
+  }, [queryClient]);
+  
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setError('');

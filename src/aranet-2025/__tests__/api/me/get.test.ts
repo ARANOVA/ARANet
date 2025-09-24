@@ -7,17 +7,17 @@ const baseURL = 'http://localhost:3000';
 describe('POST /api/me', () => {
   let cookie: string;
 
-  beforeAll(async () => {
+  const login = async (username: string, password: string): Promise<void> => {
     const loginResponse = await request(baseURL)
       .post('/api/login')
-      .send({ username: 'pablo', password: '1234' });
+      .send({ username, password });
 
     expect(loginResponse.status).toBe(200);
 
     // Captura cookie de la cabecera Set-Cookie
     const rawCookie = loginResponse.headers['set-cookie'];
     cookie = rawCookie?.[0].split(';')[0]; // ejemplo: "session=abcd1234"
-  });
+  };
 
   it('Devuelve el unauthorized for request without login', async () => {
     const res = await request(baseURL)
@@ -28,6 +28,7 @@ describe('POST /api/me', () => {
   });
 
   it('Devuelve el usuario logueado', async () => {
+    await login('pablo', '1234');
     const res = await request(baseURL)
       .get('/api/me')
       .set('Cookie', cookie)
@@ -42,6 +43,38 @@ describe('POST /api/me', () => {
         roles: ['admin', 'member'],
         is_active: 1,
         is_super_admin: expect.any(Number),
+        created_at: expect.any(String),
+        last_login: expect.any(String),
+      })
+    });
+    const { deleted_by, deleted_at, last_login } = res.body.data;
+    expect(
+      deleted_by === null || typeof deleted_by === "number"
+    ).toBe(true);
+    expect(
+      deleted_at === null || typeof deleted_at === "string"
+    ).toBe(true);
+    expect(
+      last_login === null || typeof last_login === "string"
+    ).toBe(true);
+  });
+
+  it('Devuelve el usuario logueado con role member sólo', async () => {
+    await login('gracia', '1234');
+    const res = await request(baseURL)
+      .get('/api/me')
+      .set('Cookie', cookie)
+      ;
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      statusCode: 200,
+      data: expect.objectContaining({
+        id: expect.any(Number),
+        username: 'gracia',
+        roles: ['member'],
+        is_active: 1,
+        is_super_admin: 0,
         created_at: expect.any(String),
         last_login: expect.any(String),
       })

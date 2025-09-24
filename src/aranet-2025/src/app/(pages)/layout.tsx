@@ -28,7 +28,7 @@ export default async function RootLayout({
   const dataPlain = ServerDataPlain.getInstance();
   const queryClient = dataPlain.getQueryClient();
   const dehydratedState = dehydrate(queryClient);
-  const me = await dataPlain.useMe(session.userId as number);
+  const me = await dataPlain.useMe(session.id);
   if (!me.data?.id) {
     return <NotAuthorized />;
   }

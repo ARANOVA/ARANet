@@ -16,11 +16,15 @@ export default async function HomePage() {
   }
 
   const helloTxt = me.data?.username ? `Hola ${me.data.username},` : 'Hola,';
-  const options = [
-    { label: '2023', value: 2023, selected: false },
-    { label: '2024', value: 2024, selected: false },
-    { label: '2025', value: 2025, selected: true }
-  ]
+  const currentYear = new Date().getFullYear();
+  const options = Array.from({ length: 3 }, (_, i) => {
+    const year = currentYear - (2 - i); // genera [currentYear-2, currentYear-1, currentYear]
+    return {
+      label: String(year),
+      value: year,
+      selected: year === currentYear,
+    };
+  });
 
   return (
     <>
