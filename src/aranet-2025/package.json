@@ -9,8 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "test:generate:bdd": "npx cucumber-js",
-    "test:run:bdd": "npx cucumber-js --require-module ts-node/register --require __tests__/features/**/*.ts"
+    "test:bdd": "npx cucumber-js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.8",
