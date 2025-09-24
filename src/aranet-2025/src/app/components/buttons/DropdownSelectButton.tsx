@@ -10,16 +10,16 @@ interface Props {
 }
 
 export const DropdownSelectButton = ({ options }: Props) => {
+  const disabled = options.length === 0;
+
   const [mounted, setMounted] = useState(false);
+  const [selected, setSelected] = useState<DropdownOptions | undefined>(options.find(option => option.selected));
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) return null; // evitar renderizar en SSR
-
-  const disabled = options.length === 0;
-  const selected = options.find(option => option.selected);
 
   return (
     <div className="grow sm:flex-none z-0 text-right">
@@ -34,7 +34,7 @@ export const DropdownSelectButton = ({ options }: Props) => {
         </DropdownButton>
         <DropdownMenu anchor="bottom end">
           {(options || []).map(op => (
-            <DropdownItem key={op.value} onClick={() => console.log(op.value)} className='cursor-pointer text-right'>
+            <DropdownItem key={op.value} onClick={() => setSelected(op)} className='cursor-pointer text-right'>
               {op.icon}
               <DropdownLabel>{op.label}</DropdownLabel>
               {op.shortcut && (<DropdownShortcut keys={op.shortcut} />)}
