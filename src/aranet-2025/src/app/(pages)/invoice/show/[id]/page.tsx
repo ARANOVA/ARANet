@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import { notFound, unauthorized } from "next/navigation";
 import { isValidId } from "@/utils";
 import { datePipe } from "@/app/lib/helpers";
+import { aranet_invoice_verifactu } from "@/interfaces";
 
 export const dynamic = 'force-dynamic';
 
@@ -57,6 +58,8 @@ export default async function ClientShowPage({ params }: Props) {
   if (invoice?.data.deleted_at) {
     aux = ` (borrado ${datePipe(invoice?.data.deleted_at)})`;
   }
+
+  const data: aranet_invoice_verifactu = {...invoice.data, huellaPrev: null};
   
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
@@ -73,7 +76,7 @@ export default async function ClientShowPage({ params }: Props) {
           title={`${prefix}${title}${aux}`}
           subtitle="Vista de detalle del documento"
           model="invoice"
-          data={invoice.data}
+          data={data}
           edit_button_href={`/invoice/edit/${id}`}
           edit_button_text="Editar"
           print_button_text={invoice.data.deleted_at ? undefined : 'Imprimir'}

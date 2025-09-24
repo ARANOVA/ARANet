@@ -1,7 +1,8 @@
 'use client';
 
+import { aranet_invoice_verifactu } from '@/interfaces';
 import { useFormUiStore, useSearchStore } from '@/store';
-import { verifactuFlow } from '@/utils/server/verifactu.utils';
+import { verifactuFlow, verifactuConsulta } from '@/utils/server/verifactu.utils';
 import { PageHeader } from '@aranova/aranova-react-ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
@@ -56,8 +57,9 @@ export const PageStoreHeader = ({
   if (print_button_text) {
     const printClick = () => {
       // Test verifactu
-      console.log('print_button_click');
-      verifactuFlow(data as any).then(console.log).catch(console.log);
+      console.log('print_button_click, 2025, 9');
+      //verifactuConsulta(2025, 9).then(console.log).catch(console.log);
+      verifactuFlow(data as aranet_invoice_verifactu).then(console.log).catch(console.log);
     };
     add_props.print_button_click = printClick; //() => window.print();
   }

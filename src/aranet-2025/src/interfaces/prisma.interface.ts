@@ -22,3 +22,7 @@ export interface aranet_invoice_join_all extends aranet_invoice_join_client_and_
    aranet_kind_of_invoice: aranet_kind_of_invoice | null;
    aranet_invoice_item?: aranet_invoice_item[] | null;
 }
+
+export interface aranet_invoice_verifactu extends aranet_invoice_join_all {
+   huellaPrev: string | null;
+}
