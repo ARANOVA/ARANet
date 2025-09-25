@@ -2,6 +2,7 @@
 
 import { dateColumn } from '@/app/lib/helpers';
 import { aranet_client_join_contacts, User } from '@/interfaces';
+import { joinWithSeparators } from '@/utils';
 import { ColumnDef, ColumnMeta, createColumnHelper } from '@tanstack/react-table';
 import clsx from 'clsx';
 import Link from "next/link";
@@ -95,7 +96,7 @@ export const clientColumns: ColumnDef<any, any>[] = [
       if (!main_contact) {
         return '';
       }
-      const fullname = `${main_contact.aranet_contact.contact_first_name} ${main_contact.aranet_contact.contact_last_name}`;
+      const fullname = joinWithSeparators([main_contact.aranet_contact.contact_first_name, main_contact.aranet_contact.contact_last_name], [' ']);
       return (
         <div className="flex gap-x-2">
           <Link

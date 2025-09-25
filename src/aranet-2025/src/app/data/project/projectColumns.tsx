@@ -1,13 +1,14 @@
 'use client'
 
 import { dateColumn } from '@/app/lib/helpers';
-import { aranet_vendor_join_contacts, User } from '@/interfaces';
+import { aranet_project_join_client_status_and_category, User } from '@/interfaces';
 import { joinWithSeparators } from '@/utils';
+import { GlobeAltIcon } from '@heroicons/react/16/solid';
 import { ColumnDef, ColumnMeta, createColumnHelper } from '@tanstack/react-table';
 import clsx from 'clsx';
 import Link from "next/link";
 
-const columnHelper = createColumnHelper<aranet_vendor_join_contacts>()
+const columnHelper = createColumnHelper<aranet_project_join_client_status_and_category>()
 
 interface AranovaColumnMeta {
   className?: string;
@@ -45,6 +46,10 @@ const maxWidth170: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
   className: "min-w-[170px] max-w-[170px] w-[170px] overflow-hidden whitespace-nowrap text-ellipsis",
 };
 
+const maxWidth240: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
+  className: "min-w-[170px] max-w-[240px] w-[240px] overflow-hidden whitespace-nowrap text-ellipsis",
+};
+
 const mix = (...args: (ColumnMeta<AranovaColumnMeta, unknown> | undefined)[]): ColumnMeta<AranovaColumnMeta, unknown> | undefined => {
   // TODO: Sólo mezla el className
   return {
@@ -58,7 +63,7 @@ const mix = (...args: (ColumnMeta<AranovaColumnMeta, unknown> | undefined)[]): C
 const locale = 'es-ES'; //navigator?.language ?? 'es-ES';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const vendorColumns: ColumnDef<any, any>[] = [
+export const projectColumns: ColumnDef<any, any>[] = [
   // columnHelper.accessor("id", {
   //   header: "Id",
   //   size: 60,
@@ -66,20 +71,20 @@ export const vendorColumns: ColumnDef<any, any>[] = [
   //   meta: mix(metaLeft, maxWidth60),
   // }),
   columnHelper.accessor(
-    row => `${row.vendor_company_name}`, // accessor function
+    row => joinWithSeparators([row.project_prefix, row.project_number, row.project_name], ['', ' - ']),
     {
-      id: "vendor_company_name",
-      header: "Empresa",
-      size: 170,
-      meta: mix(metaLeft, maxWidth170),
+      id: "project_fullname",
+      header: "Titulo de proyecto",
+      size: 240,
+      meta: mix(metaLeft, maxWidth240),
       cell: info => {
         const value = info.getValue();
         const row = info.row.original;
         return (
           <Link
-            title={row.vendor_company_name}
+            title={value}
             className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
-            href={`/admin/vendor/show/${row.id}`}
+            href={`/project/show/${row.id}`}
           >
             { value }
           </Link>
@@ -88,55 +93,45 @@ export const vendorColumns: ColumnDef<any, any>[] = [
     }
   ),
   columnHelper.accessor(
-    row => {
-      if (!row.objectcontacts) {
-        return '';
-      }
-      const main_contact = row.objectcontacts.find(contact => contact.objectcontact_is_default);
-      if (!main_contact) {
-        return '';
-      }
-      const fullname = joinWithSeparators([main_contact.aranet_contact.contact_first_name, main_contact.aranet_contact.contact_last_name], [' ']);
-      return (
-        <div className="flex gap-x-2">
-          <Link
-            title={fullname}
-            className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
-            href={`/contact/show/${main_contact.objectcontact_contact_id}`}
-          >
-            { fullname }
-          </Link>
-          {main_contact.aranet_contact.contact_email && (
-            <span className='flex gap-x-0.5'>
-            {'['}
-            <Link
-              title={main_contact.aranet_contact.contact_email}
-              className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
-              href={`mailto:${main_contact.aranet_contact.contact_email}`}
-            >
-            email
-          </Link>
-          {']'}
-          </span>
-          )}
-        </div>
-      );
-    },
+    row => `${row.client?.client_unique_name}`,
     {
-      id: "main_contact",
-      header: "Contacto principal",
+      id: "client_unique_name",
+      header: "Cliente",
       size: 170,
       meta: mix(metaLeft, maxWidth170),
-      cell: info => info.getValue(),
+      cell: info => {
+        const value = info.getValue();
+        const row = info.row.original;
+        return value ? (
+          <div className="flex gap-x-2">
+            {row.client?.client_website && (
+              <Link
+                title="Ir a la web"
+                className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+                href={row.client?.client_website}
+              >
+                <GlobeAltIcon width={25} height={25} />
+              </Link>
+            )}
+            <Link
+              title={value}
+              className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+              href={`/client/show/${row.project_client_id}`}
+            >
+              { value }
+            </Link>
+          </div>
+        ) : null;
+      }
     }
   ),
 
-  // numberColumn<aranet_vendor_join_contacts>('aranet_projects_total', 'Proyectos', { minFractionDigits: 2, maxFractionDigits: 2, locale }, '', {
+  // numberColumn<aranet_project_join_contacts>('aranet_projects_total', 'Proyectos', { minFractionDigits: 2, maxFractionDigits: 2, locale }, '', {
   //   size: 130,
   //   meta: mix(metaCenter, maxWidth130),
   // }),
 
-  // numberColumn<aranet_vendor_join_contacts>('aranet_incomes_total', 'Ingresos', { minFractionDigits: 2, maxFractionDigits: 2, locale }, '€', {
+  // numberColumn<aranet_project_join_contacts>('aranet_incomes_total', 'Ingresos', { minFractionDigits: 2, maxFractionDigits: 2, locale }, '€', {
   //   size: 130,
   //   meta: mix(metaCenter, maxWidth130),
   // }),

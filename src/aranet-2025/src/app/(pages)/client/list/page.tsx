@@ -37,6 +37,8 @@ export default async function ClientListPage({ searchParams }: Props) {
   const { page, limit, sortField, sortDir } = await searchParams;
   const currentPage =
     page === undefined || isNaN(+page) || +page < 1 ? 1 : +page;
+  const currentLimit =
+    limit === undefined || isNaN(+limit) || +limit < 10 ? 10 : (+limit > 200 ? 200 : +limit);
 
   const typedSortDir: 'asc' | 'desc' = ({ desc: 'desc', asc: 'asc' }[
     (sortDir || 'asc').toLowerCase()
@@ -61,7 +63,7 @@ export default async function ClientListPage({ searchParams }: Props) {
         />
         <ToastStoreAlert />
         <EditableStoreTable<any>
-          limit={limit}
+          limit={currentLimit}
           page={currentPage - 1}
           pageDataSelection={<PaginationStore />}
           editTitle="Editar cliente"

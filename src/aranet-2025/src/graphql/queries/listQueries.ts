@@ -1,4 +1,108 @@
 export const LIST_QUERIES = {
+  budget: `
+    query ListBudgets(
+      $page: Int,
+      $size: Int,
+      $sortField: String,
+      $sortDir: String,
+      $search: [SearchInput!],
+      $filters: [String!]
+    ) {
+      budgets(
+        page: $page,
+        size: $size,
+        sortField: $sortField,
+        sortDir: $sortDir,
+        search: $search,
+        filters: $filters
+      ) {
+        statusCode
+        data {
+          items {
+            id
+            budget_prefix
+            budget_number
+            budget_revision
+            budget_title
+            budget_date
+            budget_status_id
+            budget_total_cost
+            budget_total_amount
+            created_at
+            updated_at
+            client {
+              client_company_name
+              client_unique_name
+            }
+            project {
+              project_prefix
+              project_number
+              project_name
+            }
+            status {
+              budget_status_title
+            }
+          }
+          metadata {
+            total
+            page
+            quantity
+            last
+          }
+        }
+      }
+    }
+  `,
+  project: `
+    query ListProjects(
+      $page: Int,
+      $size: Int,
+      $sortField: String,
+      $sortDir: String,
+      $search: [SearchInput!],
+      $filters: [String!]
+    ) {
+      projects(
+        page: $page,
+        size: $size,
+        sortField: $sortField,
+        sortDir: $sortDir,
+        search: $search,
+        filters: $filters
+      ) {
+        statusCode
+        data {
+          items {
+            id
+            project_prefix
+            project_number
+            project_name
+            project_url
+            project_comments
+            project_start_date
+            created_at
+            updated_at
+            client {
+              id
+              client_company_name
+              client_unique_name
+              client_website
+            }
+            status {
+              id
+              project_status_title
+            }
+          }
+          metadata {
+            total
+            page
+            quantity
+            last
+          }
+        }
+      }
+    }
+  `,
   contact: `
     query ListContacts(
       $page: Int,
@@ -144,58 +248,6 @@ export const LIST_QUERIES = {
       }
     }
   `,
-  vendor: `
-    query ListVendors(
-      $page: Int,
-      $size: Int,
-      $sortField: String,
-      $sortDir: String,
-      $search: [SearchInput!],
-      $filters: [String!]
-    ) {
-      vendors(
-        page: $page,
-        size: $size,
-        sortField: $sortField,
-        sortDir: $sortDir,
-        search: $search,
-        filters: $filters
-      ) {
-        statusCode
-        data {
-          items {
-            id
-            vendor_company_name
-            vendor_unique_name
-            vendor_cif
-            vendor_since
-            created_at
-            updated_at
-            
-            objectcontacts {
-              objectcontact_contact_id
-              objectcontact_object_id
-              objectcontact_object_class
-              objectcontact_rol
-              objectcontact_is_default
-              aranet_contact {
-                contact_first_name
-                contact_last_name
-                contact_email
-              }
-            }
-
-          }
-          metadata {
-            total
-            page
-            quantity
-            last
-          }
-        }
-      }
-    }
-  `,
   user: `
     query ListUsers(
       $page: Int,
@@ -265,9 +317,21 @@ export const LIST_QUERIES = {
             invoice_date
             invoice_title
             invoice_client_id
+            invoice_payment_status_id
+            invoice_payment_date
+            invoice_total_amount
+            invoice_tax_rate
+            invoice_periodic
+            invoice_periodic_current
+            invoice_service_from
+            invoice_service_to
+            payment_status {
+              payment_status_title
+            }
             client {
-              id
               client_company_name
+              client_unique_name
+              client_website
             }
           }
           metadata {

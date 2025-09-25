@@ -1,8 +1,9 @@
 import { MenuItem, NotAuthorized, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
-import { PageStoreHeader } from "@/app/components";
+import { EditableStoreTable, PageStoreHeader, PaginationStore, ToastStoreAlert } from "@/app/components";
 import { Metadata } from "next";
+import { projectColumns, projectFilters } from "@/app/data/project";
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +11,18 @@ export const metadata: Metadata = {
   title: 'Proyectos',
 };
 
-export default async function ProjectListPage() {
+interface Props {
+  searchParams: Promise<{
+    page?: string;
+    limit?: number;
+    sortField?: string;
+    sortDir?: string;
+    filter?: string;
+    'search[]'?: string[] | string;
+  }>;
+}
+
+export default async function ProjectListPage({ searchParams }: Props) {
   const session = await getSession();
   if (!session) {
     return <NotAuthorized />;
@@ -22,6 +34,16 @@ export default async function ProjectListPage() {
     return <NotAuthorized />;
   }
   
+  const { page, limit, sortField, sortDir } = await searchParams;
+  const currentPage =
+    page === undefined || isNaN(+page) || +page < 1 ? 1 : +page;
+  const currentLimit =
+    limit === undefined || isNaN(+limit) || +limit < 10 ? 10 : (+limit > 200 ? 200 : +limit);
+
+  const typedSortDir: 'asc' | 'desc' = ({ desc: 'desc', asc: 'asc' }[
+    (sortDir || 'desc').toLowerCase()
+  ] || 'desc') as 'asc' | 'desc';
+
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
     { name: 'Proyectos', href: '' },
@@ -38,6 +60,28 @@ export default async function ProjectListPage() {
           add_button_text="Añadir proyecto"
           search_placeholder="Buscar proyectos..."
         />
+        <ToastStoreAlert />
+        <EditableStoreTable<any>
+          limit={currentLimit}
+          page={currentPage - 1}
+          pageDataSelection={<PaginationStore />}
+          editTitle="Editar proyecto"
+          newTitle="Añadir proyecto"
+          viewTitle="Ver proyecto"
+          subtitle="Por favor, completa todos los campos obligatorios"
+          model="project"
+          editModel="page"
+          showModel="page"
+          columns={projectColumns}
+          filters={projectFilters}
+          idField="id"
+          sortField={sortField || 'created_at'}
+          sortDir={typedSortDir}
+        >
+          {/* <NewCalendarForm rrhh={rrhh.data} me={me.data} /> */}
+          {/* <ListFormCalendar rrhh={rrhh.data} me={me.data}/> */}
+          <span>Hola</span>
+        </EditableStoreTable>
       </div>
     </>
   )

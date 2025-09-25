@@ -1,7 +1,7 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
-import { listClients, getContacts, listInvoices, listUsers, listVendors, listContacts } from '@/app/lib/api-helpers';
-import { ListVariables } from '@aranova/aranova-react-ui';
+import { getContacts, getById } from '@/app/lib/api-helpers';
+import { clientsQuery, contactsQuery, invoicesQuery, projectsQuery, usersQuery, vendorsQuery, budgetsQuery } from './queries';
 
 export const schema = createSchema<GraphQLContext>({
   typeDefs: /* GraphQL */ `
@@ -47,10 +47,7 @@ export const schema = createSchema<GraphQLContext>({
       payment_condition: PaymentCondition
       payment_method: PaymentMethod
       payment_status: PaymentStatus
-      created_by_user: User
-      updated_by_user: User
-      deleted_by_user: User
-      items: [InvoiceItem!]!
+      invoice_items: [InvoiceItem!]!
     }
 
     type Client {
@@ -167,9 +164,6 @@ export const schema = createSchema<GraphQLContext>({
       client: Client
       category: ProjectCategory
       status: ProjectStatus
-      created_by_user: User
-      updated_by_user: User
-      deleted_by_user: User
       budgets: [Budget!]!
       expenses: [ExpenseItem!]!
       incomes: [IncomeItem!]!
@@ -294,12 +288,12 @@ export const schema = createSchema<GraphQLContext>({
     # Tipos relacionados básicos
     type ProjectCategory {
       id: Int!
-      name: String!
+      category_title: String!
     }
 
     type ProjectStatus {
       id: Int!
-      name: String!
+      project_status_title: String!
     }
 
     type ExpenseItem {
@@ -334,7 +328,83 @@ export const schema = createSchema<GraphQLContext>({
 
     type Budget {
       id: Int!
-      full_title: String!
+      budget_prefix: String
+      budget_number: String!
+      budget_revision: Int!
+      budget_date: String!
+      budget_valid_date: String!
+      budget_approved_date: String
+      budget_client_id: Int
+      budget_project_id: Int
+      budget_category_id: Int
+      budget_title: String
+      budget_comments: String
+      budget_print_comments: Int
+      budget_tax_rate: Float
+      budget_freight_charge: Float
+      budget_total_cost: Float
+      budget_total_amount: Float
+      budget_payment_condition_id: Int
+      budget_status_id: Int
+      budget_is_last: Int
+      created_at: String
+      created_by: Int
+      updated_at: String
+      updated_by: Int
+      deleted_at: String
+      deleted_by: Int
+
+      # Relaciones
+      status: BudgetStatus
+      category: InvoiceCategory
+      client: Client
+      payment_condition: PaymentCondition
+      project: Project
+
+      budget_items: [BudgetItem!]!
+      invoice: [Invoice!]!
+    }
+
+    type BudgetItem {
+      id: Int!
+      item_order: Int!
+      item_type_id: Int
+      item_is_optional: Int
+      item_description: String
+      item_quantity: Float
+      milestone_task_id: Int
+      item_task_id: Int
+      item_cost: Float
+      item_margin: Float
+      item_retail_price: Float
+      item_tax_rate: Float
+      item_budget_id: Int
+      item_budget_type_id: Int
+
+      # Relaciones
+      type_of_invoice_item: TypeOfInvoiceItem
+      budget: Budget
+      type_of_hour: TypeOfHour
+    }
+
+    type TypeOfInvoiceItem {
+      id: Int!
+      type_of_item_title: String!
+    }
+
+    type TypeOfHour {
+      id: Int!
+      type_of_hour_title: String
+      type_of_hour_description: String
+      type_of_hour_cost: Float
+
+      # Relaciones
+      budget_items: [BudgetItem!]!
+    }
+
+    type BudgetStatus {
+      id: Int!
+      budget_status_title: String!
     }
 
     type InvoiceCategory {
@@ -349,17 +419,19 @@ export const schema = createSchema<GraphQLContext>({
 
     type PaymentCondition {
       id: Int!
-      name: String!
+      payment_condition_days: Int
+      payment_condition_payment_day: Int
+      payment_condition_title: String!
     }
 
     type PaymentMethod {
       id: Int!
-      name: String!
+      payment_method_title: String!
     }
 
     type PaymentStatus {
       id: Int!
-      status: String!
+      payment_status_title: String!
     }
 
     type InvoiceItem {
@@ -447,6 +519,17 @@ export const schema = createSchema<GraphQLContext>({
       error: String
       data: ProjectData!
     }
+
+    type BudgetData {
+      items: [Budget!]!
+      metadata: Metadata!
+    }
+
+    type BudgetListResponse {
+      statusCode: Int!
+      error: String
+      data: BudgetData!
+    }
       
     type Query {
       invoices(
@@ -493,6 +576,24 @@ export const schema = createSchema<GraphQLContext>({
         search: [SearchInput!],
         filters: [String!]
       ): ContactListResponse!
+
+      projects(
+        page: Int = 1,
+        size: Int = 10,
+        sortField: String = "created_at",
+        sortDir: String = "dsc",
+        search: [SearchInput!],
+        filters: [String!]
+      ): ProjectListResponse!
+
+      budgets(
+        page: Int = 1,
+        size: Int = 10,
+        sortField: String = "created_at",
+        sortDir: String = "desc",
+        search: [SearchInput!],
+        filters: [String!]
+      ): BudgetListResponse!
     }
 
     type Mutation {
@@ -501,80 +602,34 @@ export const schema = createSchema<GraphQLContext>({
   `,
   resolvers: {
     Query: {
-      invoices: async (
-        _: unknown,
-        {
-          page = 1,
-          size = 10,
-          sortField = 'invoice_date',
-          sortDir = 'asc',
-          search = [],
-          filters = [],
-        }: ListVariables,
-        context: GraphQLContext,
-      ) => {
-        const resp = await listInvoices(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
-        return resp;
+      invoices: invoicesQuery,
+      users: usersQuery,
+      clients: clientsQuery,
+      vendors: vendorsQuery,
+      contacts: contactsQuery,
+      projects: projectsQuery,
+      budgets: budgetsQuery,
+    },
+    Budget: {
+      status: async (parent, _args, context) => {
+        return getById(context.prisma, 'budget_status', parent.budget_status_id)
       },
-      users: async (
-        _: unknown,
-        {
-          page = 1,
-          size = 10,
-          sortField = 'id',
-          sortDir = 'asc',
-          search = [],
-          filters = [],
-        }: ListVariables,
-        context: GraphQLContext,
-      ) => {
-        const resp = await listUsers(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
-        return resp;
+      category: async (parent, _args, context) => {
+        return getById(context.prisma, 'invoice_category', parent.budget_category_id)
       },
-      clients: async (
-        _: unknown,
-        {
-          page = 1,
-          size = 10,
-          sortField = 'id',
-          sortDir = 'asc',
-          search = [],
-          filters = [],
-        }: ListVariables,
-        context: GraphQLContext,
-      ) => {
-        const resp = await listClients(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
-        return resp;
+      client: async (parent, _args, context) => {
+        return getById(context.prisma, 'client', parent.budget_client_id)
       },
-      vendors: async (
-        _: unknown,
-        {
-          page = 1,
-          size = 10,
-          sortField = 'id',
-          sortDir = 'asc',
-          search = [],
-          filters = [],
-        }: ListVariables,
-        context: GraphQLContext,
-      ) => {
-        const resp = await listVendors(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
-        return resp;
+      payment_condition: async (parent, _args, context) => {
+        return getById(context.prisma, 'payment_condition', parent.budget_payment_condition_id)
       },
-      contacts: async (
-        _: unknown,
-        {
-          page = 1,
-          size = 10,
-          sortField = 'id',
-          sortDir = 'asc',
-          search = [],
-          filters = [],
-        }: ListVariables,
-        context: GraphQLContext,
-      ) => {
-        const resp = await listContacts(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
-        return resp;
+      project: async (parent, _args, context) => {
+        return getById(context.prisma, 'project', parent.budget_project_id)
+      },
+      budget_items: async (parent, _args, context) => {
+        return context.prisma.aranet_budget_item.findMany({
+          where: { item_budget_id: parent.id },
+        });
       },
     },
     User: {
@@ -584,19 +639,25 @@ export const schema = createSchema<GraphQLContext>({
         })
       },
     },
+    Project: {
+      client: async (parent, _args, context) => {
+        return getById(context.prisma, 'client', parent.project_client_id)
+      },
+      status: async (parent, _args, context) => {
+        return getById(context.prisma, 'project_status', parent.project_status_id)
+      },
+    },
     Invoice: {
       client: async (parent, _args, context) => {
-        return context.prisma.aranet_client.findUnique({
-          where: { id: parent.invoice_client_id ?? 0 },
-        })
+        return getById(context.prisma, 'client', parent.invoice_client_id)
+      },
+      payment_status: async (parent, _args, context) => {
+        return getById(context.prisma, 'payment_status', parent.invoice_payment_status_id)
       },
     },
     Vendor: {
       kind_of_company: async (parent, _args, context) => {
-        return context.prisma.aranet_kind_of_company.findFirst({
-          where: { id: parent.client_kind_of_company_id },
-        })
-        // return context.prisma.aranet_kind_of_company.findMany();
+        return getById(context.prisma, 'kind_of_company', parent.vendor_kind_of_company_id);
       },
       objectcontacts: async (parent, _args, context) => {
         return getContacts(context.prisma, 'Vendor', parent.id)
@@ -609,10 +670,7 @@ export const schema = createSchema<GraphQLContext>({
         });
       },
       kind_of_company: async (parent, _args, context) => {
-        return context.prisma.aranet_kind_of_company.findFirst({
-          where: { id: parent.client_kind_of_company_id },
-        })
-        // return context.prisma.aranet_kind_of_company.findMany();
+        return getById(context.prisma, 'kind_of_company', parent.client_kind_of_company_id);
       },
       objectcontacts: async (parent, _args, context) => {
         return getContacts(context.prisma, 'Client', parent.id)

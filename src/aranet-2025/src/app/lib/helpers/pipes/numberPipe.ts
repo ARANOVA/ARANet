@@ -25,6 +25,7 @@ export function numberColumn<T>(
   suffix: string = '',
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra: Record<string, any>,
+  zeroIsValue = true,
 ): ColumnDef<T, number | null | undefined> {
   const columnHelper = createColumnHelper<T>();
 
@@ -34,7 +35,7 @@ export function numberColumn<T>(
     ...extra,
     cell: ({ getValue }) => {
       const value = getValue();
-      if (value == null || isNaN(value)) return '';
+      if (value == null || isNaN(value) || (zeroIsValue && value === 0)) return '';
 
       return new Intl.NumberFormat(locale, {
         minimumIntegerDigits: minIntegerDigits,
