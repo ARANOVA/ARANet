@@ -1,6 +1,6 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
-import { listClients, listInvoices, listUsers } from '@/app/lib/api-helpers';
+import { listClients, listContacts, listInvoices, listUsers, listVendors } from '@/app/lib/api-helpers';
 import { ListVariables } from '@aranova/aranova-react-ui';
 
 export const schema = createSchema<GraphQLContext>({
@@ -79,6 +79,34 @@ export const schema = createSchema<GraphQLContext>({
       invoices: [Invoice!]!
       projects: [Project!]!
 
+      objectcontacts: [ObjectContact]
+    }
+
+    type Vendor {
+      id: Int!
+      vendor_unique_name: String!
+      vendor_company_name: String!
+      vendor_cif: String
+      vendor_kind_of_company_id: Int
+      vendor_since: String
+      vendor_website: String
+      vendor_comments: String
+      vendor_has_tags: Int
+      created_at: String
+      created_by: Int
+      updated_at: String
+      updated_by: Int
+      deleted_at: String
+      deleted_by: Int
+      vendor_company_type: Int
+
+      # Relaciones
+      # TODO expense_items: [ExpenseItem!]!
+      # TODO income_items: [IncomeItem!]!
+      kind_of_company: KindOfCompany
+      created_by_user: User
+      updated_by_user: User
+      deleted_by_user: User
       objectcontacts: [ObjectContact]
     }
 
@@ -375,6 +403,17 @@ export const schema = createSchema<GraphQLContext>({
       data: ClientData!
     }
 
+    type VendorData {
+      items: [Vendor!]!
+      metadata: Metadata!
+    }
+
+    type VendorListResponse {
+      statusCode: Int!
+      error: String
+      data: VendorData!
+    }
+
     type ProjectData {
       items: [Project!]!
       metadata: Metadata!
@@ -413,6 +452,15 @@ export const schema = createSchema<GraphQLContext>({
         search: [SearchInput!],
         filters: [String!]
       ): ClientListResponse!
+
+      vendors(
+        page: Int = 1,
+        size: Int = 10,
+        sortField: String = "id",
+        sortDir: String = "asc",
+        search: [SearchInput!],
+        filters: [String!]
+      ): VendorListResponse!
     }
 
     type Mutation {
@@ -424,12 +472,12 @@ export const schema = createSchema<GraphQLContext>({
       invoices: async (
         _: unknown,
         {
-            page = 1,
-            size = 10,
-            sortField = 'invoice_date',
-            sortDir = 'asc',
-            search = [],
-            filters = [],
+          page = 1,
+          size = 10,
+          sortField = 'invoice_date',
+          sortDir = 'asc',
+          search = [],
+          filters = [],
         }: ListVariables,
         context: GraphQLContext,
       ) => {
@@ -439,12 +487,12 @@ export const schema = createSchema<GraphQLContext>({
       users: async (
         _: unknown,
         {
-            page = 1,
-            size = 10,
-            sortField = 'id',
-            sortDir = 'asc',
-            search = [],
-            filters = [],
+          page = 1,
+          size = 10,
+          sortField = 'id',
+          sortDir = 'asc',
+          search = [],
+          filters = [],
         }: ListVariables,
         context: GraphQLContext,
       ) => {
@@ -454,16 +502,31 @@ export const schema = createSchema<GraphQLContext>({
       clients: async (
         _: unknown,
         {
-            page = 1,
-            size = 10,
-            sortField = 'id',
-            sortDir = 'asc',
-            search = [],
-            filters = [],
+          page = 1,
+          size = 10,
+          sortField = 'id',
+          sortDir = 'asc',
+          search = [],
+          filters = [],
         }: ListVariables,
         context: GraphQLContext,
       ) => {
         const resp = await listClients(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
+        return resp;
+      },
+      vendors: async (
+        _: unknown,
+        {
+          page = 1,
+          size = 10,
+          sortField = 'id',
+          sortDir = 'asc',
+          search = [],
+          filters = [],
+        }: ListVariables,
+        context: GraphQLContext,
+      ) => {
+        const resp = await listVendors(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
         return resp;
       },
     },
@@ -481,6 +544,17 @@ export const schema = createSchema<GraphQLContext>({
         })
       },
     },
+    Vendor: {
+      kind_of_company: async (parent, _args, context) => {
+        return context.prisma.aranet_kind_of_company.findFirst({
+          where: { id: parent.client_kind_of_company_id },
+        })
+        // return context.prisma.aranet_kind_of_company.findMany();
+      },
+      objectcontacts: async (parent, _args, context) => {
+        return listContacts(context.prisma, 'Vendor', parent.id)
+      },
+    },
     Client: {
       invoices: async (parent, _args, context) => {
         return context.prisma.aranet_invoice.findMany({
@@ -493,16 +567,8 @@ export const schema = createSchema<GraphQLContext>({
         })
         // return context.prisma.aranet_kind_of_company.findMany();
       },
-      objectcontacts:  async (parent, _args, context) => {
-        return context.prisma.aranet_objectcontact.findMany({
-          where: {
-            objectcontact_object_class: 'Client',
-            objectcontact_object_id: parent.id,
-          },
-          include: {
-            aranet_contact: true,
-          }
-        });
+      objectcontacts: async (parent, _args, context) => {
+        return listContacts(context.prisma, 'Client', parent.id)
       },
     },
     Mutation: {

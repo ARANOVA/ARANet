@@ -1,8 +1,9 @@
 import { MenuItem, NotAuthorized, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
-import { PageStoreHeader } from "@/app/components";
+import { EditableStoreTable, PageStoreHeader, PaginationStore, ToastStoreAlert } from "@/app/components";
 import { Metadata } from "next";
+import { vendorColumns, vendorFilters } from "@/app/data/vendor";
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +11,18 @@ export const metadata: Metadata = {
   title: 'Proveedores - Empresas',
 };
 
-export default async function VendorListPage() {
+interface Props {
+  searchParams: Promise<{
+    page?: string;
+    limit?: number;
+    sortField?: string;
+    sortDir?: string;
+    filter?: string;
+    'search[]'?: string[] | string;
+  }>;
+}
+
+export default async function VendorListPage({ searchParams }: Props) {
   const session = await getSession();
   if (!session) {
     return <NotAuthorized />;
@@ -21,7 +33,15 @@ export default async function VendorListPage() {
   if (!me.data?.id) {
     return <NotAuthorized />;
   }
-  
+
+  const { page, limit, sortField, sortDir } = await searchParams;
+  const currentPage =
+    page === undefined || isNaN(+page) || +page < 1 ? 1 : +page;
+
+  const typedSortDir: 'asc' | 'desc' = ({ desc: 'desc', asc: 'asc' }[
+    (sortDir || 'asc').toLowerCase()
+  ] || 'desc') as 'asc' | 'desc';
+
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
     { name: 'Empresas', href: null },
@@ -39,6 +59,26 @@ export default async function VendorListPage() {
           add_button_text="Añadir proveedor"
           search_placeholder="Buscar proveedores..."
         />
+        <ToastStoreAlert />
+        <EditableStoreTable<any>
+          limit={limit}
+          page={currentPage - 1}
+          pageDataSelection={<PaginationStore />}
+          editTitle="Editar proveedor"
+          newTitle="Añadir proveedor"
+          viewTitle="Ver proveedor"
+          subtitle="Por favor, completa todos los campos obligatorios"
+          model="vendor"
+          editModel="page"
+          showModel="page"
+          columns={vendorColumns}
+          filters={vendorFilters}
+          idField="id"
+          sortField={sortField || 'vendor_company_name'}
+          sortDir={typedSortDir}
+        >
+          <span>Hola</span>
+        </EditableStoreTable>
       </div>
     </>
   )
