@@ -1,3 +1,4 @@
+export * from './getContacts';
 export * from './listClients';
 export * from './listContacts';
 export * from './listInvoices';

@@ -1,6 +1,6 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
-import { listClients, listContacts, listInvoices, listUsers, listVendors } from '@/app/lib/api-helpers';
+import { listClients, getContacts, listInvoices, listUsers, listVendors, listContacts } from '@/app/lib/api-helpers';
 import { ListVariables } from '@aranova/aranova-react-ui';
 
 export const schema = createSchema<GraphQLContext>({
@@ -121,9 +121,21 @@ export const schema = createSchema<GraphQLContext>({
 
     type Contact {
       id: Int!
+      contact_salutation: String
       contact_first_name: String
       contact_last_name: String
       contact_email: String
+      contact_phone: String
+      contact_fax: String
+      contact_mobile: String
+      contact_birthday: String
+      contact_org_unit: String
+      created_at: String
+      created_by: Int
+      updated_at: String
+      updated_by: Int
+      deleted_at: String
+      deleted_by: Int
     }
 
     type KindOfCompany {
@@ -414,6 +426,17 @@ export const schema = createSchema<GraphQLContext>({
       data: VendorData!
     }
 
+    type ContactData {
+      items: [Contact!]!
+      metadata: Metadata!
+    }
+
+    type ContactListResponse {
+      statusCode: Int!
+      error: String
+      data: ContactData!
+    }
+
     type ProjectData {
       items: [Project!]!
       metadata: Metadata!
@@ -461,6 +484,15 @@ export const schema = createSchema<GraphQLContext>({
         search: [SearchInput!],
         filters: [String!]
       ): VendorListResponse!
+
+      contacts(
+        page: Int = 1,
+        size: Int = 10,
+        sortField: String = "contact_first_name",
+        sortDir: String = "asc",
+        search: [SearchInput!],
+        filters: [String!]
+      ): ContactListResponse!
     }
 
     type Mutation {
@@ -529,6 +561,21 @@ export const schema = createSchema<GraphQLContext>({
         const resp = await listVendors(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
         return resp;
       },
+      contacts: async (
+        _: unknown,
+        {
+          page = 1,
+          size = 10,
+          sortField = 'id',
+          sortDir = 'asc',
+          search = [],
+          filters = [],
+        }: ListVariables,
+        context: GraphQLContext,
+      ) => {
+        const resp = await listContacts(context.prisma, page, size, sortField, sortDir || 'asc', search, filters);
+        return resp;
+      },
     },
     User: {
       profile: async (parent, _args, context) => {
@@ -552,7 +599,7 @@ export const schema = createSchema<GraphQLContext>({
         // return context.prisma.aranet_kind_of_company.findMany();
       },
       objectcontacts: async (parent, _args, context) => {
-        return listContacts(context.prisma, 'Vendor', parent.id)
+        return getContacts(context.prisma, 'Vendor', parent.id)
       },
     },
     Client: {
@@ -568,7 +615,7 @@ export const schema = createSchema<GraphQLContext>({
         // return context.prisma.aranet_kind_of_company.findMany();
       },
       objectcontacts: async (parent, _args, context) => {
-        return listContacts(context.prisma, 'Client', parent.id)
+        return getContacts(context.prisma, 'Client', parent.id)
       },
     },
     Mutation: {

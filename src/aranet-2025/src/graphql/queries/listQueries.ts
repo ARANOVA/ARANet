@@ -1,4 +1,97 @@
 export const LIST_QUERIES = {
+  contact: `
+    query ListContacts(
+      $page: Int,
+      $size: Int,
+      $sortField: String,
+      $sortDir: String,
+      $search: [SearchInput!],
+      $filters: [String!]
+    ) {
+      contacts(
+        page: $page,
+        size: $size,
+        sortField: $sortField,
+        sortDir: $sortDir,
+        search: $search,
+        filters: $filters
+      ) {
+        statusCode
+        data {
+          items {
+            id
+            contact_first_name
+            contact_last_name
+            contact_birthday
+            contact_phone
+            contact_mobile
+            contact_email
+            contact_fax
+            created_at
+            updated_at
+          }
+          metadata {
+            total
+            page
+            quantity
+            last
+          }
+        }
+      }
+    }
+  `,
+  vendor: `
+    query ListVendors(
+      $page: Int,
+      $size: Int,
+      $sortField: String,
+      $sortDir: String,
+      $search: [SearchInput!],
+      $filters: [String!]
+    ) {
+      vendors(
+        page: $page,
+        size: $size,
+        sortField: $sortField,
+        sortDir: $sortDir,
+        search: $search,
+        filters: $filters
+      ) {
+        statusCode
+        data {
+          items {
+            id
+            vendor_company_name
+            vendor_unique_name
+            vendor_cif
+            vendor_since
+            created_at
+            updated_at
+            
+            objectcontacts {
+              objectcontact_contact_id
+              objectcontact_object_id
+              objectcontact_object_class
+              objectcontact_rol
+              objectcontact_is_default
+              aranet_contact {
+                contact_first_name
+                contact_last_name
+                contact_email
+              }
+            }
+
+          }
+          metadata {
+            total
+            page
+            quantity
+            last
+          }
+        }
+      }
+    }
+  `,
   client: `
     query ListClients(
       $page: Int,
