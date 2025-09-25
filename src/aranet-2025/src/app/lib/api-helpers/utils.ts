@@ -1,6 +1,6 @@
 import { SearchDTO } from "@aranova/aranova-react-ui";
 
-export const parseFilter = (value: string) => {
+const parseFilter = (value: string) => {
   const match = value.match(/^([<>]=?|!=|=)?\s*(\d+(\.\d+)?)$/);
   if (!match) return { contains: value };
 

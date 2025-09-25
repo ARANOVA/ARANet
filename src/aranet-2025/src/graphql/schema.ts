@@ -78,11 +78,30 @@ export const schema = createSchema<GraphQLContext>({
       budgets: [Budget!]!
       invoices: [Invoice!]!
       projects: [Project!]!
+
+      objectcontacts: [ObjectContact]
+    }
+
+    type ObjectContact {
+      objectcontact_contact_id: Int!
+      objectcontact_object_id: Int!
+      objectcontact_object_class: String!
+      objectcontact_rol: String
+      objectcontact_is_default: Boolean
+      aranet_contact: Contact
+    }
+
+    type Contact {
+      id: Int!
+      contact_first_name: String
+      contact_last_name: String
+      contact_email: String
     }
 
     type KindOfCompany {
       id: Int!
-      name: String!
+      kind_of_company_title: String
+      kind_of_company_description: String
     }
 
     type Project {
@@ -466,7 +485,24 @@ export const schema = createSchema<GraphQLContext>({
       invoices: async (parent, _args, context) => {
         return context.prisma.aranet_invoice.findMany({
           where: { invoice_client_id: parent.id },
+        });
+      },
+      kind_of_company: async (parent, _args, context) => {
+        return context.prisma.aranet_kind_of_company.findFirst({
+          where: { id: parent.client_kind_of_company_id },
         })
+        // return context.prisma.aranet_kind_of_company.findMany();
+      },
+      objectcontacts:  async (parent, _args, context) => {
+        return context.prisma.aranet_objectcontact.findMany({
+          where: {
+            objectcontact_object_class: 'Client',
+            objectcontact_object_id: parent.id,
+          },
+          include: {
+            aranet_contact: true,
+          }
+        });
       },
     },
     Mutation: {

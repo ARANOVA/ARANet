@@ -2,7 +2,7 @@ import { ListResponse, SearchDTO } from "@aranova/aranova-react-ui";
 import { logDebug, logError } from "../logger";
 import { PrismaClient } from "@/generated/prisma";
 import { USER_VALID_FIELDS, USER_TEXT_FIELDS } from "@/app/data/user";
-import { parseFilter, searchWhere } from "./utils";
+import { searchWhere } from "./utils";
 import { sf_guard_user_join_profile } from "@/interfaces";
 
 const filterByValidFields = (filter: SearchDTO) => {

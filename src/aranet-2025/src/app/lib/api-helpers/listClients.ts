@@ -1,9 +1,8 @@
 import { ListResponse, SearchDTO } from "@aranova/aranova-react-ui";
 import { logDebug, logError } from "../logger";
-import { PrismaClient } from "@/generated/prisma";
+import { aranet_client, PrismaClient } from "@/generated/prisma";
 import { CLIENT_VALID_FIELDS, CLIENT_TEXT_FIELDS } from "@/app/data/client";
-import { parseFilter, searchWhere } from "./utils";
-import { aranet_client_join_contacts } from "@/interfaces";
+import { searchWhere } from "./utils";
 
 const filterByValidFields = (filter: SearchDTO) => {
   return CLIENT_VALID_FIELDS.includes(filter.field.toLowerCase()) || filter.field === 'all';
@@ -18,7 +17,7 @@ export const listClients = async (
   sortDir: 'asc' | 'desc',
   search: SearchDTO[],
   filters: string[],
-): Promise<ListResponse<aranet_client_join_contacts>> => {
+): Promise<ListResponse<aranet_client>> => {
   search = search.filter(filter => filterByValidFields(filter))
   logDebug(`GET /api/client - Búsquedas encontradas: ${JSON.stringify(search)}`);
   // const filtrosEncontrados = filters.filter((filter) => filterByValidFields(filter, '|||'));
@@ -60,8 +59,6 @@ export const listClients = async (
         error: "Bad Request",
       };
     }
-
-    // TODO: Join contacts
 
     return {
       statusCode: 200,

@@ -1,6 +1,6 @@
 'use client'
 
-import { dateColumn, numberColumn } from '@/app/lib/helpers';
+import { dateColumn } from '@/app/lib/helpers';
 import { aranet_client_join_contacts, User } from '@/interfaces';
 import { ColumnDef, ColumnMeta, createColumnHelper } from '@tanstack/react-table';
 import clsx from 'clsx';
@@ -58,12 +58,12 @@ const locale = 'es-ES'; //navigator?.language ?? 'es-ES';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const clientColumns: ColumnDef<any, any>[] = [
-  columnHelper.accessor("id", {
-    header: "Id",
-    size: 60,
-    enableHiding: false,
-    meta: mix(metaLeft, maxWidth60),
-  }),
+  // columnHelper.accessor("id", {
+  //   header: "Id",
+  //   size: 60,
+  //   enableHiding: false,
+  //   meta: mix(metaLeft, maxWidth60),
+  // }),
   columnHelper.accessor(
     row => `${row.client_company_name}`, // accessor function
     {
@@ -88,14 +88,38 @@ export const clientColumns: ColumnDef<any, any>[] = [
   ),
   columnHelper.accessor(
     row => {
-      if (!row.contacts) {
+      if (!row.objectcontacts) {
         return '';
       }
-      const main_contact = row.contacts.find(contact => contact.objectcontact_is_default);
+      const main_contact = row.objectcontacts.find(contact => contact.objectcontact_is_default);
       if (!main_contact) {
         return '';
       }
-      return `${main_contact.contact.contact_first_name} ${main_contact.contact.contact_last_name}`;
+      const fullname = `${main_contact.aranet_contact.contact_first_name} ${main_contact.aranet_contact.contact_last_name}`;
+      return (
+        <div className="flex gap-x-2">
+          <Link
+            title={fullname}
+            className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+            href={`/contact/show/${main_contact.objectcontact_contact_id}`}
+          >
+            { fullname }
+          </Link>
+          {main_contact.aranet_contact.contact_email && (
+            <span className='flex gap-x-0.5'>
+            {'['}
+            <Link
+              title={main_contact.aranet_contact.contact_email}
+              className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+              href={`mailto:${main_contact.aranet_contact.contact_email}`}
+            >
+            email
+          </Link>
+          {']'}
+          </span>
+          )}
+        </div>
+      );
     },
     {
       id: "main_contact",
@@ -107,15 +131,15 @@ export const clientColumns: ColumnDef<any, any>[] = [
     }
   ),
 
-  numberColumn<aranet_client_join_contacts>('aranet_projects_total', 'Proyectos', { minFractionDigits: 2, maxFractionDigits: 2, locale }, '', {
-    size: 130,
-    meta: mix(metaCenter, maxWidth130),
-  }),
+  // numberColumn<aranet_client_join_contacts>('aranet_projects_total', 'Proyectos', { minFractionDigits: 2, maxFractionDigits: 2, locale }, '', {
+  //   size: 130,
+  //   meta: mix(metaCenter, maxWidth130),
+  // }),
 
-  numberColumn<aranet_client_join_contacts>('aranet_incomes_total', 'Ingresos', { minFractionDigits: 2, maxFractionDigits: 2, locale }, '€', {
-    size: 130,
-    meta: mix(metaCenter, maxWidth130),
-  }),
+  // numberColumn<aranet_client_join_contacts>('aranet_incomes_total', 'Ingresos', { minFractionDigits: 2, maxFractionDigits: 2, locale }, '€', {
+  //   size: 130,
+  //   meta: mix(metaCenter, maxWidth130),
+  // }),
   
   dateColumn<User>('created_at', 'Fecha creación', locale, {
     size: 130,

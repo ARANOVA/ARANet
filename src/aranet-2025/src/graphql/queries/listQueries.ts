@@ -22,8 +22,24 @@ export const LIST_QUERIES = {
             id
             client_company_name
             client_unique_name
+            client_cif
+            client_since
             created_at
             updated_at
+            
+            objectcontacts {
+              objectcontact_contact_id
+              objectcontact_object_id
+              objectcontact_object_class
+              objectcontact_rol
+              objectcontact_is_default
+              aranet_contact {
+                contact_first_name
+                contact_last_name
+                contact_email
+              }
+            }
+
           }
           metadata {
             total
