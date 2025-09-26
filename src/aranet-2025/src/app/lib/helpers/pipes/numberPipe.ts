@@ -26,20 +26,28 @@ export function numberColumn<T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra: Record<string, any>,
   zeroIsValue = true,
-  includeSum = false,
+  agregateFn: 'sum' | 'avg' | '' = '',
 ): ColumnDef<T, number | null | undefined> {
   const columnHelper = createColumnHelper<T>();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const footer = includeSum ? {footer: (info: any) => {
+  const footer = agregateFn ? {footer: (info: any) => {
     const amounts = info.table.getCoreRowModel().rows.map(r => r.original[accessor]);
-    const sum = amounts.reduce((a: number, b: number) => a + b, 0);
-    return sum !== null
+    let value: number | null = null;
+    switch (agregateFn) {
+      case 'sum':
+        value = amounts.reduce((a: number, b: number) => a + b, 0);
+        break;
+      case 'avg':
+        value = amounts.reduce((a, b) => a + b, 0) / amounts.length;
+        break;
+    }
+    return value !== null
     ? new Intl.NumberFormat(locale, {
-        minimumIntegerDigits: 2,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(sum) + '€'
+        minimumIntegerDigits: minIntegerDigits,
+        minimumFractionDigits: minFractionDigits,
+        maximumFractionDigits: maxFractionDigits,
+      }).format(value) + suffix
     : '';
   }} : {};
   return columnHelper.accessor(accessor, {

@@ -4,7 +4,7 @@ import { dateColumn, numberColumn } from '@/app/lib/helpers';
 import { aranet_expense_item_join_vendor_and_category } from '@/interfaces';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Link from "next/link";
-import { amountMeta130, amountMeta60, amountMeta110, dateCenterMeta130, textLeftMeta170 } from '../consts.utils';
+import { amountMeta130, amountMeta60, amountMeta110, dateCenterMeta130, textLeftMeta170, tableLinkClassname } from '../consts.utils';
 
 const columnHelper = createColumnHelper<aranet_expense_item_join_vendor_and_category>()
 
@@ -54,7 +54,7 @@ export const expenseColumns: ColumnDef<any, any>[] = [
         return value ? (
           <Link
             title={value}
-            className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+            className={tableLinkClassname}
             href={`/vendor/show/${row.expense_item_vendor_id}`}
           >
             { value }
@@ -87,7 +87,7 @@ export const expenseColumns: ColumnDef<any, any>[] = [
       meta: amountMeta130,
     },
     true,
-    true,
+    'sum',
   ),
 
   numberColumn('expense_item_irpf', 'IRPF', { minFractionDigits: 0, maxFractionDigits: 0, locale }, '€', {

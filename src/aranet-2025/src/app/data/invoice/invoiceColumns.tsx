@@ -1,53 +1,12 @@
 'use client'
 
 import { dateColumn, numberColumn } from '@/app/lib/helpers';
-import { aranet_invoice_join_client, Invoice } from '@/interfaces';
-import { ColumnDef, ColumnMeta, createColumnHelper } from '@tanstack/react-table';
-import clsx from 'clsx';
+import { aranet_invoice_join_client } from '@/interfaces';
+import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Link from "next/link";
+import { amountMeta110, amountMeta130, amountMeta60, checkCenterMeta60, dateCenterMeta130, tableLinkClassname, textLeftMeta130, textLeftMeta170 } from '../consts.utils';
 
 const columnHelper = createColumnHelper<aranet_invoice_join_client>()
-
-interface AranovaColumnMeta {
-  className?: string;
-}
-
-const metaCenter: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "text-center !pr-0 !pl-0 !px-0",
-};
-
-const metaLeft: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "text-left",
-};
-
-const metaRight: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "text-right",
-};
-
-const maxWidth60: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "min-w-[60px] max-w-[60px] w-[60px] overflow-hidden whitespace-nowrap text-ellipsis",
-};
-
-const maxWidth90: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "min-w-[90px] max-w-[90px] w-[90px] overflow-hidden whitespace-nowrap text-ellipsis",
-};
-
-const maxWidth130: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "min-w-[130px] max-w-[130px] w-[130px] overflow-hidden whitespace-nowrap text-ellipsis",
-};
-
-const maxWidth170: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "min-w-[170px] max-w-[170px] w-[170px] overflow-hidden whitespace-nowrap text-ellipsis",
-};
-
-const mix = (...args: (ColumnMeta<AranovaColumnMeta, unknown> | undefined)[]): ColumnMeta<AranovaColumnMeta, unknown> | undefined => {
-  // TODO: Sólo mezla el className
-  return {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    className: clsx(args.map(arg => (arg as any).className))
-  };
-};
-
 
 // TODO
 const locale = 'es-ES'; //navigator?.language ?? 'es-ES';
@@ -66,14 +25,14 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
       id: "invoice_full_number",
       header: "Nº",
       size: 130,
-      meta: mix(metaLeft, maxWidth130),
+      meta: textLeftMeta130,
       cell: info => {
         const value = info.getValue();
         const row = info.row.original;
         return (
           <Link
             title={`${row.invoice_prefix}${row.invoice_number}`}
-            className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+            className={tableLinkClassname}
             href={`/invoice/show/${row.id}`}
           >
             { value }
@@ -86,7 +45,7 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
     header: "Título",
     size: 170,
     enableHiding: false,
-    meta: mix(metaLeft, maxWidth170),
+    meta: textLeftMeta170
   }),
   columnHelper.accessor(
     row => `${row.client?.client_unique_name}`,
@@ -95,14 +54,14 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
       header: "Cliente",
       size: 170,
       enableSorting: false,
-      meta: mix(metaLeft, maxWidth170),
+      meta: textLeftMeta170,
       cell: info => {
         const value = info.getValue();
         const row = info.row.original;
         return value ? (
           <Link
             title={row.client?.client_unique_name}
-            className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+            className={tableLinkClassname}
             href={`/client/show/${row.invoice_client_id}`}
           >
             { value }
@@ -113,7 +72,7 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
   ),
   dateColumn('invoice_date', 'Fecha', locale, {
     size: 130,
-    meta: mix(metaCenter, maxWidth130),
+    meta: dateCenterMeta130
   }),
 
   columnHelper.accessor("invoice_payment_status_id", {
@@ -121,7 +80,7 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
     size: 60,
     enableHiding: false,
     enableSorting: false,
-    meta: mix(metaCenter, maxWidth60),
+    meta: checkCenterMeta60,
   }),
 
   columnHelper.accessor(
@@ -134,19 +93,19 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
       header: "Periodicidad",
       size: 130,
       enableSorting: false,
-      meta: mix(metaRight, maxWidth130),
+      meta: amountMeta110,
       cell: info => info.getValue(),
     }
   ),
 
   numberColumn('invoice_total_amount', 'Base', { minFractionDigits: 2, maxFractionDigits: 2, locale }, '€', {
     size: 130,
-    meta: mix(metaRight, maxWidth130),
-  }),
+    meta: amountMeta130
+  }, true, 'sum'),
 
   numberColumn('invoice_tax_rate', 'Tax', { minFractionDigits: 0, maxFractionDigits: 0, locale }, '%', {
     size: 60,
-    meta: mix(metaRight, maxWidth60),
+    meta: amountMeta60,
     enableSorting: false,
   }, false),
 
@@ -160,7 +119,21 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
       header: "Total",
       size: 130,
       enableSorting: false,
-      meta: mix(metaRight, maxWidth130),
+      meta: amountMeta130,
+      footer: info => {
+        const amounts = info.table.getCoreRowModel().rows.map(r => {
+          if (r.original.invoice_total_amount === null) return null;
+          return Math.round((r.original.invoice_total_amount * (100 + (r.original.invoice_tax_rate || 0)))) / 100;
+        }).filter(r => r !== null);
+        const sum = amounts.reduce((a, b) => a + b, 0);
+        return sum !== null
+        ? new Intl.NumberFormat(locale, {
+            minimumIntegerDigits: 2,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(sum) + '€'
+        : '';
+      },
       cell: info => {
         const value = info.getValue();
         return value !== null

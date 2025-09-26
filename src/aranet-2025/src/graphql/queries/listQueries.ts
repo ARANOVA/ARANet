@@ -171,7 +171,7 @@ export const LIST_QUERIES = {
             vendor_since
             created_at
             updated_at
-            
+            vendor_website
             objectcontacts {
               objectcontact_contact_id
               objectcontact_object_id
@@ -223,7 +223,7 @@ export const LIST_QUERIES = {
             client_since
             created_at
             updated_at
-            
+            client_website
             objectcontacts {
               objectcontact_contact_id
               objectcontact_object_id

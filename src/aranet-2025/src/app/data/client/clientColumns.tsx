@@ -3,56 +3,12 @@
 import { dateColumn } from '@/app/lib/helpers';
 import { aranet_client_join_contacts, User } from '@/interfaces';
 import { joinWithSeparators } from '@/utils';
-import { ColumnDef, ColumnMeta, createColumnHelper } from '@tanstack/react-table';
-import clsx from 'clsx';
+import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Link from "next/link";
+import { dateCenterMeta130, tableLinkClassname, textLeftMeta170 } from '../consts.utils';
+import { GlobeAltIcon } from '@heroicons/react/24/outline';
 
 const columnHelper = createColumnHelper<aranet_client_join_contacts>()
-
-interface AranovaColumnMeta {
-  className?: string;
-}
-
-const metaCenter: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "text-center !pr-0 !pl-0 !px-0",
-};
-
-const metaFlexCenter: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "mx-auto !pr-0 !pl-0 !px-0",
-};
-
-const metaLeft: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "text-left",
-};
-
-const metaRight: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "text-right",
-};
-
-const maxWidth60: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "min-w-[60px] max-w-[60px] w-[60px] overflow-hidden whitespace-nowrap text-ellipsis",
-};
-
-const maxWidth90: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "min-w-[90px] max-w-[90px] w-[90px] overflow-hidden whitespace-nowrap text-ellipsis",
-};
-
-const maxWidth130: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "min-w-[130px] max-w-[130px] w-[130px] overflow-hidden whitespace-nowrap text-ellipsis",
-};
-
-const maxWidth170: ColumnMeta<AranovaColumnMeta, unknown> | undefined = {
-  className: "min-w-[170px] max-w-[170px] w-[170px] overflow-hidden whitespace-nowrap text-ellipsis",
-};
-
-const mix = (...args: (ColumnMeta<AranovaColumnMeta, unknown> | undefined)[]): ColumnMeta<AranovaColumnMeta, unknown> | undefined => {
-  // TODO: Sólo mezla el className
-  return {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    className: clsx(args.map(arg => (arg as any).className))
-  };
-};
-
 
 // TODO
 const locale = 'es-ES'; //navigator?.language ?? 'es-ES';
@@ -71,18 +27,29 @@ export const clientColumns: ColumnDef<any, any>[] = [
       id: "client_company_name",
       header: "Empresa",
       size: 170,
-      meta: mix(metaLeft, maxWidth170),
+      meta: textLeftMeta170,
       cell: info => {
         const value = info.getValue();
         const row = info.row.original;
         return (
-          <Link
-            title={row.client_company_name}
-            className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
-            href={`/admin/client/show/${row.id}`}
-          >
-            { value }
-          </Link>
+          <div className="flex gap-x-2">
+            {row.client_website && (
+              <Link
+                title="Ir a la web"
+                className={tableLinkClassname}
+                href={row.client_website}
+              >
+                <GlobeAltIcon width={25} height={25} />
+              </Link>
+            )}
+            <Link
+              title={row.client_company_name}
+              className={tableLinkClassname}
+              href={`/client/show/${row.id}`}
+            >
+              { value }
+            </Link>
+          </div>
         );
       }
     }
@@ -101,7 +68,7 @@ export const clientColumns: ColumnDef<any, any>[] = [
         <div className="flex gap-x-2">
           <Link
             title={fullname}
-            className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+            className={tableLinkClassname}
             href={`/contact/show/${main_contact.objectcontact_contact_id}`}
           >
             { fullname }
@@ -111,7 +78,7 @@ export const clientColumns: ColumnDef<any, any>[] = [
             {'['}
             <Link
               title={main_contact.aranet_contact.contact_email}
-              className="flex items-center gap-1 text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-700 hover:dark:text-gray-500"
+              className={tableLinkClassname}
               href={`mailto:${main_contact.aranet_contact.contact_email}`}
             >
             email
@@ -126,9 +93,8 @@ export const clientColumns: ColumnDef<any, any>[] = [
       id: "main_contact",
       header: "Contacto principal",
       size: 170,
-      meta: mix(metaLeft, maxWidth170),
-      cell: info => info.getValue(),
-
+      meta: textLeftMeta170,
+      cell: ({ getValue }) => getValue(),
     }
   ),
 
@@ -144,12 +110,11 @@ export const clientColumns: ColumnDef<any, any>[] = [
   
   dateColumn<User>('created_at', 'Fecha creación', locale, {
     size: 130,
-    meta: mix(metaCenter, maxWidth130),
+    meta: dateCenterMeta130,
   }),
   dateColumn<User>('updated_at', 'Actualizado el', locale, {
     size: 130,
-    meta: mix(metaCenter, maxWidth130),
+    meta: dateCenterMeta130,
   }),
 
-  
 ];
