@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   title: 'Gastos - Finanzas',
 };
 
-
 interface Props {
   searchParams: Promise<{
     page?: string;

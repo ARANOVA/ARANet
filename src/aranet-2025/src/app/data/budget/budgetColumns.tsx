@@ -120,7 +120,7 @@ export const budgetColumns: ColumnDef<any, any>[] = [
         const row = info.row.original;
         return value !== null && row.budget_total_cost !== null && row.budget_total_cost > 0
         ? new Intl.NumberFormat(locale, {
-            minimumIntegerDigits: 2,
+            minimumIntegerDigits: 1,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }).format(value) + '%'
@@ -134,7 +134,7 @@ export const budgetColumns: ColumnDef<any, any>[] = [
         const avg = margins.reduce((a, b) => a + b, 0) / margins.length;
         return avg !== null
         ? new Intl.NumberFormat(locale, {
-            minimumIntegerDigits: 2,
+            minimumIntegerDigits: 1,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }).format(avg) + '%'

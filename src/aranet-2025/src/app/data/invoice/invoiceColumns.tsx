@@ -128,7 +128,7 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
         const sum = amounts.reduce((a, b) => a + b, 0);
         return sum !== null
         ? new Intl.NumberFormat(locale, {
-            minimumIntegerDigits: 2,
+            minimumIntegerDigits: 1,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }).format(sum) + '€'
@@ -138,7 +138,7 @@ export const invoiceColumns: ColumnDef<any, any>[] = [
         const value = info.getValue();
         return value !== null
         ? new Intl.NumberFormat(locale, {
-            minimumIntegerDigits: 2,
+            minimumIntegerDigits: 1,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }).format(value) + '€'

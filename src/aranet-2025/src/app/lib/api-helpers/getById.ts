@@ -13,7 +13,8 @@ type enumModel =
   'payment_condition' |
   'project' |
   'payment_status' |
-  'expense_category'
+  'expense_category' |
+  'income_category'
 ;
 
 export const getById = async <T>(
@@ -34,6 +35,7 @@ export const getById = async <T>(
     project: prisma.aranet_project,
     payment_status: prisma.aranet_payment_status,
     expense_category: prisma.aranet_expense_category,
+    income_category: prisma.aranet_income_category,
   };
 
   if (!id) return null;

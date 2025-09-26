@@ -1,18 +1,18 @@
 'use client'
 
 import { dateColumn, numberColumn } from '@/app/lib/helpers';
-import { aranet_expense_item_join_vendor_and_category } from '@/interfaces';
+import { aranet_income_item_join_vendor_project_and_category } from '@/interfaces';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Link from "next/link";
 import { amountMeta130, amountMeta60, dateCenterMeta130, textLeftMeta170, tableLinkClassname } from '../consts.utils';
 
-const columnHelper = createColumnHelper<aranet_expense_item_join_vendor_and_category>()
+const columnHelper = createColumnHelper<aranet_income_item_join_vendor_project_and_category>()
 
 // TODO
 const locale = 'es-ES'; //navigator?.language ?? 'es-ES';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const expenseColumns: ColumnDef<any, any>[] = [
+export const incomeColumns: ColumnDef<any, any>[] = [
   // columnHelper.accessor("id", {
   //   header: "Id",
   //   size: 60,
@@ -22,8 +22,8 @@ export const expenseColumns: ColumnDef<any, any>[] = [
   columnHelper.accessor(
     row => `${row.category?.category_title}`,
     {
-      id: "expense_category_title",
-      header: "Referencia",
+      id: "income_category_name",
+      header: "Nombre",
       size: 170,
       enableSorting: false,
       meta: textLeftMeta170,
@@ -36,9 +36,9 @@ export const expenseColumns: ColumnDef<any, any>[] = [
             <Link
               title={value}
               className={tableLinkClassname}
-              href={`/expense/show/${row.id}`}
+              href={`/income/show/${row.id}`}
             >
-              <span className="text-xs">{row.expense_item_name}</span>
+              <span className="text-xs">{row.income_item_name}</span>
             </Link>
           </div>
         );
@@ -61,7 +61,7 @@ export const expenseColumns: ColumnDef<any, any>[] = [
           <Link
             title={value}
             className={tableLinkClassname}
-            href={`/vendor/show/${row.expense_item_vendor_id}`}
+            href={`/vendor/show/${row.income_item_vendor_id}`}
           >
             { value }
           </Link>
@@ -69,7 +69,7 @@ export const expenseColumns: ColumnDef<any, any>[] = [
       }
     }
   ),
-  dateColumn('expense_purchase_date', 'Fecha', locale, {
+  dateColumn('income_date', 'Fecha', locale, {
     size: 130,
     meta: dateCenterMeta130,
   }),
@@ -84,7 +84,7 @@ export const expenseColumns: ColumnDef<any, any>[] = [
 
 
   numberColumn(
-    'expense_item_amount',
+    'income_item_base',
     'Base',
     { minFractionDigits: 2, maxFractionDigits: 2, locale },
     '€',
@@ -102,7 +102,7 @@ export const expenseColumns: ColumnDef<any, any>[] = [
     enableSorting: false,
   }),
 
-  numberColumn('expense_item_tax_rate', 'Tax', { minFractionDigits: 0, maxFractionDigits: 0, locale }, '%', {
+  numberColumn('income_item_tax_rate', 'Tax', { minFractionDigits: 0, maxFractionDigits: 0, locale }, '%', {
     size: 60,
     meta: amountMeta60,
     enableSorting: false,
@@ -110,14 +110,14 @@ export const expenseColumns: ColumnDef<any, any>[] = [
 
   columnHelper.accessor(
     row => {
-      if (row.expense_item_amount === null || row.expense_item_tax_rate === null) return null;
-      return Math.round((row.expense_item_amount * (100 + (row.expense_item_tax_rate || 0)))) / 100 - (row.expense_item_irpf || 0);
+      if (row.income_item_amount === null || row.income_item_tax_rate === null) return null;
+      return Math.round((row.income_item_amount * (100 + (row.income_item_tax_rate || 0)))) / 100 - (row.income_item_irpf || 0);
     },
     {
-      id: "expense_item_total",
+      id: "income_item_total",
       header: "Total",
       footer: info => {
-        const amounts = info.table.getCoreRowModel().rows.map(r => Math.round((r.original.expense_item_amount * (100 + (r.original.expense_item_tax_rate || 0)))) / 100 - (r.original.expense_item_irpf || 0));
+        const amounts = info.table.getCoreRowModel().rows.map(r => Math.round((r.original.income_item_amount * (100 + (r.original.income_item_tax_rate || 0)))) / 100 - (r.original.income_item_irpf || 0));
         const sum = amounts.reduce((a, b) => a + b, 0);
         return sum !== null
         ? new Intl.NumberFormat(locale, {

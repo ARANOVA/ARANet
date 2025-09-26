@@ -397,4 +397,52 @@ export const LIST_QUERIES = {
       }
     }
   `,
+  income: `
+    query ListIncomes(
+      $page: Int,
+      $size: Int,
+      $sortField: String,
+      $sortDir: String,
+      $search: [SearchInput!],
+      $filters: [String!]
+    ) {
+      incomes(
+        page: $page,
+        size: $size,
+        sortField: $sortField,
+        sortDir: $sortDir,
+        search: $search,
+        filters: $filters
+      ) {
+        statusCode
+        data {
+          items {
+            id
+            income_date
+            income_item_name
+            income_item_vendor_id
+            income_item_amount
+            income_item_base
+            income_item_irpf
+            income_item_tax_rate
+            income_item_category_id
+            vendor {
+              vendor_company_name
+              vendor_unique_name
+              vendor_website
+            }
+            category {
+              category_title
+            }
+          }
+          metadata {
+            total
+            page
+            quantity
+            last
+          }
+        }
+      }
+    }
+  `,
 };
