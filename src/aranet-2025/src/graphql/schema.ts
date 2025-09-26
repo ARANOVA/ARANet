@@ -1,7 +1,7 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
 import { getContacts, getById, deleteSoftById, deleteById, updateLatestBudgetRevisions } from '@/app/lib/api-helpers';
-import { clientsQuery, contactsQuery, invoicesQuery, projectsQuery, usersQuery, vendorsQuery, budgetsQuery, expensesQuery, incomesQuery } from './queries';
+import { clientsQuery, contactsQuery, invoicesQuery, projectsQuery, usersQuery, vendorsQuery, budgetsQuery, expensesQuery, incomesQuery, cashesQuery } from './queries';
 
 export const schema = createSchema<GraphQLContext>({
   typeDefs: /* GraphQL */ `
@@ -517,6 +517,21 @@ export const schema = createSchema<GraphQLContext>({
       amount: Float!
     }
 
+    type CashItem {
+      id: Int!
+      cash_item_name: String!
+      cash_item_comments: String
+      cash_item_date: String!
+      cash_item_amount: Float!
+
+      created_at: String
+      created_by: Int
+      updated_at: String
+      updated_by: Int
+      deleted_at: String
+      deleted_by: Int
+    }
+
     input SearchInput {
       type: String
       field: String
@@ -634,6 +649,17 @@ export const schema = createSchema<GraphQLContext>({
       error: String
       data: IncomeData!
     }
+
+    type CashItemData {
+      items: [CashItem!]!
+      metadata: Metadata!
+    }
+
+    type CashItemListResponse {
+      statusCode: Int!
+      error: String
+      data: CashItemData!
+    }
       
     type Query {
       invoices(
@@ -716,6 +742,15 @@ export const schema = createSchema<GraphQLContext>({
         search: [SearchInput!],
         filters: [String!]
       ): IncomeListResponse!
+
+      cashes(
+        page: Int = 1,
+        size: Int = 10,
+        sortField: String = "cash_item_date",
+        sortDir: String = "asc",
+        search: [SearchInput!],
+        filters: [String!]
+      ): CashItemListResponse!
     }
 
     type Mutation {
@@ -743,6 +778,7 @@ export const schema = createSchema<GraphQLContext>({
       budgets: budgetsQuery,
       expenses: expensesQuery,
       incomes: incomesQuery,
+      cashes: cashesQuery,
     },
     Mutation: {
       deleteExpenses: async (_: any, args: { ids: number[] }, context: any) => {

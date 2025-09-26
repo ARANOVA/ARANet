@@ -445,4 +445,40 @@ export const LIST_QUERIES = {
       }
     }
   `,
+  cash: `
+    query ListCashes(
+      $page: Int,
+      $size: Int,
+      $sortField: String,
+      $sortDir: String,
+      $search: [SearchInput!],
+      $filters: [String!]
+    ) {
+      cashes(
+        page: $page,
+        size: $size,
+        sortField: $sortField,
+        sortDir: $sortDir,
+        search: $search,
+        filters: $filters
+      ) {
+        statusCode
+        data {
+          items {
+            id
+            cash_item_date
+            cash_item_name
+            cash_item_comments
+            cash_item_amount
+          }
+          metadata {
+            total
+            page
+            quantity
+            last
+          }
+        }
+      }
+    }
+  `,
 };

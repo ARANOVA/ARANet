@@ -3,6 +3,7 @@ export * from './deleteSoftById';
 export * from './getById';
 export * from './getContacts';
 export * from './listBudgets';
+export * from './listCashes';
 export * from './listClients';
 export * from './listContacts';
 export * from './listExpenses';

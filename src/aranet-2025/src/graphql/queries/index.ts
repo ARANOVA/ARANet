@@ -1,4 +1,5 @@
 export * from './budgetsQuery';
+export * from './cashesQuery';
 export * from './clientsQuery';
 export * from './contactsQuery';
 export * from './deleteQueries';
