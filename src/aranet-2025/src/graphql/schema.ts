@@ -902,8 +902,8 @@ export const schema = createSchema<GraphQLContext>({
       client: async (parent: {invoice_client_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'client', parent.invoice_client_id)
       },
-      project: async (parent: {invoice_proyect_id: number}, _: any, context: GraphQLContext) => {
-        return getById(context.prisma, 'project', parent.invoice_proyect_id)
+      project: async (parent: {invoice_project_id: number}, _: any, context: GraphQLContext) => {
+        return getById(context.prisma, 'project', parent.invoice_project_id)
       },
       budget: async (parent: {invoice_budget_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'budget', parent.invoice_budget_id)

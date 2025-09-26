@@ -70,12 +70,21 @@ export const ID_QUERIES = {
           kind_of_invoice {
             kind_of_invoice_title
           }
+          project {
+            id
+            project_prefix
+            project_number
+            project_name
+          }
           budget {
             id
             budget_revision
             budget_number
             budget_prefix
             budget_title
+          }
+          project {
+            id
           }
           client {
             client_company_name

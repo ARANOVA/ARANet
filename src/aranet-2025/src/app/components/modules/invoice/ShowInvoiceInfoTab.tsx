@@ -33,17 +33,22 @@ export const ShowInvoiceInfoTab = ({ invoice, tags }: Props) => {
     <DescriptionList>
       <DescriptionTerm className="!pt-0.5">Estado</DescriptionTerm>
       <DescriptionDetails className="!pt-0.5 !pb-1">
-        Abierto: {invoice_date}<br/>
+        Fecha factura: {invoice_date}<br/>
         {payment_status?.payment_status_title}{payment_date ? `: ${payment_date}` : ''} <br />
       </DescriptionDetails>
 
-      {project && (
+      {(project || budget)&& (
         <>
         <DescriptionTerm className="!pt-0.5">Proyecto</DescriptionTerm>
         <DescriptionDetails className="!pt-0.5 !pb-1">
-          <Link href={`/project/show/${project.id}`} className="text-sky-600 dark:text-sky-400 hover:underline">
-            {project.project_prefix}{project.project_number} - {project.project_name}
-          </Link><br/>
+          {project && (
+            <>
+              <Link href={`/project/show/${project.id}`} className="text-sky-600 dark:text-sky-400 hover:underline">
+                {project.project_prefix}{project.project_number} - {project.project_name}
+              </Link>
+              <br/>
+            </>
+          )}
           {budget && <Link href={`/budget/show/${budget.id}`} className="text-sky-600 dark:text-sky-400 hover:underline">
             {budget.budget_prefix}{budget.budget_number}-R{budget?.budget_revision} - {budget.budget_title}
           </Link>}
@@ -72,10 +77,15 @@ export const ShowInvoiceInfoTab = ({ invoice, tags }: Props) => {
       <DescriptionDetails className="!pt-0.5 !pb-1">{comments}</DescriptionDetails>
 
       <DescriptionTerm className="!pt-0.5">Impuestos y Transporte</DescriptionTerm>
-      <DescriptionDetails className="!pt-0.5 !pb-1">Impuestos: {tax}% Portes: {freight ? freight : "No"}</DescriptionDetails>
+      <DescriptionDetails className="!pt-0.5 !pb-1">Impuestos: {tax}%; Portes: {freight ? freight : "No"}</DescriptionDetails>
 
       <DescriptionTerm className="!pt-0.5">Forma de pago</DescriptionTerm>
-      <DescriptionDetails className="!pt-0.5 !pb-1">{payment_method?.payment_method_title} - {payment_condition?.payment_condition_title}</DescriptionDetails>
+      <DescriptionDetails className="!pt-0.5 !pb-1">
+        {payment_method?.payment_method_title} - {payment_condition?.payment_condition_title}
+        {(payment_condition?.payment_condition_payment_day || 0) > 0 &&
+          `Pago el día: ${payment_condition?.payment_condition_payment_day}`
+        }
+      </DescriptionDetails>
 
       <DescriptionTerm className="!pt-0.5">Etiquetas</DescriptionTerm>
       <DescriptionDetails className="!pt-0.5 !pb-1">{(tags || []).map(t => t.name).join(", ")}</DescriptionDetails>
