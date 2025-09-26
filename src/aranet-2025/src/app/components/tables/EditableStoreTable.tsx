@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   EditableTable,
   ListResponse,
@@ -9,10 +9,10 @@ import {
 import { ColumnDef } from '@tanstack/react-table';
 import { useFormUiStore, useItemsStore, useFiltersStore, useSearchStore } from '@/store';
 import {
-  deleteDataByModel,
+  deleteDataByModelGraphql,
   exportDataByModel,
   getListDataByModelGraphql,
-} from '@/app/lib/api-wrappers/server';
+} from '@/app/lib/api-wrappers/client';
 import { ExportData, Filters } from '@/interfaces';
 import { ListFiltersForm, ToastStoreAlert, DownloadFile } from '@/app/components';
 
@@ -68,7 +68,7 @@ export const EditableStoreTable = <T extends { id?: number }>({
     ids: number[]
   ): Promise<SingleResponse<void>> => {
     formUi.closeAlert();
-    return deleteDataByModel(model, ids);
+    return deleteDataByModelGraphql(model, ids);
   };
 
   // // Modal (export)

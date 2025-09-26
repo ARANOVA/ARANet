@@ -1,3 +1,4 @@
+export * from './deleteById';
 export * from './getById';
 export * from './getContacts';
 export * from './listBudgets';

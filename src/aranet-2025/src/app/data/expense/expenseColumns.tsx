@@ -4,7 +4,7 @@ import { dateColumn, numberColumn } from '@/app/lib/helpers';
 import { aranet_expense_item_join_vendor_and_category } from '@/interfaces';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Link from "next/link";
-import { amountMeta130, amountMeta60, amountMeta110, dateCenterMeta130, textLeftMeta170, tableLinkClassname } from '../consts.utils';
+import { amountMeta130, amountMeta60, dateCenterMeta130, textLeftMeta170, tableLinkClassname } from '../consts.utils';
 
 const columnHelper = createColumnHelper<aranet_expense_item_join_vendor_and_category>()
 
@@ -33,7 +33,13 @@ export const expenseColumns: ColumnDef<any, any>[] = [
         return (
           <div className="flex flex-col">
             <span>{value}</span>
-            <span className="text-xs dark:text-zinc-400 text-zinc-800">{row.expense_item_name}</span>
+            <Link
+              title={value}
+              className={tableLinkClassname}
+              href={`/expense/show/${row.id}`}
+            >
+              <span className="text-xs">{row.expense_item_name}</span>
+            </Link>
           </div>
         );
       }

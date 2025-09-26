@@ -4,10 +4,10 @@ import { useState } from "react";
 import { ExclamationTriangleIcon } from "@heroicons/react/16/solid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertActions, AlertTitle, Button, SingleResponse } from "@aranova/aranova-react-ui";
-import { deleteDataByModel } from "@/app/lib/api-wrappers/client";
 import { logError } from "@/app/lib/logger";
 import { useFormUiStore, useItemsStore } from "@/store";
 import { useRouter } from "next/navigation";
+import { deleteDataByModelGraphql } from "@/app/lib/api-wrappers/client";
 
 interface Props {
     model: string;
@@ -37,7 +37,7 @@ export const DeleteModelButton = ({ model, id }: Props) => {
     ids: number[]
   ): Promise<SingleResponse<void>> => {
     closeAlert();
-    return deleteDataByModel(model, ids);
+    return deleteDataByModelGraphql(model, ids);
   };
 
   const mutation = useMutation<SingleResponse<void>, Error, number[]>({

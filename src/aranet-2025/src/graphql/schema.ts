@@ -1,6 +1,6 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
-import { getContacts, getById } from '@/app/lib/api-helpers';
+import { getContacts, getById, deleteById } from '@/app/lib/api-helpers';
 import { clientsQuery, contactsQuery, invoicesQuery, projectsQuery, usersQuery, vendorsQuery, budgetsQuery, expensesQuery } from './queries';
 
 export const schema = createSchema<GraphQLContext>({
@@ -499,6 +499,11 @@ export const schema = createSchema<GraphQLContext>({
       last: Int!
     }
 
+    type SingleResponse {
+      statusCode: Int!
+      error: String
+    }
+
     type InvoiceData {
       items: [Invoice!]!
       metadata: Metadata!
@@ -663,6 +668,7 @@ export const schema = createSchema<GraphQLContext>({
 
     type Mutation {
       createInvoice(number: String!): Invoice!
+      deleteExpense(ids: [Int!]!): SingleResponse!
     }
   `,
   resolvers: {
@@ -675,6 +681,20 @@ export const schema = createSchema<GraphQLContext>({
       projects: projectsQuery,
       budgets: budgetsQuery,
       expenses: expensesQuery,
+    },
+    Mutation: {
+      deleteExpense: async (_: any, args: { ids: number[] }, context: any) => {
+        const err = await deleteById(context.prisma, context.session, 'expense', args.ids);
+        if (err) throw err;
+        return {
+          statusCode: 201,
+        }
+      },
+      createInvoice: async (_parent, data, context) => {
+        return context.prisma.aranet_invoice.create({
+          data: data,
+        })
+      },
     },
     Budget: {
       status: async (parent, _args, context) => {
@@ -748,13 +768,6 @@ export const schema = createSchema<GraphQLContext>({
       },
       objectcontacts: async (parent, _args, context) => {
         return getContacts(context.prisma, 'Client', parent.id)
-      },
-    },
-    Mutation: {
-      createInvoice: async (_parent, data, context) => {
-        return context.prisma.aranet_invoice.create({
-          data: data,
-        })
       },
     },
   },

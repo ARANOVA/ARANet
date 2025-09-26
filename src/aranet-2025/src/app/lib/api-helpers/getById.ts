@@ -41,7 +41,7 @@ export const getById = async <T>(
   try {
     const fn = modelMap[model];
 
-    const data = (fn as any).findFirst({ where: { id } });
+    const data = await (fn as any).findFirst({ where: { id } });
     return data ? data as T : null;
   } catch (err) {
     logError(`Error GET /api/[model]/id]: ${err}`);

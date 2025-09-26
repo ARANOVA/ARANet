@@ -4,6 +4,7 @@ export * from './contactsQuery';
 export * from './expensesQuery';
 export * from './invoicesQuery';
 export * from './listQueries';
+export * from './deleteQueries';
 export * from './projectsQuery';
 export * from './usersQuery';
 export * from './vendorsQuery';
