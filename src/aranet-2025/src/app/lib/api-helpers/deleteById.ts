@@ -10,7 +10,8 @@ type enumModel =
   'contact' |
   'project' |
   'timesheet' |
-  'budget'
+  'budget' |
+  'cash'
 ;
 
 export const deleteById = async (
@@ -27,6 +28,7 @@ export const deleteById = async (
     expense: prisma.aranet_expense_item,
     timesheet: prisma.aranet_timesheet,
     budget: prisma.aranet_budget,
+    cash: prisma.aranet_cash_item,
   };
 
   if ((ids || []).length === 0) {

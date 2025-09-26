@@ -806,7 +806,7 @@ export const schema = createSchema<GraphQLContext>({
         return await deleteSoftById(context.prisma, context.session, 'income', args.ids);
       },
       deleteCashes: async (_: any, args: { ids: number[] }, context: any) => {
-        return await deleteSoftById(context.prisma, context.session, 'cash', args.ids);
+        return await deleteById(context.prisma, context.session, 'cash', args.ids);
       },
       deleteBudgets: async (_: any, args: { ids: number[] }, context: any) => {
         // TODO: Hay que hacerlo a la vez todo, en una transacción
