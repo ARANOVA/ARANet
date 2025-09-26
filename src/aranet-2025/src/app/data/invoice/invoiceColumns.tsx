@@ -53,38 +53,6 @@ const mix = (...args: (ColumnMeta<AranovaColumnMeta, unknown> | undefined)[]): C
 const locale = 'es-ES'; //navigator?.language ?? 'es-ES';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const tipoCalendarioCellFormatter = ({ getValue }: { getValue: any }) => {
-  const raw = getValue();
-  switch (raw) {
-    case 1:
-      return 'General';
-    case 2:
-      return 'Equipo';
-    case 3:
-      return 'Personal';
-    default:
-      return 'Desconocido';
-  }
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const prefixAndNumberCellFormatter = ({ getValue }: { getValue: any }) => {
-  const raw = getValue();
-  switch (raw) {
-    case 0:
-      return 'Aprobado';
-    case 1:
-      return 'Temporal';
-    case 2:
-      return 'Solicitud';
-    case 3:
-      return 'Borrador';
-    default:
-      return 'Desconocido';
-  }
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const invoiceColumns: ColumnDef<any, any>[] = [
   // columnHelper.accessor("id", {
   //   header: "Id",

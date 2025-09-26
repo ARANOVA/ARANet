@@ -26,13 +26,27 @@ export function numberColumn<T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra: Record<string, any>,
   zeroIsValue = true,
+  includeSum = false,
 ): ColumnDef<T, number | null | undefined> {
   const columnHelper = createColumnHelper<T>();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const footer = includeSum ? {footer: (info: any) => {
+    const amounts = info.table.getCoreRowModel().rows.map(r => r.original[accessor]);
+    const sum = amounts.reduce((a: number, b: number) => a + b, 0);
+    return sum !== null
+    ? new Intl.NumberFormat(locale, {
+        minimumIntegerDigits: 2,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(sum) + '€'
+    : '';
+  }} : {};
   return columnHelper.accessor(accessor, {
     id: String(accessor),
     header,
     ...extra,
+    ...footer,
     cell: ({ getValue }) => {
       const value = getValue();
       if (value == null || isNaN(value) || (zeroIsValue && value === 0)) return '';

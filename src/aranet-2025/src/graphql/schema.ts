@@ -1,7 +1,7 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
 import { getContacts, getById } from '@/app/lib/api-helpers';
-import { clientsQuery, contactsQuery, invoicesQuery, projectsQuery, usersQuery, vendorsQuery, budgetsQuery } from './queries';
+import { clientsQuery, contactsQuery, invoicesQuery, projectsQuery, usersQuery, vendorsQuery, budgetsQuery, expensesQuery } from './queries';
 
 export const schema = createSchema<GraphQLContext>({
   typeDefs: /* GraphQL */ `
@@ -98,8 +98,8 @@ export const schema = createSchema<GraphQLContext>({
       vendor_company_type: Int
 
       # Relaciones
-      # TODO expense_items: [ExpenseItem!]!
-      # TODO income_items: [IncomeItem!]!
+      # TODO expense_items: [Expense!]!
+      # TODO income_items: [Income!]!
       kind_of_company: KindOfCompany
       created_by_user: User
       updated_by_user: User
@@ -165,7 +165,7 @@ export const schema = createSchema<GraphQLContext>({
       category: ProjectCategory
       status: ProjectStatus
       budgets: [Budget!]!
-      expenses: [ExpenseItem!]!
+      expenses: [Expense!]!
       incomes: [IncomeItem!]!
       invoices: [Invoice!]!
       notifications: [Notification!]!
@@ -296,10 +296,55 @@ export const schema = createSchema<GraphQLContext>({
       project_status_title: String!
     }
 
-    type ExpenseItem {
+    type Expense {
       id: Int!
-      description: String!
-      amount: Float!
+      expense_item_name: String!
+      expense_item_comments: String
+      expense_purchase_date: String!
+      expense_purchase_by: Int!
+      expense_item_category_id: Int
+      expense_item_payment_method_id: Int
+      expense_item_payment_check: String
+      expense_item_reimbursement_id: Int
+      expense_item_project_id: Int
+      expense_item_budget_id: Int
+      expense_item_amount: Float!
+      expense_item_base: Float
+      expense_item_tax_rate: Float
+      expense_item_irpf: Float
+      expense_item_invoice_number: String
+      expense_item_vendor_id: Int
+      expense_validate_date: String
+      expense_validate_by: Int
+      created_at: String
+      created_by: Int
+      updated_at: String
+      updated_by: Int
+      deleted_at: String
+      deleted_by: Int
+      expense_item_periodic: Int
+
+      # Relaciones
+      # expense_purchase_user: User!
+      # expense_validate_user: User!
+      project: Project
+      vendor: Vendor
+      budget: Budget
+      category: ExpenseCategory
+      payment_method: PaymentMethod
+      reimbursement: Reimbursement
+    }
+
+    type Reimbursement {
+      id: Int!
+      reimbursement_title: String
+    }
+
+    type ExpenseCategory {
+      id: Int!
+      category_title: String!
+      category_meta_concept: String
+      category_show: Int
     }
 
     type IncomeItem {
@@ -530,6 +575,17 @@ export const schema = createSchema<GraphQLContext>({
       error: String
       data: BudgetData!
     }
+
+    type ExpenseData {
+      items: [Expense!]!
+      metadata: Metadata!
+    }
+
+    type ExpenseListResponse {
+      statusCode: Int!
+      error: String
+      data: ExpenseData!
+    }
       
     type Query {
       invoices(
@@ -594,6 +650,15 @@ export const schema = createSchema<GraphQLContext>({
         search: [SearchInput!],
         filters: [String!]
       ): BudgetListResponse!
+
+      expenses(
+        page: Int = 1,
+        size: Int = 10,
+        sortField: String = "expense_purchase_date",
+        sortDir: String = "asc",
+        search: [SearchInput!],
+        filters: [String!]
+      ): ExpenseListResponse!
     }
 
     type Mutation {
@@ -609,6 +674,7 @@ export const schema = createSchema<GraphQLContext>({
       contacts: contactsQuery,
       projects: projectsQuery,
       budgets: budgetsQuery,
+      expenses: expensesQuery,
     },
     Budget: {
       status: async (parent, _args, context) => {
@@ -645,6 +711,14 @@ export const schema = createSchema<GraphQLContext>({
       },
       status: async (parent, _args, context) => {
         return getById(context.prisma, 'project_status', parent.project_status_id)
+      },
+    },
+    Expense: {
+      vendor: async (parent, _args, context) => {
+        return getById(context.prisma, 'vendor', parent.expense_item_vendor_id)
+      },
+      category: async (parent, _args, context) => {
+        return getById(context.prisma, 'expense_category', parent.expense_item_category_id)
       },
     },
     Invoice: {

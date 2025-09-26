@@ -3,6 +3,7 @@ export * from './getContacts';
 export * from './listBudgets';
 export * from './listClients';
 export * from './listContacts';
+export * from './listExpenses';
 export * from './listInvoices';
 export * from './listProjects';
 export * from './listUsers';
