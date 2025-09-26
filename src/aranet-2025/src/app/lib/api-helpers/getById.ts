@@ -1,29 +1,13 @@
+import { enumGetModel } from "@/app/data";
 import { logError } from "../logger";
 import { PrismaClient } from "@/generated/prisma";
 
-type enumModel =
-  'client' |
-  'vendor' |
-  'contact' |
-  'project_status' |
-  'profile' |
-  'kind_of_company' |
-  'budget_status' |
-  'invoice_category' |
-  'payment_condition' |
-  'project' |
-  'payment_status' |
-  'expense_category' |
-  'income_category' |
-  'expense'
-;
-
 export const getById = async <T>(
   prisma: PrismaClient,
-  model: enumModel,
+  model: enumGetModel,
   id: number
 ): Promise<T | null> => {
-  const modelMap = {
+  const modelMap: Record<enumGetModel, any> = {
     contact: prisma.aranet_contact,
     client: prisma.aranet_client,
     vendor: prisma.aranet_vendor,
@@ -38,6 +22,12 @@ export const getById = async <T>(
     expense_category: prisma.aranet_expense_category,
     income_category: prisma.aranet_income_category,
     expense: prisma.aranet_expense_item,
+    invoice: prisma.aranet_invoice,
+    timesheet: prisma.aranet_timesheet,
+    budget: prisma.aranet_budget,
+    income: prisma.aranet_income_item,
+    kind_of_invoice: prisma.aranet_kind_of_invoice,
+    payment_method: prisma.aranet_payment_method,
   };
 
   if (!id) return null;
@@ -48,7 +38,7 @@ export const getById = async <T>(
     const data = await (fn as any).findFirst({ where: { id } });
     return data ? data as T : null;
   } catch (err) {
-    logError(`Error GET /api/[model]/id]: ${err}`);
+    logError(`Error GET /api/[model]/id: ${err}`);
     return null;
   };
 }

@@ -3,5 +3,5 @@ import { SessionPayload } from "@/interfaces";
 
 export type GraphQLContext = {
   prisma: PrismaClient;
-  session: Promise<SessionPayload | null>;
+  session: SessionPayload | null;
 }

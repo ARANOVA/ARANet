@@ -55,7 +55,7 @@ class ServerDataPlain {
   async useInvoiceById(id: number): Promise<SingleResponse<aranet_invoice_join_all>> {
     return this.queryClient.fetchQuery<SingleResponse<aranet_invoice_join_all>>({
       queryKey: ['invoice', id],
-      queryFn: () => getSingleDataByModel('invoice', id),
+      queryFn: () => getSingleDataByModelGraphql<aranet_invoice_join_all>('invoice', id),
       retry: 3,
       staleTime: 1000 * 60 * 15, // 15 minutos
     });

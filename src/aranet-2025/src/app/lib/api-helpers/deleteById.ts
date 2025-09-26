@@ -2,25 +2,15 @@ import { SessionPayload } from "@/interfaces";
 import { logError } from "../logger";
 import { PrismaClient } from "@/generated/prisma";
 import { SingleResponse } from "@aranova/aranova-react-ui";
-
-type enumModel =
-  'client' |
-  'vendor' |
-  'expense' |
-  'contact' |
-  'project' |
-  'timesheet' |
-  'budget' |
-  'cash'
-;
+import { enumDeleteModel } from "@/app/data";
 
 export const deleteById = async (
   prisma: PrismaClient,
   session: SessionPayload | null,
-  model: enumModel,
+  model: enumDeleteModel,
   ids: number[],
 ): Promise<SingleResponse<void>> => {
-  const modelMap = {
+  const modelMap: Record<enumDeleteModel, any> = {
     contact: prisma.aranet_contact,
     client: prisma.aranet_client,
     vendor: prisma.aranet_vendor,
@@ -29,6 +19,8 @@ export const deleteById = async (
     timesheet: prisma.aranet_timesheet,
     budget: prisma.aranet_budget,
     cash: prisma.aranet_cash_item,
+    income: prisma.aranet_income_item,
+    invoice: prisma.aranet_invoice,
   };
 
   if ((ids || []).length === 0) {

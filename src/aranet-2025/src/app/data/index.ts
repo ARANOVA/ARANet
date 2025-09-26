@@ -9,6 +9,42 @@ import { PROJECT_TEXT_FIELDS, PROJECT_VALID_FIELDS } from "./project";
 import { USER_TEXT_FIELDS, USER_VALID_FIELDS } from "./user";
 import { VENDOR_TEXT_FIELDS, VENDOR_VALID_FIELDS } from "./vendor";
 
+export type enumDeleteModel = 
+  'contact' |
+  'client' |
+  'vendor' |
+  'project' |
+  'expense' |
+  'timesheet' |
+  'budget' |
+  'invoice' |
+  'income' |
+  'cash'
+;
+
+export type enumGetModel =
+  'client' |
+  'vendor' |
+  'contact' |
+  'project_status' |
+  'profile' |
+  'kind_of_company' |
+  'budget_status' |
+  'invoice_category' |
+  'payment_condition' |
+  'project' |
+  'payment_status' |
+  'expense_category' |
+  'income_category' |
+  'expense' |
+  'invoice' |
+  'timesheet' |
+  'budget' |
+  'income' |
+  'kind_of_invoice' |
+  'payment_method'
+;
+
 export type enumListModel =
   'client' |
   'vendor' |

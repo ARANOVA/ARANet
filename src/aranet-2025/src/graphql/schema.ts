@@ -1,8 +1,8 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
 import { getContacts, getById, deleteSoftById, deleteById, updateLatestBudgetRevisions } from '@/app/lib/api-helpers';
-import { createListQuery } from './queries';
-import { aranet_expense_item } from '@/generated/prisma';
+import { createGetQuery, createListQuery } from './queries';
+import { aranet_invoice } from '@/generated/prisma';
 
 export const schema = createSchema<GraphQLContext>({
   typeDefs: /* GraphQL */ `
@@ -492,7 +492,7 @@ export const schema = createSchema<GraphQLContext>({
 
     type KindOfInvoice {
       id: Int!
-      name: String!
+      kind_of_invoice_title: String!
     }
 
     type PaymentCondition {
@@ -556,6 +556,12 @@ export const schema = createSchema<GraphQLContext>({
       statusCode: Int!
       error: String
       data: Expense!
+    }
+
+    type InvoiceSingleResponse {
+      statusCode: Int!
+      error: String
+      data: Invoice!
     }
 
     type InvoiceData {
@@ -762,6 +768,10 @@ export const schema = createSchema<GraphQLContext>({
       expense(
         id: Int!
       ): ExpenseSingleResponse!
+
+      invoice(
+        id: Int!
+      ): InvoiceSingleResponse!
     }
 
     type Mutation {
@@ -790,49 +800,38 @@ export const schema = createSchema<GraphQLContext>({
       expenses: createListQuery('expense'),
       incomes: createListQuery('income'),
       cashes: createListQuery('cash'),
-      expense: async (_: any, args: { id: number }, context: any) => {
-        const data = await getById<aranet_expense_item>(context.prisma, 'expense', args.id);
-        if (data === null) {
-          return {
-            statusCode: 404,
-            error: 'not found'
-          }
-        }
-        return {
-          statusCode: 200,
-          data,
-        }
-      }
+      expense: createGetQuery('expense'),
+      invoice: createGetQuery('invoice'),
     },
     Mutation: {
-      deleteExpenses: async (_: any, args: { ids: number[] }, context: any) => {
+      deleteExpenses: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
         return await deleteSoftById(context.prisma, context.session, 'expense', args.ids);
       },
-      deleteClients: async (_: any, args: { ids: number[] }, context: any) => {
+      deleteClients: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
         return await deleteSoftById(context.prisma, context.session, 'client', args.ids);
       },
-      deleteVendors: async (_: any, args: { ids: number[] }, context: any) => {
+      deleteVendors: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
         return await deleteSoftById(context.prisma, context.session, 'vendor', args.ids);
       },
-      deleteContacts: async (_: any, args: { ids: number[] }, context: any) => {
+      deleteContacts: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
         return await deleteSoftById(context.prisma, context.session, 'contact', args.ids);
       },
-      deleteProjects: async (_: any, args: { ids: number[] }, context: any) => {
+      deleteProjects: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
         return await deleteSoftById(context.prisma, context.session, 'project', args.ids);
       },
-      deleteTimesheets: async (_: any, args: { ids: number[] }, context: any) => {
+      deleteTimesheets: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
         return await deleteById(context.prisma, context.session, 'timesheet', args.ids);
       },
-      deleteInvoices: async (_: any, args: { ids: number[] }, context: any) => {
+      deleteInvoices: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
         return await deleteSoftById(context.prisma, context.session, 'invoice', args.ids);
       },
-      deleteIncomes: async (_: any, args: { ids: number[] }, context: any) => {
+      deleteIncomes: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
         return await deleteSoftById(context.prisma, context.session, 'income', args.ids);
       },
-      deleteCashes: async (_: any, args: { ids: number[] }, context: any) => {
+      deleteCashes: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
         return await deleteById(context.prisma, context.session, 'cash', args.ids);
       },
-      deleteBudgets: async (_: any, args: { ids: number[] }, context: any) => {
+      deleteBudgets: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
         // TODO: Hay que hacerlo a la vez todo, en una transacción
         const result = await deleteById(context.prisma, context.session, 'budget', args.ids);
         if (result.statusCode >= 200 && result.statusCode < 300) {
@@ -842,93 +841,113 @@ export const schema = createSchema<GraphQLContext>({
         }
         return result;
       },
-      createInvoice: async (_parent, data, context) => {
-        return context.prisma.aranet_invoice.create({
-          data: data,
-        })
+      createInvoice: async (_: any, data: aranet_invoice, context: GraphQLContext) => {
+        return context.prisma.aranet_invoice.create({ data });
       },
     },
     Budget: {
-      status: async (parent, _args, context) => {
+      status: async (parent: {budget_status_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'budget_status', parent.budget_status_id)
       },
-      category: async (parent, _args, context) => {
+      category: async (parent: {budget_category_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'invoice_category', parent.budget_category_id)
       },
-      client: async (parent, _args, context) => {
+      client: async (parent: {budget_client_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'client', parent.budget_client_id)
       },
-      payment_condition: async (parent, _args, context) => {
+      payment_condition: async (parent: {budget_payment_condition_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'payment_condition', parent.budget_payment_condition_id)
       },
-      project: async (parent, _args, context) => {
+      project: async (parent: {budget_project_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'project', parent.budget_project_id)
       },
-      budget_items: async (parent, _args, context) => {
+      budget_items: async (parent: {id: number}, _: any, context: GraphQLContext) => {
         return context.prisma.aranet_budget_item.findMany({
           where: { item_budget_id: parent.id },
         });
       },
     },
     User: {
-      profile: async (parent, _args, context) => {
+      profile: async (parent: {id: number}, _: any, context: GraphQLContext) => {
         return context.prisma.sf_guard_user_profile.findUnique({
           where: { user_id: parent.id ?? 0 },
         })
       },
     },
     Project: {
-      client: async (parent, _args, context) => {
+      client: async (parent: {project_client_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'client', parent.project_client_id)
       },
-      status: async (parent, _args, context) => {
+      status: async (parent: {project_status_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'project_status', parent.project_status_id)
       },
     },
     Expense: {
-      vendor: async (parent, _args, context) => {
+      vendor: async (parent: {expense_item_vendor_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'vendor', parent.expense_item_vendor_id)
       },
-      category: async (parent, _args, context) => {
+      category: async (parent: {expense_item_category_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'expense_category', parent.expense_item_category_id)
       },
     },
     Income: {
-      vendor: async (parent, _args, context) => {
+      vendor: async (parent: {income_item_vendor_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'vendor', parent.income_item_vendor_id)
       },
-      category: async (parent, _args, context) => {
+      category: async (parent: {income_item_category_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'income_category', parent.income_item_category_id)
       },
     },
     Invoice: {
-      client: async (parent, _args, context) => {
+      client: async (parent: {invoice_client_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'client', parent.invoice_client_id)
       },
-      payment_status: async (parent, _args, context) => {
+      project: async (parent: {invoice_proyect_id: number}, _: any, context: GraphQLContext) => {
+        return getById(context.prisma, 'project', parent.invoice_proyect_id)
+      },
+      budget: async (parent: {invoice_budget_id: number}, _: any, context: GraphQLContext) => {
+        return getById(context.prisma, 'budget', parent.invoice_budget_id)
+      },
+      payment_status: async (parent: {invoice_payment_status_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'payment_status', parent.invoice_payment_status_id)
       },
+      payment_condition: async (parent: {invoice_payment_condition_id: number}, _: any, context: GraphQLContext) => {
+        return getById(context.prisma, 'payment_condition', parent.invoice_payment_condition_id)
+      },
+      payment_method: async (parent: {invoice_payment_method_id: number}, _: any, context: GraphQLContext) => {
+        return getById(context.prisma, 'payment_method', parent.invoice_payment_method_id)
+      },
+      kind_of_invoice: async (parent: {invoice_kind_of_invoice_id: number}, _: any, context: GraphQLContext) => {
+        return getById(context.prisma, 'kind_of_invoice', parent.invoice_kind_of_invoice_id)
+      },
+      category: async (parent: {invoice_category_id: number}, _: any, context: GraphQLContext) => {
+        return getById(context.prisma, 'kind_of_invoice', parent.invoice_category_id)
+      },
+      // invoice_items: async (parent: {invoice_category_id: number}, _: any, context: GraphQLContext) => {
+      //   return getById(context.prisma, 'kind_of_invoice', parent.invoice_category_id)
+      // },
+
     },
     Vendor: {
-      kind_of_company: async (parent, _args, context) => {
+      kind_of_company: async (parent: {vendor_kind_of_company_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'kind_of_company', parent.vendor_kind_of_company_id);
       },
-      objectcontacts: async (parent, _args, context) => {
+      objectcontacts: async (parent: {id: number}, _: any, context: GraphQLContext) => {
         return getContacts(context.prisma, 'Vendor', parent.id)
       },
     },
     Client: {
-      invoices: async (parent, _args, context) => {
+      invoices: async (parent: {id: number}, _: any, context: GraphQLContext) => {
         return context.prisma.aranet_invoice.findMany({
           where: { invoice_client_id: parent.id },
         });
       },
-      kind_of_company: async (parent, _args, context) => {
+      kind_of_company: async (parent: {client_kind_of_company_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'kind_of_company', parent.client_kind_of_company_id);
       },
-      objectcontacts: async (parent, _args, context) => {
+      objectcontacts: async (parent: {id: number}, _: any, context: GraphQLContext) => {
         return getContacts(context.prisma, 'Client', parent.id)
       },
     },
   },
-})
+});
