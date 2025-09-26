@@ -42,7 +42,6 @@ export const deleteById = async (
     
   try {
     const fn = modelMap[model];
-
     await (fn as any).deleteMany({
       where: { id: { in: ids } },
     });

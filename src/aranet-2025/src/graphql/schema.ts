@@ -1,7 +1,7 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
 import { getContacts, getById, deleteSoftById, deleteById, updateLatestBudgetRevisions } from '@/app/lib/api-helpers';
-import { clientsQuery, contactsQuery, invoicesQuery, projectsQuery, usersQuery, vendorsQuery, budgetsQuery, expensesQuery, incomesQuery, cashesQuery } from './queries';
+import { createListQuery } from './queries';
 
 export const schema = createSchema<GraphQLContext>({
   typeDefs: /* GraphQL */ `
@@ -769,16 +769,16 @@ export const schema = createSchema<GraphQLContext>({
   `,
   resolvers: {
     Query: {
-      invoices: invoicesQuery,
-      users: usersQuery,
-      clients: clientsQuery,
-      vendors: vendorsQuery,
-      contacts: contactsQuery,
-      projects: projectsQuery,
-      budgets: budgetsQuery,
-      expenses: expensesQuery,
-      incomes: incomesQuery,
-      cashes: cashesQuery,
+      invoices: createListQuery('invoice'),
+      users: createListQuery('user'),
+      clients: createListQuery('client'),
+      vendors: createListQuery('vendor'),
+      contacts: createListQuery('contact'),
+      projects: createListQuery('project'),
+      budgets: createListQuery('budget'),
+      expenses: createListQuery('expense'),
+      incomes: createListQuery('income'),
+      cashes: createListQuery('cash'),
     },
     Mutation: {
       deleteExpenses: async (_: any, args: { ids: number[] }, context: any) => {

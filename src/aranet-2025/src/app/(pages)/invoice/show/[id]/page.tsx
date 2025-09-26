@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {};
 }
 
-export default async function ClientShowPage({ params }: Props) {
+export default async function InvoiceShowPage({ params }: Props) {
   const { id } = await params;
   if (!isValidId(id)) {
     notFound();
