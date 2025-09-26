@@ -91,6 +91,13 @@ export const ID_QUERIES = {
             client_unique_name
             client_website
           }
+          invoice_items {
+            item_description
+            item_tax_rate
+            item_quantity
+            item_cost
+            item_type_id 
+          }
         }
       }
     }

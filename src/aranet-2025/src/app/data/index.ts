@@ -22,6 +22,11 @@ export type enumDeleteModel =
   'cash'
 ;
 
+export type enumSimpleListModel =
+  'expense_item' |
+  'invoice_item'
+;
+
 export type enumGetModel =
   'client' |
   'vendor' |

@@ -1,6 +1,6 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
-import { getContacts, getById, deleteSoftById, deleteById, updateLatestBudgetRevisions } from '@/app/lib/api-helpers';
+import { getContacts, getById, deleteSoftById, deleteById, updateLatestBudgetRevisions, listById } from '@/app/lib/api-helpers';
 import { createGetQuery, createListQuery } from './queries';
 import { aranet_invoice } from '@/generated/prisma';
 
@@ -514,8 +514,18 @@ export const schema = createSchema<GraphQLContext>({
 
     type InvoiceItem {
       id: Int!
-      description: String!
-      amount: Float!
+      item_type_id: Int
+      item_description: String
+      item_quantity: Int
+      item_cost: Float
+      item_tax_rate: Float
+      item_invoice_id: Int
+      invoice: Invoice
+      type_of_item: TypeOfItem
+    }
+
+    type TypeOfItem {
+      type_of_item_title: String!
     }
 
     type CashItem {
@@ -923,9 +933,9 @@ export const schema = createSchema<GraphQLContext>({
       category: async (parent: {invoice_category_id: number}, _: any, context: GraphQLContext) => {
         return getById(context.prisma, 'kind_of_invoice', parent.invoice_category_id)
       },
-      // invoice_items: async (parent: {invoice_category_id: number}, _: any, context: GraphQLContext) => {
-      //   return getById(context.prisma, 'kind_of_invoice', parent.invoice_category_id)
-      // },
+      invoice_items: async (parent: {id: number}, _: any, context: GraphQLContext) => {
+        return listById(context.prisma, 'invoice_item', {item_invoice_id: parent.id})
+      },
 
     },
     Vendor: {
