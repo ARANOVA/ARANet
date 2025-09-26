@@ -1,4 +1,4 @@
-export const EXPENSE_TEXT_FIELDS = ['expense_item_title'];
+export const EXPENSE_TEXT_FIELDS = ['expense_item_name'];
 
 export const EXPENSE_NUMBER_FIELDS = ['id'];
 

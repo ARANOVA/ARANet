@@ -34,7 +34,7 @@ export const listByModel = async <T>(
 
   const validFields = getValidFields(model);
   search = search.filter(filter => filterByValidFields(validFields, filter))
-  logDebug(`GET /api/${model} - Búsquedas encontradas: ${JSON.stringify(search)}`);
+  logDebug(`GET /api/graphql - ${model} - Búsquedas encontradas: ${JSON.stringify(search)}`);
   // const filtrosEncontrados = filters.filter((filter) => filterByValidFields(filter, '|||'));
 
   // TODO: CREAR FILTROS
@@ -48,7 +48,7 @@ export const listByModel = async <T>(
       ]
     };
     searchWhere(where, search, getTextFields(model));
-    logDebug(`GET /api/${model} - Where generado: ${JSON.stringify(where)}`);
+    logDebug(`GET /api/graphql - ${model} - Where generado: ${JSON.stringify(where)}`);
 
     const orderBy: Record<string, string> = {};
     orderBy[sortField] = sortDir;
@@ -84,7 +84,7 @@ export const listByModel = async <T>(
       }
     };
   } catch (err) {
-    logError(`Error GET /api/${model}: ${err}`);
+    logError(`Error GET /api/graphql - ${model}: ${err}`);
     return {
       statusCode: 500,
       error: "Internal Server Error",
