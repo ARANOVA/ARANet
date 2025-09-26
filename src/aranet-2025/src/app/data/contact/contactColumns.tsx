@@ -6,6 +6,7 @@ import { User } from '@/interfaces';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Link from "next/link";
 import { dateCenterMeta130, tableLinkClassname, textLeftMeta170 } from '../consts.utils';
+import { joinWithSeparators } from '@/utils';
 
 const columnHelper = createColumnHelper<aranet_contact>()
 
@@ -21,7 +22,7 @@ export const contactColumns: ColumnDef<any, any>[] = [
   //   meta: mix(metaLeft, maxWidth60),
   // }),
   columnHelper.accessor(
-    row => `${row.contact_first_name} ${row.contact_last_name}`, // accessor function
+    row => joinWithSeparators([row.contact_first_name, row.contact_last_name], [' ']),
     {
       id: "contact_first_name",
       header: "Contacto",

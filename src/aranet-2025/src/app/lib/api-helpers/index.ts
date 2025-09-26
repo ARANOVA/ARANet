@@ -1,4 +1,5 @@
 export * from './deleteById';
+export * from './deleteSoftById';
 export * from './getById';
 export * from './getContacts';
 export * from './listBudgets';
@@ -9,3 +10,4 @@ export * from './listInvoices';
 export * from './listProjects';
 export * from './listUsers';
 export * from './listVendors';
+export * from './updateLatestBudgetRevisions';

@@ -1,6 +1,6 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
-import { getContacts, getById, deleteById } from '@/app/lib/api-helpers';
+import { getContacts, getById, deleteSoftById, deleteById, updateLatestBudgetRevisions } from '@/app/lib/api-helpers';
 import { clientsQuery, contactsQuery, invoicesQuery, projectsQuery, usersQuery, vendorsQuery, budgetsQuery, expensesQuery } from './queries';
 
 export const schema = createSchema<GraphQLContext>({
@@ -668,7 +668,16 @@ export const schema = createSchema<GraphQLContext>({
 
     type Mutation {
       createInvoice(number: String!): Invoice!
-      deleteExpense(ids: [Int!]!): SingleResponse!
+      deleteExpenses(ids: [Int!]!): SingleResponse!
+      deleteClients(ids: [Int!]!): SingleResponse!
+      deleteVendors(ids: [Int!]!): SingleResponse!
+      deleteContacts(ids: [Int!]!): SingleResponse!
+      deleteProjects(ids: [Int!]!): SingleResponse!
+      deleteBudgets(ids: [Int!]!): SingleResponse!
+      deleteTimesheets(ids: [Int!]!): SingleResponse!
+      deleteInvoices(ids: [Int!]!): SingleResponse!
+      deleteIncomes(ids: [Int!]!): SingleResponse!
+      deleteCashes(ids: [Int!]!): SingleResponse!
     }
   `,
   resolvers: {
@@ -683,12 +692,42 @@ export const schema = createSchema<GraphQLContext>({
       expenses: expensesQuery,
     },
     Mutation: {
-      deleteExpense: async (_: any, args: { ids: number[] }, context: any) => {
-        const err = await deleteById(context.prisma, context.session, 'expense', args.ids);
-        if (err) throw err;
-        return {
-          statusCode: 201,
+      deleteExpenses: async (_: any, args: { ids: number[] }, context: any) => {
+        return await deleteSoftById(context.prisma, context.session, 'expense', args.ids);
+      },
+      deleteClients: async (_: any, args: { ids: number[] }, context: any) => {
+        return await deleteSoftById(context.prisma, context.session, 'client', args.ids);
+      },
+      deleteVendors: async (_: any, args: { ids: number[] }, context: any) => {
+        return await deleteSoftById(context.prisma, context.session, 'vendor', args.ids);
+      },
+      deleteContacts: async (_: any, args: { ids: number[] }, context: any) => {
+        return await deleteSoftById(context.prisma, context.session, 'contact', args.ids);
+      },
+      deleteProjects: async (_: any, args: { ids: number[] }, context: any) => {
+        return await deleteSoftById(context.prisma, context.session, 'project', args.ids);
+      },
+      deleteTimesheets: async (_: any, args: { ids: number[] }, context: any) => {
+        return await deleteById(context.prisma, context.session, 'timesheet', args.ids);
+      },
+      deleteInvoices: async (_: any, args: { ids: number[] }, context: any) => {
+        return await deleteSoftById(context.prisma, context.session, 'invoice', args.ids);
+      },
+      deleteIncomes: async (_: any, args: { ids: number[] }, context: any) => {
+        return await deleteSoftById(context.prisma, context.session, 'income', args.ids);
+      },
+      deleteCashes: async (_: any, args: { ids: number[] }, context: any) => {
+        return await deleteSoftById(context.prisma, context.session, 'cash', args.ids);
+      },
+      deleteBudgets: async (_: any, args: { ids: number[] }, context: any) => {
+        // TODO: Hay que hacerlo a la vez todo, en una transacción
+        const result = await deleteById(context.prisma, context.session, 'budget', args.ids);
+        if (result.statusCode >= 200 && result.statusCode < 300) {
+          await updateLatestBudgetRevisions(context.prisma, context.session, args.ids);
+          // TODO: Actualizar la versión a la última disponible o borrar todas las versiones???
+          return { statusCode: 204 };
         }
+        return result;
       },
       createInvoice: async (_parent, data, context) => {
         return context.prisma.aranet_invoice.create({

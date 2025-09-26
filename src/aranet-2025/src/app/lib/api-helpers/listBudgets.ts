@@ -29,7 +29,7 @@ export const listBudgets = async (
   try {
     const where: any = {
       AND: [
-        { deleted_at: null },
+        { deleted_at: null, budget_is_last: 1 },
       ]
     };
     searchWhere(where, search, BUDGET_TEXT_FIELDS);

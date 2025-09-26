@@ -27,6 +27,7 @@ export const LIST_QUERIES = {
             budget_date
             budget_status_id
             budget_total_cost
+            budget_is_last
             budget_total_amount
             created_at
             updated_at

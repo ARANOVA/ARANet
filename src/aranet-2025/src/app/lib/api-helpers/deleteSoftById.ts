@@ -10,10 +10,13 @@ type enumModel =
   'contact' |
   'project' |
   'timesheet' |
-  'budget'
+  'budget' |
+  'invoice' |
+  'income' |
+  'cash'
 ;
 
-export const deleteById = async (
+export const deleteSoftById = async (
   prisma: PrismaClient,
   session: SessionPayload | null,
   model: enumModel,
@@ -27,6 +30,9 @@ export const deleteById = async (
     expense: prisma.aranet_expense_item,
     timesheet: prisma.aranet_timesheet,
     budget: prisma.aranet_budget,
+    invoice: prisma.aranet_invoice,
+    income: prisma.aranet_income_item,
+    cash: prisma.aranet_cash_item,
   };
 
   if ((ids || []).length === 0) {
@@ -40,17 +46,29 @@ export const deleteById = async (
     
   try {
     const fn = modelMap[model];
+    const data: Record<string, unknown> = {
+        deleted_at: new Date(),
+        deleted_by: cookie.id,
+    };
+    if (model === 'budget') {
+      data.aranet_budget_is_last = 0;
+    }
 
-    await (fn as any).deleteMany({
-      where: { id: { in: ids } },
+    const x = await (fn as any).updateMany({
+      where: { id: {
+        in: ids.map(i => i*100000)
+      } },
+      data
     });
+    console.log({x})
+    if (x.count < ids.length) {
+      return { statusCode: 500, error: 'No se pudo borrar alguno de los registros'};
+    }
     return { statusCode: 204 };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    if (err.toString().indexOf('No record was found for a delete') === -1) {
-      logError(`Error DELETE /api/graphtql (${model}): ${err}`);
-      return { statusCode: 500, error: 'Error inexperado'};
-    }
-    return { statusCode: 204 };
+    // Revisar el mensaje si no existe el id que se pasa
+    logError(`Error DELETE /api/graphtql (${model}): ${err}`);
+    return { statusCode: 500, error: 'Error inexperado'};
   };
 }
