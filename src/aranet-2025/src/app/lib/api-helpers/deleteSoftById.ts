@@ -58,7 +58,6 @@ export const deleteSoftById = async (
       } },
       data
     });
-    console.log({x})
     if (x.count < ids.length) {
       return { statusCode: 500, error: 'No se pudo borrar alguno de los registros'};
     }

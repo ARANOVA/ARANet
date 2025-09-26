@@ -40,7 +40,6 @@ export const getSingleDataByModelGraphql = async <T>(
       });
     }
     const json = await res.json();
-    console.log({json})
     if (json.errors) {
       throw new Error(json.errors[0].message);
     }

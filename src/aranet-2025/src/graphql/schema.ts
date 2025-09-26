@@ -2,6 +2,7 @@ import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
 import { getContacts, getById, deleteSoftById, deleteById, updateLatestBudgetRevisions } from '@/app/lib/api-helpers';
 import { createListQuery } from './queries';
+import { aranet_expense_item } from '@/generated/prisma';
 
 export const schema = createSchema<GraphQLContext>({
   typeDefs: /* GraphQL */ `
@@ -551,6 +552,12 @@ export const schema = createSchema<GraphQLContext>({
       error: String
     }
 
+    type ExpenseSingleResponse {
+      statusCode: Int!
+      error: String
+      data: Expense!
+    }
+
     type InvoiceData {
       items: [Invoice!]!
       metadata: Metadata!
@@ -751,6 +758,10 @@ export const schema = createSchema<GraphQLContext>({
         search: [SearchInput!],
         filters: [String!]
       ): CashItemListResponse!
+
+      expense(
+        id: Int!
+      ): ExpenseSingleResponse!
     }
 
     type Mutation {
@@ -779,6 +790,19 @@ export const schema = createSchema<GraphQLContext>({
       expenses: createListQuery('expense'),
       incomes: createListQuery('income'),
       cashes: createListQuery('cash'),
+      expense: async (_: any, args: { id: number }, context: any) => {
+        const data = await getById<aranet_expense_item>(context.prisma, 'expense', args.id);
+        if (data === null) {
+          return {
+            statusCode: 404,
+            error: 'not found'
+          }
+        }
+        return {
+          statusCode: 200,
+          data,
+        }
+      }
     },
     Mutation: {
       deleteExpenses: async (_: any, args: { ids: number[] }, context: any) => {
