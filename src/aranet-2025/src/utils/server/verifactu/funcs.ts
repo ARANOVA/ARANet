@@ -5,10 +5,8 @@ import { exec } from "child_process";
 import crypto from 'crypto';
 import { aranet_invoice_join_all, aranet_invoice_verifactu } from "@/interfaces";
 import { round2, toDateIso, toDateString, toInvoiceType } from "./utils";
-import { create } from "xmlbuilder2";
-import { ID_VERSION_REGISTRO_ALTA, NSS } from "./consts";
 import { ClientSSLSecurityPFX, createClientAsync, IOptions } from "soap";
-import { buildXmlConsulta } from './xmlBuilder';
+import { buildXmlConsulta, buildXmlRegistro } from './xmlBuilder';
 
 // Utils
 const sumItems = (invoice: aranet_invoice_join_all): { taxAmount: number; totalAmount: number } => {
@@ -79,18 +77,8 @@ export const sendToVerifactu = async (
   // Enviar mensaje
   switch (method) {
     case 'RegFactuSistemaFacturacion':
-      const resp1 = client.RegFactuSistemaFacturacion({ xml }, (err: any, result: any, rawResponse: any, soapHeader: any, rawRequest: any) => {
-        console.log({err, result, rawResponse, soapHeader, rawRequest});
-        if (err) {
-          console.error("SOAP error:", err);
-          return;
-        }
-        console.log("Result:", result);
-        console.log("Raw Request:", rawRequest);
-        console.log("Raw Response:", rawResponse);
-      });
-      console.log(resp1);
-      break;
+      const [res] = await client.RegFactuSistemaFacturacionAsync({_xml: xml});
+      return res;
     case 'ConsultaFactuSistemaFacturacion':
       const [result] = await client.ConsultaFactuSistemaFacturacionAsync({_xml: xml});
       // console.log("Result:", result);
@@ -116,9 +104,9 @@ export const verifactuBuildConsultaRegistrosXML = async(
 }
 
 // 1. Generar XML
-export const verifactuBuildRegistroAltaXML = async (
+export const verifactuBuildRegistroAltaXML = (
   invoice: aranet_invoice_verifactu,
-): Promise<string | Error> => {
+): string | Error => {
   // 1. Comprobaciones iniciales
   if (!process.env.COMPANY_CIF || !process.env.COMPANY_FULLNAME) {
     return new Error("Faltan valores de entorno de la empresa");
@@ -149,109 +137,8 @@ export const verifactuBuildRegistroAltaXML = async (
     return new Error("La factura debe que tener fecha de emisión");
   }
 
-  const prefix = invoice.invoice_prefix || '';
-  const root = create({ version: '1.0', encoding: 'UTF-8' })
-    .ele("env:Envelope", {
-        ...NSS.alta,
-      })
-      .ele('env:Header').up()
-      .ele('env:Body')
-        .ele('sum:RegFactuSistemaFacturacion')
-          .ele(`sum1:Cabecera`)
-            .ele("sum1:ObligadoEmision")
-              .ele("sum1:NombreRazon").txt(process.env.COMPANY_FULLNAME).up()
-              .ele("sum1:NIF").txt(process.env.COMPANY_CIF).up()
-            .up()
-          .up()
-
-          .ele('sum:RegistroFactura')
-            .ele("sum:RegistroAlta")
-              .ele("sum1:IDVersion").txt(ID_VERSION_REGISTRO_ALTA).up();
-
-  const idFactura = root.ele("sum1:IDFactura")
-    .ele("sum1:IDEmisorFactura").txt(process.env.COMPANY_CIF).up()
-    .ele("sum1:NumSerieFactura").txt(prefix + invoice.invoice_number).up()
-    .ele("sum1:FechaExpedicionFactura").txt(invoiceDate).up()
-  .up();
-
-  root.ele("sum1:NombreRazonEmisor").txt(process.env.COMPANY_FULLNAME).up()
-    // <Subsanacion>S</Subsanacion>
-    // <RechazoPrevio>X</RechazoPrevio>
-    .ele("sum1:TipoFactura").txt(toInvoiceType(invoice.invoice_kind_of_invoice_id)).up()
-    // <TipoRectificativa/>
-    // <FacturasRectificadas/>
-    // <FacturasSustituidas/>
-    // <ImporteRectificacion/>
-    // <FechaOperacion/>
-    .ele("sum1:DescripcionOperacion").txt(invoice.invoice_title || '').up();
-
-  root.ele("sum1:Destinatarios")
-    .ele("sum1:IDDestinatario")
-      .ele("sum1:NombreRazon").txt(invoice.client?.client_company_name).up()
-      .ele("sum1:NIF").txt(invoice.client?.client_cif).up()
-    .up()
-  .up();
-
-  let total_items_tax_amount = 0;
-  let total_items_base_amount = 0;
-  if (invoice.invoice_item || [].length > 0) {
-    const desglose = root.ele("sum1:Desglose");
-    (invoice.invoice_item || []).forEach((d) => {
-      if (d.item_cost === 0 || d.item_cost === null) return;
-      const tax_amount = round2(((d.item_tax_rate || 0) / 100) * d.item_cost);
-      total_items_tax_amount += tax_amount;
-      total_items_base_amount += d.item_cost;
-      const detalle = desglose.ele("sum1:DetalleDesglose");
-      detalle.ele("sum1:ClaveRegimen").txt('01').up(); // TODO
-      detalle.ele("sum1:CalificacionOperacion").txt('S1').up(); // TODO
-      detalle.ele("sum1:TipoImpositivo").txt((d.item_tax_rate || 0).toFixed(0)).up(); // TODO
-      detalle.ele("sum1:BaseImponibleOimporteNoSujeto").txt(round2(d.item_cost).toFixed(2)).up();
-      detalle.ele("sum1:CuotaRepercutida").txt(round2(tax_amount).toFixed(2)).up();
-      detalle.up();
-    });
-    desglose.up();
-  }
-
-  if (total_items_base_amount !== invoice.invoice_total_amount) {
-    return new Error(`No coinciden los importes totales. ${total_items_base_amount} !== ${invoice.invoice_total_amount}`);
-  }
-
-  root.ele("sum1:CuotaTotal").txt(total_items_tax_amount.toFixed(2)).up();
-  root.ele("sum1:ImporteTotal").txt(round2(total_items_tax_amount + invoice.invoice_total_amount).toFixed(2)).up();
-
-  const huellaPrev = invoice.huellaPrev;
-  root.ele("sum1:Encadenamiento")
-    .ele("sum1:PrimerRegistro").txt(huellaPrev ? 'N' : 'S').up();
-  if (huellaPrev) {
-    root.ele("sum1:RegistroAnterior")
-      .ele("sum1:IDEmisorFactura").txt(huellaPrev ? process.env.COMPANY_CIF : '').up()
-      .ele("sum1:NumSerieFactura").txt(huellaPrev ? prefix + invoice.invoice_number : '').up()
-      .ele("sum1:FechaExpedicionFactura").txt(huellaPrev ? invoiceDate : '').up()
-      .ele("sum1:Huella").txt(huellaPrev || '').up()
-    .up();
-  }
-  root.up();
-
-  if (process.env.DEV_COMPANY_NAME && process.env.DEV_COMPANY_CIF) {
-    root.ele("sum1:SistemaInformatico")
-      .ele("sum1:NombreRazon").txt(process.env.DEV_COMPANY_NAME).up()
-      .ele("sum1:NIF").txt(process.env.DEV_COMPANY_CIF).up()
-      .ele("sum1:NombreSistemaInformatico").txt(process.env.DEV_APP_NAME || '').up()
-      .ele("sum1:IdSistemaInformatico").txt(process.env.DEV_APP_ID || '').up()
-      .ele("sum1:Version").txt(process.env.DEV_APP_VERSION || '1.0.0').up()
-      .ele("sum1:NumeroInstalacion").txt(process.env.DEV_APP_LOCALID || '1').up()
-      .ele("sum1:TipoUsoPosibleSoloVerifactu").txt("N").up()
-      .ele("sum1:TipoUsoPosibleMultiOT").txt("S").up()
-      .ele("sum1:IndicadorMultiplesOT").txt("S").up()
-    .up();
-  }
-
-  root.ele("sum1:FechaHoraHusoGenRegistro").txt(toDateIso(invoice.created_at)).up();
-  root.ele("sum1:TipoHuella").txt('01').up();
-  root.ele("sum1:Huella").txt('HUELLA_PLACEHOLDER').up();
-  root.up().up();
-
-  return root.end({ prettyPrint: true });
+  // 2. Generar XML
+  return buildXmlRegistro(invoice);
 }
 
 

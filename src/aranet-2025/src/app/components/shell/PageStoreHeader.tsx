@@ -22,7 +22,7 @@ interface Props {
   edit_button_text?: string;
   edit_button_href?: string;
   print_button_text?: string;
-  data?: unknown;
+  data?: aranet_invoice_verifactu;
 }
 
 type Fn = () => void;
@@ -58,8 +58,8 @@ export const PageStoreHeader = ({
     const printClick = () => {
       // Test verifactu
       console.log('print_button_click, 2025, 9');
-      verifactuConsulta(2025, 9).then(console.log).catch(console.log);
-      // verifactuFlow(data as aranet_invoice_verifactu).then(console.log).catch(console.log);
+      // verifactuConsulta(2025, 9).then(console.log).catch(console.log);
+      verifactuFlow(data as aranet_invoice_verifactu).then(console.log).catch(console.log);
     };
     add_props.print_button_click = printClick; //() => window.print();
   }

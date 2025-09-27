@@ -92,6 +92,7 @@ export const ID_QUERIES = {
             client_company_name
             client_unique_name
             client_website
+            client_cif
           }
           invoice_items {
             item_description

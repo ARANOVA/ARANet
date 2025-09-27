@@ -59,7 +59,11 @@ export default async function InvoiceShowPage({ params }: Props) {
     aux = ` (borrado ${datePipe(invoice?.data.deleted_at)})`;
   }
 
-  const data: aranet_invoice_verifactu = {...invoice.data, huellaPrev: null};
+  const data: aranet_invoice_verifactu = {
+    ...invoice.data,
+    huellaPrev: null,
+    invoicePrev: null,
+  };
   
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
@@ -91,6 +95,7 @@ export default async function InvoiceShowPage({ params }: Props) {
           addresses={addresses?.data?.items || []}
           contacts={contacts?.data?.items || []}
         />
+        {JSON.stringify(invoice.data.invoice_items)}
         <Divider />
       </div>
     </>

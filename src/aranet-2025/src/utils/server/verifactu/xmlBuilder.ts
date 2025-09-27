@@ -43,7 +43,8 @@ export const buildXmlConsulta = (
 }
 
 export const buildXmlRegistro = (
-  invoice: aranet_invoice_verifactu
+  invoice: aranet_invoice_verifactu,
+  onlyBody = true,
 ): string | Error => {
 
   // 1. Comprobaciones iniciales
@@ -76,49 +77,51 @@ export const buildXmlRegistro = (
     return new Error("La factura debe que tener fecha de emisión");
   }
 
-  if (!process.env.DEV_COMPANY_NAME || process.env.DEV_COMPANY_CIF) {
+  if (!process.env.DEV_COMPANY_NAME || !process.env.DEV_COMPANY_CIF) {
     return new Error("Debe identificarse el sistema informático emisor");
   }
 
   const prefix = invoice.invoice_prefix || '';
 
   // 2. Build xml
-  const root = create({ version: '1.0', encoding: 'UTF-8' })
-    .ele("env:Envelope", {
-        ...NSS.alta,
+  const root = create({ version: '1.0', encoding: 'UTF-8' });
+  if (!onlyBody) {
+    root.ele("env:Envelope", {
+        ...NSS.consulta,
       })
       .ele('env:Header').up()
-      .ele('env:Body')
-        .ele('sfLR:RegFactuSistemaFacturacion')
-          .ele(`sfLR:Cabecera`)
-            .ele("sf:ObligadoEmision")
-              .ele("sf:NombreRazon").txt(process.env.COMPANY_FULLNAME).up()
-              .ele("sf:NIF").txt(process.env.COMPANY_CIF).up()
-            .up()
-          .up()
+    .ele('env:Body');
+  }
+  
+  const body = root.ele('sfLR:RegFactuSistemaFacturacion')
+    .ele(`sfLR:Cabecera`)
+      .ele("sf:ObligadoEmision")
+        .ele("sf:NombreRazon").txt(process.env.COMPANY_FULLNAME).up()
+        .ele("sf:NIF").txt(process.env.COMPANY_CIF).up()
+      .up()
+    .up()
 
-          .ele('sfLR:RegistroFactura')
-            .ele("sfLR:RegistroAlta")
-              .ele("sf:IDVersion").txt(ID_VERSION_REGISTRO_ALTA).up();
-
-  const idFactura = root.ele("sf:IDFactura")
-    .ele("sf:IDEmisorFactura").txt(process.env.COMPANY_CIF).up()
-    .ele("sf:NumSerieFactura").txt(prefix + invoice.invoice_number).up()
-    .ele("sf:FechaExpedicionFactura").txt(invoiceDate).up()
-  .up();
+    .ele('sfLR:RegistroFactura')
+      .ele("sfLR:RegistroAlta")
+        .ele("sf:IDVersion").txt(ID_VERSION_REGISTRO_ALTA).up()
+        .ele("sf:IDFactura")
+          .ele("sf:IDEmisorFactura").txt(process.env.COMPANY_CIF).up()
+          .ele("sf:NumSerieFactura").txt(prefix + invoice.invoice_number).up()
+          .ele("sf:FechaExpedicionFactura").txt(invoiceDate).up()
+        .up();
 
   // RefExterna (optional)
 
-  root.ele("sf:NombreRazonEmisor").txt(process.env.COMPANY_FULLNAME).up();
+  body.ele("sf:NombreRazonEmisor").txt(process.env.COMPANY_FULLNAME).up();
 
   // TipoFactura (required)
   const invoiceType = toInvoiceType(invoice.invoice_kind_of_invoice_id);
-  root.ele("sf:TipoFactura").txt(invoiceType).up();
+  body.ele("sf:TipoFactura").txt(invoiceType).up();
 
   // TipoRectificación (optional)
   if (invoice.invoice_prefix?.startsWith('AB')) {
     const invoiceRectType = toInvoiceType(invoice.invoice_kind_of_invoice_id);
-    root.ele("sf:TipoRectificativa").txt(invoiceRectType).up();
+    body.ele("sf:TipoRectificativa").txt(invoiceRectType).up();
     // TODO: Facturas rectificadas
     /*
     $facturasRectificadas = $doc->createElementNS(self::SF_NAMESPACE, 'sf:FacturasRectificadas');
@@ -162,22 +165,23 @@ export const buildXmlRegistro = (
   }
   */
 
-  root.ele("sf:DescripcionOperacion").txt(invoice.invoice_title || '').up();
+  body.ele("sf:DescripcionOperacion").txt(invoice.invoice_title || '').up();
 
-  root.ele("sf:Destinatarios")
+  body.ele("sf:Destinatarios")
     .ele("sf:IDDestinatario")
       .ele("sf:NombreRazon").txt(invoice.client?.client_company_name).up();
   if (invoice.client?.client_cif) {
-    root.ele("sf:NIF").txt(invoice.client?.client_cif).up();
+    body.ele("sf:NIF").txt(invoice.client?.client_cif).up();
   }
-  root.up().up();
+  body.up().up();
 
   // Items
   let total_items_tax_amount = 0;
   let total_items_base_amount = 0;
+  console.log({invoice_item: invoice.invoice_item})
   if (invoice.invoice_item || [].length > 0) {
-    const desglose = root.ele("sf:Desglose");
-    (invoice.invoice_item || []).forEach((d) => {
+    const desglose = body.ele("sf:Desglose");
+    (invoice.invoice_items || []).forEach((d) => {
       if (d.item_cost === 0 || d.item_cost === null) return;
       const tax_amount = round2(((d.item_tax_rate || 0) / 100) * d.item_cost);
       total_items_tax_amount += tax_amount;
@@ -197,27 +201,27 @@ export const buildXmlRegistro = (
     return new Error(`No coinciden los importes totales. ${total_items_base_amount} !== ${invoice.invoice_total_amount}`);
   }
 
-  root.ele("sf:CuotaTotal").txt(total_items_tax_amount.toFixed(2)).up();
-  root.ele("sf:ImporteTotal").txt(round2(total_items_tax_amount + invoice.invoice_total_amount).toFixed(2)).up();
+  body.ele("sf:CuotaTotal").txt(total_items_tax_amount.toFixed(2)).up();
+  body.ele("sf:ImporteTotal").txt(round2(total_items_tax_amount + invoice.invoice_total_amount).toFixed(2)).up();
 
-  root.ele("sf:Encadenamiento");
+  body.ele("sf:Encadenamiento");
   if (invoice.huellaPrev && invoice.invoicePrev) {
     // Get prev invoice
     const prefix = invoice.invoicePrev.invoice_prefix || '';
-    root.ele("sf:RegistroAnterior")
+    body.ele("sf:RegistroAnterior")
       .ele("sf:IDEmisorFactura").txt(process.env.COMPANY_CIF || '').up()
       .ele("sf:NumSerieFactura").txt(prefix + invoice.invoicePrev.invoice_number).up()
       .ele("sf:FechaExpedicionFactura").txt(toDateString(invoice.invoicePrev.invoice_date)).up()
       .ele("sf:Huella").txt(invoice.huellaPrev).up()
     .up();
   } else {
-    root.ele("sf:PrimerRegistro").txt(invoice.huellaPrev ? 'N' : 'S').up();
+    body.ele("sf:PrimerRegistro").txt(invoice.huellaPrev ? 'N' : 'S').up();
   }
-  root.up();
+  body.up();
 
   // SistemaInformatico (required)
 
-  root.ele("sf:SistemaInformatico")
+  body.ele("sf:SistemaInformatico")
     .ele("sf:NombreRazon").txt(process.env.DEV_COMPANY_NAME || '').up()
     .ele("sf:NIF").txt(process.env.DEV_COMPANY_CIF || '').up()
     .ele("sf:NombreSistemaInformatico").txt(process.env.DEV_APP_NAME || '').up()
@@ -229,11 +233,11 @@ export const buildXmlRegistro = (
     .ele("sf:IndicadorMultiplesOT").txt("N").up()
   .up();
 
-  root.ele("sf:FechaHoraHusoGenRegistro").txt(toDateIso(invoice.created_at)).up();
-  root.ele("sf:TipoHuella").txt('01').up();
-  root.ele("sf:Huella").txt('HUELLA_PLACEHOLDER').up();
-  root.up().up();
-
-  return root.end({ prettyPrint: true });
-  
+  body.ele("sf:FechaHoraHusoGenRegistro").txt(toDateIso(invoice.created_at)).up();
+  body.ele("sf:TipoHuella").txt('01').up();
+  body.ele("sf:Huella").txt('HUELLA_PLACEHOLDER').up();
+  if (!onlyBody) {
+    body.up().up().up();
+  }
+  return body.end({ prettyPrint: false });
 }
