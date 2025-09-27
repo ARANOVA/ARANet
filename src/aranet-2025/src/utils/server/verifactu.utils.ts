@@ -12,6 +12,9 @@ export const verifactuConsulta = async (year: number, month: number): Promise<Er
     // TODO
     return xml;
   }
+
+  const xmlWithoutDeclaration = xml.replace('<?xml version="1.0" encoding="UTF-8"?>', '');
+  
   // 2. Validar
   try {
     const xsdPath = path.join(__dirname, '..', '..', '..', 'verifactu-dev', 'xsd2', 'ConsultaLR.xsd').replace('/ROOT/', './');
@@ -21,19 +24,19 @@ export const verifactuConsulta = async (year: number, month: number): Promise<Er
       throw new Error(validation.error);
     }
     
-    // TODO: 3. Firmar
-    const signed = signXmlString(xml);
+    // 3. Firmar
+    const signed = signXmlString(xmlWithoutDeclaration);
     if (signed instanceof Error) {
       throw signed;
     }
 
-    console.log({xml})
     const resp = await sendToVerifactu(signed, 'ConsultaFactuSistemaFacturacion');
-    console.log({resp})
     if (resp instanceof(Error)) {
       // TODO
       throw resp;
     }
+    // 4. Hacer algo con esto
+    console.log({resp})
   } catch (err) {
     console.log('Error al validar XML:', err);
     throw err;

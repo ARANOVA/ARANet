@@ -6,6 +6,7 @@ import { ID_VERSION_REGISTRO_ALTA, NSS } from "./consts";
 export const buildXmlConsulta = (
   year: number,
   month: number,
+  onlyBody = true,
 ): string | Error => {
   // 1. Comprobaciones iniciales
   if (!process.env.COMPANY_CIF || !process.env.COMPANY_FULLNAME) {
@@ -13,30 +14,32 @@ export const buildXmlConsulta = (
   }
 
   // 2. Build xml
-  const root = create({ version: '1.0', encoding: 'UTF-8' })
-    .ele("env:Envelope", {
+  const root = create({ version: '1.0', encoding: 'UTF-8' });
+  if (!onlyBody) {
+    root.ele("env:Envelope", {
         ...NSS.consulta,
       })
       .ele('env:Header').up()
-      .ele('env:Body')
-        .ele('sfLRC:ConsultaFactuSistemaFacturacion')
-          .ele(`sfLRC:Cabecera`)
-            .ele("sf:IDVersion").txt(ID_VERSION_REGISTRO_ALTA).up()
-            .ele("sf:ObligadoEmision")
-              .ele("sf:NombreRazon").txt(process.env.COMPANY_FULLNAME).up()
-              .ele("sf:NIF").txt(process.env.COMPANY_CIF).up()
-            .up()
-          .up()
-        .ele('sfLRC:FiltroConsulta')
-          .ele('sfLRC:PeriodoImputacion')
-            .ele('sf:Ejercicio').txt(year.toString()).up()
-            .ele('sf:Periodo').txt(month.toString().padStart(2, "0")).up()
-          .up()
-        .up()
+    .ele('env:Body');
+  }
+  root.ele('sfLRC:ConsultaFactuSistemaFacturacion')
+    .ele(`sfLRC:Cabecera`)
+      .ele("sf:IDVersion").txt(ID_VERSION_REGISTRO_ALTA).up()
+      .ele("sf:ObligadoEmision")
+        .ele("sf:NombreRazon").txt(process.env.COMPANY_FULLNAME).up()
+        .ele("sf:NIF").txt(process.env.COMPANY_CIF).up()
       .up()
     .up()
+  .ele('sfLRC:FiltroConsulta')
+    .ele('sfLRC:PeriodoImputacion')
+      .ele('sf:Ejercicio').txt(year.toString()).up()
+      .ele('sf:Periodo').txt(month.toString().padStart(2, "0")).up()
+    .up()
   .up();
-  return root.end({ prettyPrint: true });
+  if (!onlyBody) {
+    root.up().up().up();
+  }
+  return root.end({ prettyPrint: false });
 }
 
 export const buildXmlRegistro = (

@@ -7,7 +7,7 @@ import { aranet_invoice_join_all, aranet_invoice_verifactu } from "@/interfaces"
 import { round2, toDateIso, toDateString, toInvoiceType } from "./utils";
 import { create } from "xmlbuilder2";
 import { ID_VERSION_REGISTRO_ALTA, NSS } from "./consts";
-import { ClientSSLSecurityPFX, createClientAsync } from "soap";
+import { ClientSSLSecurityPFX, createClientAsync, IOptions } from "soap";
 import { buildXmlConsulta } from './xmlBuilder';
 
 // Utils
@@ -27,7 +27,7 @@ const sumItems = (invoice: aranet_invoice_join_all): { taxAmount: number; totalA
 export const sendToVerifactu = async (
   xml: string,
   method: 'RegFactuSistemaFacturacion' | 'ConsultaFactuSistemaFacturacion'
-): Promise<Error | void> => {
+): Promise<Error | any> => {
   const CERT_PATH = process.env.CERT_PATH || '';
   if (!CERT_PATH) {
     return new Error('Needed env variable CERT_PATH');
@@ -49,13 +49,20 @@ export const sendToVerifactu = async (
   }
 
   // Client options for the SOAP call
-  const options = {
+  const options: IOptions = {
     wsdl_options: {
-      disableCache: true, // Optional SOAP client options
+      disableCache: true,
+      location: 'wsdl'
     },
+    endpoint: wsdlUrl,
   };
 
   const wsdPath = path.join(process.cwd(), 'verifactu-dev', 'xsd2', 'SistemaFacturacion.wsdl');
+  if (!fs.existsSync(wsdPath)) {
+    console.log(`Can't get local wsdl for connections`);
+    return new Error(`Can't get local wsdl for connections`);
+    // wsdPath = wsdlUrl;
+  }
   const client = await createClientAsync(
     wsdPath,
     options,
@@ -85,12 +92,12 @@ export const sendToVerifactu = async (
       console.log(resp1);
       break;
     case 'ConsultaFactuSistemaFacturacion':
-      const [result, rawResponse, soapHeader, rawRequest] = await client.ConsultaFactuSistemaFacturacionAsync({xml});
-      console.log("Result:", result);
-      console.log("Raw Request:", rawRequest);
-      console.log("Raw Response:", rawResponse);
-      console.log("Soap header:", soapHeader)
-      break;
+      const [result] = await client.ConsultaFactuSistemaFacturacionAsync({_xml: xml});
+      // console.log("Result:", result);
+      // console.log("Raw Request:", rawRequest);
+      // console.log("Raw Response:", rawResponse);
+      // console.log("Soap header:", soapHeader)
+      return result;
     }
 }
 
