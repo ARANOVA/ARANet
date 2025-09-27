@@ -2,7 +2,7 @@
 #set -e
 
 # Carpeta donde guardaremos los XSDs
-XSD_DIR="./src/verifactu-dev/xsd2"
+XSD_DIR="./verifactu-dev/xsd2"
 mkdir -p "$XSD_DIR"
 
 # URLs oficiales de AEAT
@@ -11,6 +11,8 @@ XSD_URLS=(
   "SuministroLR.xsd https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SuministroLR.xsd"
   "SuministroInformacion.xsd https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SuministroInformacion.xsd"
   "ConsultaLR.xsd https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/ConsultaLR.xsd"
+  "RespuestaSuministro.xsd https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/RespuestaSuministro.xsd"
+  "RespuestaConsultaLR.xsd https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/RespuestaConsultaLR.xsd"
 )
 
 echo "Descargando XSDs..."

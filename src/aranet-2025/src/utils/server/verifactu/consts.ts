@@ -1,21 +1,21 @@
 const NS0 = "http://schemas.xmlsoap.org/soap/envelope/";
-const NS1 = "https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SuministroLR.xsd";
-const NS2 = "https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SuministroInformacion.xsd";
-const NS3 = "http://www.w3.org/2000/09/xmldsig#";
-const NS4 = "https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/ConsultaLR.xsd";
+const SF_NAMESPACE = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SuministroInformacion.xsd';
+const SFLR_NAMESPACE = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SuministroLR.xsd';
+const QUERY_NAMESPACE = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/ConsultaLR.xsd';
+const DS_NAMESPACE = 'http://www.w3.org/2000/09/xmldsig#';
 
 export const NSS = {
   alta: {
-    'xmlns:soapenv': NS0,
-    'xmlns:sum': NS1,
-    'xmlns:sum1': NS2,
-    'xmlns:xd': NS3,
+    'xmlns:env': NS0,
+    'xmlns:sfLR': SFLR_NAMESPACE,
+    'xmlns:sf': SF_NAMESPACE,
+    'xmlns:ds': DS_NAMESPACE,
   },
   consulta: {
-    'xmlns:soapenv': NS0,
-    'xmlns:con': NS4,
-    'xmlns:sum1': NS2,
-    'xmlns:sum': NS1,
+    'xmlns:env': NS0,
+    'xmlns:sfLRC': QUERY_NAMESPACE,
+    'xmlns:sf': SF_NAMESPACE,
+    'xmlns:sfLR': SFLR_NAMESPACE,
   }
 };
 

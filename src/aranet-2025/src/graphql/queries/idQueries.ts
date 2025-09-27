@@ -56,6 +56,8 @@ export const ID_QUERIES = {
           invoice_periodic_current
           invoice_service_from
           invoice_service_to
+          created_at
+          updated_at
           payment_status {
             payment_status_title
           }

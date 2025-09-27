@@ -58,8 +58,8 @@ export const PageStoreHeader = ({
     const printClick = () => {
       // Test verifactu
       console.log('print_button_click, 2025, 9');
-      //verifactuConsulta(2025, 9).then(console.log).catch(console.log);
-      verifactuFlow(data as aranet_invoice_verifactu).then(console.log).catch(console.log);
+      verifactuConsulta(2025, 9).then(console.log).catch(console.log);
+      // verifactuFlow(data as aranet_invoice_verifactu).then(console.log).catch(console.log);
     };
     add_props.print_button_click = printClick; //() => window.print();
   }

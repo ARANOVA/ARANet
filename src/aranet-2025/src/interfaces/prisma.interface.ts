@@ -25,6 +25,7 @@ export interface aranet_invoice_join_all extends aranet_invoice_join_client_and_
 
 export interface aranet_invoice_verifactu extends aranet_invoice_join_all {
    huellaPrev: string | null;
+   invoicePrev: aranet_invoice_verifactu | null;
 }
 
 /**** sf_guard_user ****/

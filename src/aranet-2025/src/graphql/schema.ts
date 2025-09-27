@@ -571,7 +571,7 @@ export const schema = createSchema<GraphQLContext>({
     type InvoiceSingleResponse {
       statusCode: Int!
       error: String
-      data: Invoice!
+      data: Invoice
     }
 
     type InvoiceData {

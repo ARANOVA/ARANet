@@ -3,26 +3,49 @@ import fs from 'fs';
 import path from 'path';
 import { exec } from "child_process";
 import crypto from 'crypto';
-import { aranet_invoice_verifactu } from "@/interfaces";
+import { aranet_invoice_join_all, aranet_invoice_verifactu } from "@/interfaces";
 import { round2, toDateIso, toDateString, toInvoiceType } from "./utils";
 import { create } from "xmlbuilder2";
 import { ID_VERSION_REGISTRO_ALTA, NSS } from "./consts";
 import { ClientSSLSecurityPFX, createClientAsync } from "soap";
+import { buildXmlConsulta } from './xmlBuilder';
+
+// Utils
+const sumItems = (invoice: aranet_invoice_join_all): { taxAmount: number; totalAmount: number } => {
+  let taxAmount = 0;
+  let totalAmount = 0;
+  (invoice.invoice_item || []).forEach((d) => {
+    if (d.item_cost === 0 || d.item_cost === null) return;
+    const tax_amount = round2(((d.item_tax_rate || 0) / 100) * d.item_cost);
+    taxAmount += tax_amount;
+    totalAmount += d.item_cost;
+  });
+  return { taxAmount, totalAmount };
+}
 
 // Pre
-export const sendToVerifactu = async (xml: string): Promise<Error | void> => {
-  console.log({xml})
-  const CERT_PATH = path.join(__dirname, '..', '..', '..', '..', 'certificados', '29112043T_PABLO_SANCHEZ__R__B99078248_.p12').replace('/ROOT/', './');
-  if (!fs.existsSync(CERT_PATH)) {
-    return new Error('Certificado not found');
+export const sendToVerifactu = async (
+  xml: string,
+  method: 'RegFactuSistemaFacturacion' | 'ConsultaFactuSistemaFacturacion'
+): Promise<Error | void> => {
+  const CERT_PATH = process.env.CERT_PATH || '';
+  if (!CERT_PATH) {
+    return new Error('Needed env variable CERT_PATH');
+  }
+  const certPath = path.join(process.cwd(), CERT_PATH); //.replace('/ROOT/', './');
+  if (!fs.existsSync(certPath)) {
+    return new Error(`Certificate not found at ${certPath}`);
   }
   const CERT_PASSPHRASE = process.env.CERT_PASSPHRASE || '';
   if (!CERT_PASSPHRASE) {
     return new Error('Needed env variable CERT_PASSPHRASE');
   }
 
-  if (!process.env.VERIFACTU_WSDL_URL || !process.env.VERIFACTU_SOAP_URL) {
-    return new Error('Missing VERIFACTU_WSDL_URL or VERIFACTU_SOAP_URL');
+  const env = process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'TEST';
+  const seal = process.env.CERT_SEAL === 'seal' ? '_SEAL' : '';
+  const wsdlUrl = process.env[`VERIFACTU_URL_${env}${seal}`];
+  if (!wsdlUrl) {
+    return new Error(`Missing env var VERIFACTU_URL_${env}${seal}`);
   }
 
   // Client options for the SOAP call
@@ -32,10 +55,11 @@ export const sendToVerifactu = async (xml: string): Promise<Error | void> => {
     },
   };
 
+  const wsdPath = path.join(process.cwd(), 'verifactu-dev', 'xsd2', 'SistemaFacturacion.wsdl');
   const client = await createClientAsync(
-    process.env.VERIFACTU_WSDL_URL,
+    wsdPath,
     options,
-    process.env.VERIFACTU_SOAP_URL,
+    wsdlUrl,
   );
 
   client.setSecurity(
@@ -45,19 +69,29 @@ export const sendToVerifactu = async (xml: string): Promise<Error | void> => {
     ),
   );
 
-  client.setEndpoint(process.env.VERIFACTU_SOAP_URL);
   // Enviar mensaje
-  const resp = client.RegFactuSistemaFacturacion({ xml }, (err: any, result: any, rawResponse: any, soapHeader: any, rawRequest: any) => {
-    console.log({err, result, rawResponse, soapHeader, rawRequest});
-    if (err) {
-      console.error("SOAP error:", err);
-      return;
+  switch (method) {
+    case 'RegFactuSistemaFacturacion':
+      const resp1 = client.RegFactuSistemaFacturacion({ xml }, (err: any, result: any, rawResponse: any, soapHeader: any, rawRequest: any) => {
+        console.log({err, result, rawResponse, soapHeader, rawRequest});
+        if (err) {
+          console.error("SOAP error:", err);
+          return;
+        }
+        console.log("Result:", result);
+        console.log("Raw Request:", rawRequest);
+        console.log("Raw Response:", rawResponse);
+      });
+      console.log(resp1);
+      break;
+    case 'ConsultaFactuSistemaFacturacion':
+      const [result, rawResponse, soapHeader, rawRequest] = await client.ConsultaFactuSistemaFacturacionAsync({xml});
+      console.log("Result:", result);
+      console.log("Raw Request:", rawRequest);
+      console.log("Raw Response:", rawResponse);
+      console.log("Soap header:", soapHeader)
+      break;
     }
-    console.log("Result:", result);
-    console.log("Raw Request:", rawRequest);
-    console.log("Raw Response:", rawResponse);
-  });
-  console.log(resp);
 }
 
 // 0. Consulta registros
@@ -71,34 +105,7 @@ export const verifactuBuildConsultaRegistrosXML = async(
   }
 
   // 2. Generar XML request
-  const root = create({ version: '1.0', encoding: 'UTF-8' })
-    .ele("soapenv:Envelope", {
-        ...NSS.consulta,
-      })
-      .ele('soapenv:Header').up()
-      .ele('soapenv:Body')
-        .ele('con:ConsultaFactuSistemaFacturacion')
-            .ele(`con:Cabecera`)
-              .ele("sum1:IDVersion").txt(ID_VERSION_REGISTRO_ALTA).up()
-              .ele("sum1:ObligadoEmision")
-                .ele("sum1:NombreRazon").txt(process.env.COMPANY_FULLNAME).up()
-                .ele("sum1:NIF").txt(process.env.COMPANY_CIF).up()
-              .up()
-              // .ele('sum1:Destinatario')
-              //   .ele("sum1:NombreRazon").txt('KK, S.L.L.').up()
-              //   .ele("sum1:NIF").txt('A99051047').up()
-              // .up()
-            .up()
-          .ele('con:FiltroConsulta')
-            .ele('con:PeriodoImputacion')
-              .ele('sum1:Ejercicio').txt(year.toString()).up()
-              .ele('sum1:Periodo').txt(month.toString().padStart(2, "0")).up()
-            .up()
-          .up()
-        .up()
-      .up()
-    .up();
-    return root.end({ prettyPrint: true });
+  return buildXmlConsulta(year, month);
 }
 
 // 1. Generar XML
@@ -137,11 +144,11 @@ export const verifactuBuildRegistroAltaXML = async (
 
   const prefix = invoice.invoice_prefix || '';
   const root = create({ version: '1.0', encoding: 'UTF-8' })
-    .ele("soapenv:Envelope", {
+    .ele("env:Envelope", {
         ...NSS.alta,
       })
-      .ele('soapenv:Header').up()
-      .ele('soapenv:Body')
+      .ele('env:Header').up()
+      .ele('env:Body')
         .ele('sum:RegFactuSistemaFacturacion')
           .ele(`sum1:Cabecera`)
             .ele("sum1:ObligadoEmision")
@@ -245,11 +252,23 @@ export const verifactuBuildRegistroAltaXML = async (
 // IMPORTANTE: el "string de entrada" y el orden de concatenación debe seguir
 // exactamente el documento AEAT "Algoritmo de cálculo de la huella".
 // Aquí hay un ejemplo ilustrativo: concatena campos y la huella anterior si existe.
-export const verifactuCalcHuella = async (invoice: aranet_invoice_verifactu): Promise<Error | string> => {
+export const verifactuCalcHuella = async (
+  invoice: aranet_invoice_verifactu,
+  type: 'alta' | 'cancelacion',
+): Promise<Error | string> => {
   // --- construye la cadena tal como especifique AEAT (ejemplo simplificado) ---
   const invoiceDate = toDateString(invoice.invoice_date);
   if (!invoiceDate) {
     return new Error("La factura debe que tener fecha de emisión");
+  }
+
+  const generationDate = toDateIso(invoice.updated_at);
+  if (!generationDate) {
+    return new Error("La factura debe que tener fecha de actualización");
+  }
+
+  if (!process.env.COMPANY_CIF || !process.env.COMPANY_FULLNAME) {
+    return new Error("Faltan valores de entorno de la empresa");
   }
 
   const prefix = invoice.invoice_prefix || '';
@@ -257,10 +276,32 @@ export const verifactuCalcHuella = async (invoice: aranet_invoice_verifactu): Pr
     return new Error("Debe tener un importe total válido");
   }
 
-  const huellaPrev = invoice.huellaPrev;
-
-  const input = `${prefix}|${invoice.invoice_number}|${invoiceDate}|${round2(invoice.invoice_total_amount)}` + (huellaPrev ? `|${huellaPrev}` : '');
-  const hash = crypto.createHash('sha256').update(input, 'utf8').digest('hex').toUpperCase();
+  let inputStr = '';
+  if (type === 'alta') {
+    const { taxAmount, totalAmount } = sumItems(invoice);
+    const input: string[] = [
+      'IDEmisorFactura=' + process.env.COMPANY_CIF,
+      'NumSerieFactura=' + `${prefix}|${invoice.invoice_number}`,
+      'FechaExpedicionFactura=' + invoiceDate,
+      'TipoFactura=' + toInvoiceType(invoice.invoice_kind_of_invoice_id),
+      'CuotaTotal=' + taxAmount,
+      'ImporteTotal=' + round2(totalAmount + taxAmount),
+      'Huella=' + (invoice.huellaPrev || ''),
+      'FechaHoraHusoGenRegistro=' + generationDate,
+    ];
+    inputStr = input.join('&');
+  } else {
+    // Cancelación
+    const input: string[] = [
+      'IDEmisorFacturaAnulada=' + process.env.COMPANY_CIF,
+      'NumSerieFacturaAnulada=' + `${prefix}|${invoice.invoice_number}`,
+      'FechaExpedicionFacturaAnulada=' + invoiceDate,
+      'Huella=' + (invoice.huellaPrev || ''),
+      'FechaHoraHusoGenRegistro=' + generationDate,
+    ];
+    inputStr = input.join('&');
+  }
+  const hash = crypto.createHash('sha256').update(inputStr, 'utf8').digest('hex').toUpperCase();
   return hash;
 }
 
@@ -292,7 +333,6 @@ export const verifactuValidateXmlAgainstXsd = async (
   const bodyXml = `<${rootTag} ${xmlnsString}>
     ${bodyContent}
   </${rootTag}>`;
-    console.log({bodyXml, xmlString})
 
   
   // Escribir el XML en un archivo temporal
@@ -301,7 +341,7 @@ export const verifactuValidateXmlAgainstXsd = async (
   return new Promise((resolve, reject) => {
     exec(`xmllint --noout --nonet --schema ${xsdPath} ${tempXmlPath}`, (err, stdout, stderr) => {
       // Borrar
-      // fs.unlinkSync(tempXmlPath);
+      fs.unlinkSync(tempXmlPath);
       if (err) reject({ valid: false, error: stderr });
       else resolve({ valid: true });
     });
