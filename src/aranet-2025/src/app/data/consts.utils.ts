@@ -16,12 +16,16 @@ const validWidths: Record<number, string> = {
   110: 'min-w-[110px] max-w-[110px] w-[110px]',
   130: 'min-w-[130px] max-w-[130px] w-[130px]',
   170: 'min-w-[170px] max-w-[170px] w-[170px]',
-  240: 'min-w-[240px] max-w-[240px] w-[240px]'
+  240: 'min-w-[240px] max-w-[240px] w-[240px]',
+} as const;
+
+const validMaxWidths: Record<number, string> = {
+  340: 'max-w-[340px]',
 } as const;
 
 const amountMeta = (w: number): ColumnMeta<AranovaColumnMeta, unknown> | undefined => ({
   cellClass: clsx("text-right", noSpacing, noOverflow, validWidths[w]),
-  headerClass: clsx("text-center", noSpacing, noOverflow, validWidths[w]),
+  headerClass: clsx("!text-right", noSpacing, noOverflow, validWidths[w]),
   footerClass: clsx("text-right", noSpacing, validWidths[w])
 });
 
@@ -33,6 +37,11 @@ const dateMeta = (w: number): ColumnMeta<AranovaColumnMeta, unknown> | undefined
 const textMeta = (w: number): ColumnMeta<AranovaColumnMeta, unknown> | undefined => ({
   cellClass: clsx("text-left", noOverflow, validWidths[w]),
   headerClass: clsx("text-left", noOverflow, validWidths[w]),
+});
+
+const textMaxMeta = (w: number): ColumnMeta<AranovaColumnMeta, unknown> | undefined => ({
+  cellClass: clsx("text-left", noOverflow, validMaxWidths[w]),
+  headerClass: clsx("text-left", noOverflow, validMaxWidths[w]),
 });
 
 const checkMeta = (w: number): ColumnMeta<AranovaColumnMeta, unknown> | undefined => ({
@@ -50,3 +59,4 @@ export const textLeftMeta130 = textMeta(130);
 export const textLeftMeta170 = textMeta(170);
 export const textLeftMeta240 = textMeta(240);
 export const checkCenterMeta60 = checkMeta(60)
+export const textLeftMetaMax340 = textMaxMeta(340);

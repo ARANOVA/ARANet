@@ -3,10 +3,12 @@ export const LIST_QUERIES = {
     query ListInvoiceItems(
       $sortField: String,
       $sortDir: String,
+      $filters: [FilterInput!],
     ) {
       invoice_items(
         sortField: $sortField,
         sortDir: $sortDir,
+        filters: $filters,
       ) {
         statusCode
         data {

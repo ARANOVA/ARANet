@@ -550,6 +550,12 @@ export const schema = createSchema<GraphQLContext>({
       operator: String
     }
 
+    input FilterInput {
+      type: String
+      field: String!
+      value: String
+    }
+
     type Metadata {
       total: Int!
       page: Int!
@@ -789,6 +795,7 @@ export const schema = createSchema<GraphQLContext>({
       invoice_items(
         sortField: String = "id",
         sortDir: String = "asc",
+        filters: [FilterInput!]
       ): InvoiceItemListResponse!
 
       expense(

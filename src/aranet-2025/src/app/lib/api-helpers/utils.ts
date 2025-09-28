@@ -1,4 +1,4 @@
-import { SearchDTO } from "@aranova/aranova-react-ui";
+import { FilterDTO, SearchDTO } from "@aranova/aranova-react-ui";
 
 const parseFilter = (value: string) => {
   const match = value.match(/^([<>]=?|!=|=)?\s*(\d+(\.\d+)?)$/);
@@ -16,6 +16,15 @@ const parseFilter = (value: string) => {
     case "=":
     case undefined: return { equals: num };
     default: return { equals: num };
+  }
+}
+
+export const filterWhere = (where: any, filters: FilterDTO[]): void => {
+  for (const f of filters) {
+    if (f.value === undefined) continue;
+    const condition = parseFilter(f.value as string);
+    console.log({condition})
+    where.AND.push({ [f.field]: condition });
   }
 }
 

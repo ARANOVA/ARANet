@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { FilterDTO, ListResponse, SearchDTO, SingleResponse } from '../../../interfaces';
+import { FilterDTO, ListResponse, SingleResponse } from '../../../interfaces';
 import { SimpleTanstackTable } from './SimpleTanstackTable';
 import { FormAlert } from '../../elements';
 
@@ -13,8 +13,9 @@ interface Props<T> {
   sortDir?: 'desc' | 'asc';
   columns: ColumnDef<T, any>[];
   data?: ListResponse<T>;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   alert: React.ReactNode;
+  filters?: FilterDTO[],
   deleteFn: (model: string, ids: number[]) => Promise<SingleResponse<void>>;
   exportFn?: (model: string, ids: number[], exportData?: Record<string, unknown>) => Promise<boolean>;
   modalData?: { title: string; description?: string; body?: React.ReactNode };
@@ -23,6 +24,7 @@ interface Props<T> {
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
+    filters?: FilterDTO[],
   ) => Promise<ListResponse<T>>;
 }
 

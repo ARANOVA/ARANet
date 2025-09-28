@@ -16,9 +16,10 @@ export const getListDataByModelGraphql = async <T>(
   searches: SearchDTO[] = [],
   filters: FilterDTO[] = [],
 ): Promise<ListResponse<T>> => {
+  console.log({filters})
   const args: Record<string, unknown> = {
     page,
-    size: limit
+    size: limit,
   };
   if (sortField && sortDir) {
     args.sortField = sortField;
@@ -27,9 +28,13 @@ export const getListDataByModelGraphql = async <T>(
   if (searches && searches.length > 0) {
     args.search = searches;
   }
+  if (filters && filters.length > 0) {
+    args.filters = filters;
+  }
 
   // TODO: Partir a variable search
   const query = (LIST_QUERIES as Record<any, string>)[model];
+  console.log({query: model})
   try {
       const res = await fetch('/api/graphql', {
         method: "POST",

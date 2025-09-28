@@ -1,10 +1,10 @@
-import { ListResponse, SearchDTO } from "@aranova/aranova-react-ui";
+import { FilterDTO, ListResponse, SearchDTO } from "@aranova/aranova-react-ui";
 import { logDebug, logError } from "../logger";
 import { PrismaClient } from "@/generated/prisma";
-import { searchWhere } from "./utils";
+import { filterWhere, searchWhere } from "./utils";
 import { enumListModel, getTextFields, getValidFields } from "@/app/data";
 
-const filterByValidFields = (validFields: string[], filter: SearchDTO) => {
+const filterByValidFields = (validFields: string[], filter: SearchDTO | FilterDTO) => {
   return validFields.includes(filter.field.toLowerCase()) || filter.field === 'all';
 };
 
@@ -16,7 +16,7 @@ export const listByModel = async <T>(
   sortField: string,
   sortDir: 'asc' | 'desc',
   search: SearchDTO[],
-  filters: string[],
+  filters: FilterDTO[],
 ): Promise<ListResponse<T>> => {
   const modelMap: Record<enumListModel, any> = {
     contact: prisma.aranet_contact,
@@ -33,25 +33,24 @@ export const listByModel = async <T>(
     invoice_item: prisma.aranet_invoice_item,
   };
 
+  console.log({filters1: filters})
   const noIncludeDelete = ['invoice_item'];
 
   const validFields = getValidFields(model);
   search = search.filter(filter => filterByValidFields(validFields, filter))
-  logDebug(`GET /api/graphql - ${model} - Búsquedas encontradas: ${JSON.stringify(search)}`);
-  // const filtrosEncontrados = filters.filter((filter) => filterByValidFields(filter, '|||'));
-
-  // TODO: CREAR FILTROS
-  const filtrosExtra: unknown[] = []; // buildFiltrosExtra(filtrosEncontrados, CALENDARIO_MAPSORT);
-  // logDebug(`GET /api/invoice - Filtros encontrados: ${JSON.stringify(filtrosEncontrados)}, filtros extra: ${JSON.stringify(filtrosExtra)}`);
+  logDebug(`POST /api/graphql - ${model} - Búsquedas encontradas: ${JSON.stringify(search)}`);
+  filters = filters.filter(filter => filterByValidFields(validFields, filter));
+  logDebug(`POST /api/graphql - ${model} - Filtros encontrados: ${JSON.stringify(filters)}`);
 
   try {
-    const where: any = noIncludeDelete.includes(model) ? { AND: [] } : {
+    const where: any = noIncludeDelete.includes(model) ? {AND: []} : {
       AND: [
          { deleted_at: null },
       ]
     };
     searchWhere(where, search, getTextFields(model));
-    logDebug(`GET /api/graphql - ${model} - Where generado: ${JSON.stringify(where)}`);
+    filterWhere(where, filters);
+    logDebug(`POST /api/graphql - ${model} - Where generado: ${JSON.stringify(where)}`);
 
     const orderBy: Record<string, string> = {};
     orderBy[sortField] = sortDir;

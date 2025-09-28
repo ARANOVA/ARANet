@@ -1,18 +1,24 @@
-import { aranet_invoice_item } from "@/generated/prisma"
 import { SimpleTable } from "@/app/components";
+import { invoiceItemColumns } from "@/app/data/invoice_item/invoiceItemColumns";
+import { FilterDTO } from "@aranova/aranova-react-ui";
 
 interface Props {
-  items: aranet_invoice_item[],
+  invoice_id: number;
 }
 
-export const InvoiceItems = ({ items }: Props) => {
+export const InvoiceItems = ({ invoice_id }: Props) => {
+  const filter: FilterDTO = {
+    field: "item_invoice_id",
+    value: invoice_id.toString(),
+  }
+
   return (
     <SimpleTable
-      model="aranet_invoice_item"
+      model="invoice_item"
       idField="id"
-      columns={[]}
+      filters={[filter]}
+      columns={invoiceItemColumns}
     >
-      {JSON.stringify(items)}
     </SimpleTable>
   );
 }

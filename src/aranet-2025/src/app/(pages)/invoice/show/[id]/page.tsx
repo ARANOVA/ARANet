@@ -97,7 +97,7 @@ export default async function InvoiceShowPage({ params }: Props) {
         />
         <Divider />
         <InvoiceItems
-          items={invoice.data.invoice_items || []}
+          invoice_id={invoice.data.id}
         />
       </div>
     </>

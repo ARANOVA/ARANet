@@ -2,6 +2,7 @@
 
 import {
   EditableInlineTable,
+  FilterDTO,
   ListResponse,
   SingleResponse,
 } from '@aranova/aranova-react-ui';
@@ -19,12 +20,12 @@ interface Props<T> {
   idField: string;
   columns: ColumnDef<T, unknown>[];
   data?: ListResponse<T>;
-  children: React.ReactNode;
+  filters?: FilterDTO[],
+  children?: React.ReactNode;
 }
 
 export const SimpleTable = <T extends { id?: number }>({
   model,
-  idField,
   ...props
 }: Props<T>) => {
   const formUi = useFormUiStore();
@@ -41,8 +42,9 @@ export const SimpleTable = <T extends { id?: number }>({
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
+    filters?: FilterDTO[],
   ): Promise<ListResponse<T>> => {
-    return getListDataByModelGraphql<T>(model, '', '', 1, -1, sortField, sortDir);
+    return getListDataByModelGraphql<T>(model, '', '', 1, -1, sortField, sortDir, undefined, filters);
   }
 
   return (
@@ -52,7 +54,6 @@ export const SimpleTable = <T extends { id?: number }>({
         model={model}
         alert={<ToastStoreAlert />}
         fetchDataFn={wrapGetListDataByModelGraphql}
-        idField={idField}
         {...props}
         deleteFn={handleDelete}
       />

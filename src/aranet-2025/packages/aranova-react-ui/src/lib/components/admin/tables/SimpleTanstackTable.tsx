@@ -9,7 +9,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import clsx from 'clsx';
 import {
@@ -28,6 +28,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {
+  FilterDTO,
   ListResponse,
   SingleResponse,
 } from '../../../interfaces';
@@ -49,11 +50,13 @@ interface Props<T> {
   sortDir?: 'desc' | 'asc';
   columns: ColumnDef<T, any>[];
   data?: ListResponse<T>;
+  filters?: FilterDTO[];
   deleteFn: (model: string, ids: number[]) => Promise<SingleResponse<void>>;
   fetchDataFn: <T extends { id?: number }>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
+    filters?: FilterDTO[],
   ) => Promise<ListResponse<T>>;
   ui: any;
 }
@@ -65,6 +68,7 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
   sortDir,
   columns,
   data,
+  filters,
   deleteFn,
   fetchDataFn,
   ui,
@@ -95,10 +99,13 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
     ui.setSelectedItem(data);
   };
 
+  const className = "text-right !pl-0 !pr-0 !mr-0 !ml-0 overflow-hidden whitespace-nowrap text-ellipsis min-w-[90px] max-w-[90px] w-[90px]";
   const actionsColumn: ColumnDef<T> = {
     id: 'actions',
     meta: {
-      className: 'text-center w-24',
+      cellClass: className,
+      headerClass: className,
+      footerClass: className,
     },
     header: () => 'Acciones',
     cell: ({ row }) => {
@@ -166,18 +173,17 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
   });
 
   // Data
-  const latestSearchTerm = useRef<string>(ui.searchTerm);
   const dataQuery = useQuery<ListResponse<T>>({
     queryKey: [
       model,
       { sorting },
     ],
     queryFn: () => {
-      latestSearchTerm.current = ui.searchTerm;
       return fetchDataFn(
         model,
         sorting?.[0]?.id,
-        sorting?.[0]?.desc ? 'desc' : 'asc'
+        sorting?.[0]?.desc ? 'desc' : 'asc',
+        filters,
       );
     },
     initialData: data,
@@ -252,7 +258,6 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
           <Table
             striped
             bleed
-            className="[--gutter:--spacing(6)] sm:[--gutter:--spacing(8)]"
           >
             <TableHead>
               {table.getHeaderGroups().map(headerGroup => (
@@ -365,7 +370,8 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
                       // colSpan={table.getFooterGroups()[0].headers.length}
                       className={clsx(
                         header.column.columnDef.meta?.footerClass || header.column.columnDef.meta?.className,
-                        'py-3 pl-4 sm:pl-0 pr-3 text-lg dark:text-zinc-300 text-zinc-900')}
+                        'py-3 pl-4 sm:pl-0 pr-3 !font-extrabold dark:text-zinc-300 text-zinc-900',
+                        'bg-zinc-950/2.5 dark:bg-white/2.5 border-t-4 border-t-zinc-950/10 dark:border-t-white/10')}
                     >
                       {flexRender(header.column.columnDef.footer, header.getContext())}
                     </TableHeader>

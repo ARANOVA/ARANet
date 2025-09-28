@@ -5,6 +5,7 @@ import { CONTACT_TEXT_FIELDS, CONTACT_VALID_FIELDS } from "./contact";
 import { EXPENSE_TEXT_FIELDS, EXPENSE_VALID_FIELDS } from "./expense";
 import { INCOME_TEXT_FIELDS, INCOME_VALID_FIELDS } from "./income";
 import { INVOICE_TEXT_FIELDS, INVOICE_VALID_FIELDS } from "./invoice";
+import { INVOICE_ITEM_TEXT_FIELDS, INVOICE_ITEM_VALID_FIELDS } from "./invoice_item";
 import { PROJECT_TEXT_FIELDS, PROJECT_VALID_FIELDS } from "./project";
 import { USER_TEXT_FIELDS, USER_VALID_FIELDS } from "./user";
 import { VENDOR_TEXT_FIELDS, VENDOR_VALID_FIELDS } from "./vendor";
@@ -87,6 +88,8 @@ export const getTextFields = (model: enumListModel): string[] => {
       return INVOICE_TEXT_FIELDS;
     case 'user':
       return USER_TEXT_FIELDS;
+    case 'invoice_item':
+      return INVOICE_ITEM_TEXT_FIELDS;
     // case 'timesheet':
     //   return TIMES
   }
@@ -116,6 +119,8 @@ export const getValidFields = (model: enumListModel): string[] => {
       return INVOICE_VALID_FIELDS;
     case 'user':
       return USER_VALID_FIELDS;
+    case 'invoice_item':
+      return INVOICE_ITEM_VALID_FIELDS;
     // case 'timesheet':
     //   return TIMES
   }
