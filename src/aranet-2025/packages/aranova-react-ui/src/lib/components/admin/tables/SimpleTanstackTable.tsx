@@ -250,7 +250,7 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
   });
 
   return (
-    <div className="mt-4 sm:mx-0 table-none md:table-auto">
+    <div className="mt-4 sm:mx-0 table-none md:table-auto w-full">
       {returnAlert ? (
         returnAlert
       ) : (

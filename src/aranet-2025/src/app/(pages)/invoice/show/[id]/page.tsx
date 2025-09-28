@@ -95,7 +95,6 @@ export default async function InvoiceShowPage({ params }: Props) {
           addresses={addresses?.data?.items || []}
           contacts={contacts?.data?.items || []}
         />
-        <Divider />
         <InvoiceItems
           invoice_id={invoice.data.id}
         />
