@@ -61,7 +61,8 @@ export type enumListModel =
   'timesheet' |
   'budget' |
   'cash' |
-  'user'
+  'user' |
+  'invoice_item'
 ;
 
 export const getTextFields = (model: enumListModel): string[] => {

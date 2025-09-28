@@ -683,6 +683,17 @@ export const schema = createSchema<GraphQLContext>({
       error: String
       data: CashItemData!
     }
+
+    type InvoiceItemData {
+      items: [InvoiceItem!]!
+      metadata: Metadata!
+    }
+
+    type InvoiceItemListResponse {
+      statusCode: Int!
+      error: String
+      data: InvoiceItemData!
+    }
       
     type Query {
       invoices(
@@ -775,6 +786,11 @@ export const schema = createSchema<GraphQLContext>({
         filters: [String!]
       ): CashItemListResponse!
 
+      invoice_items(
+        sortField: String = "id",
+        sortDir: String = "asc",
+      ): InvoiceItemListResponse!
+
       expense(
         id: Int!
       ): ExpenseSingleResponse!
@@ -812,6 +828,7 @@ export const schema = createSchema<GraphQLContext>({
       cashes: createListQuery('cash'),
       expense: createGetQuery('expense'),
       invoice: createGetQuery('invoice'),
+      invoice_items: createListQuery('invoice_item'),
     },
     Mutation: {
       deleteExpenses: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
@@ -936,7 +953,6 @@ export const schema = createSchema<GraphQLContext>({
       invoice_items: async (parent: {id: number}, _: any, context: GraphQLContext) => {
         return listById(context.prisma, 'invoice_item', {item_invoice_id: parent.id})
       },
-
     },
     Vendor: {
       kind_of_company: async (parent: {vendor_kind_of_company_id: number}, _: any, context: GraphQLContext) => {

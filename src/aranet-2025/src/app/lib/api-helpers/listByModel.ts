@@ -30,7 +30,10 @@ export const listByModel = async <T>(
     income: prisma.aranet_income_item,
     invoice: prisma.aranet_invoice,
     user: prisma.sf_guard_user,
+    invoice_item: prisma.aranet_invoice_item,
   };
+
+  const noIncludeDelete = ['invoice_item'];
 
   const validFields = getValidFields(model);
   search = search.filter(filter => filterByValidFields(validFields, filter))
@@ -42,9 +45,9 @@ export const listByModel = async <T>(
   // logDebug(`GET /api/invoice - Filtros encontrados: ${JSON.stringify(filtrosEncontrados)}, filtros extra: ${JSON.stringify(filtrosExtra)}`);
 
   try {
-    const where: any = {
+    const where: any = noIncludeDelete.includes(model) ? { AND: [] } : {
       AND: [
-        { deleted_at: null },
+         { deleted_at: null },
       ]
     };
     searchWhere(where, search, getTextFields(model));

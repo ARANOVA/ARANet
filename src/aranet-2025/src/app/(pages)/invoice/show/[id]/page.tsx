@@ -1,7 +1,7 @@
 import { Divider, MenuItem, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
-import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert, InvoiceInfo } from "@/app/components";
+import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert, InvoiceInfo, InvoiceItems } from "@/app/components";
 import { Metadata } from "next";
 import { notFound, unauthorized } from "next/navigation";
 import { isValidId } from "@/utils";
@@ -95,8 +95,10 @@ export default async function InvoiceShowPage({ params }: Props) {
           addresses={addresses?.data?.items || []}
           contacts={contacts?.data?.items || []}
         />
-        {JSON.stringify(invoice.data.invoice_items)}
         <Divider />
+        <InvoiceItems
+          items={invoice.data.invoice_items || []}
+        />
       </div>
     </>
   )

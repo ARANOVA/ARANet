@@ -1,4 +1,33 @@
 export const LIST_QUERIES = {
+  invoice_item: `
+    query ListInvoiceItems(
+      $sortField: String,
+      $sortDir: String,
+    ) {
+      invoice_items(
+        sortField: $sortField,
+        sortDir: $sortDir,
+      ) {
+        statusCode
+        data {
+          items {
+            id
+            item_description
+            item_tax_rate
+            item_quantity
+            item_cost
+            item_type_id 
+          }
+          metadata {
+            total
+            page
+            quantity
+            last
+          }
+        }
+      }
+    }
+  `,
   budget: `
     query ListBudgets(
       $page: Int,
