@@ -23,7 +23,6 @@ export const filterWhere = (where: any, filters: FilterDTO[]): void => {
   for (const f of filters) {
     if (f.value === undefined) continue;
     const condition = parseFilter(f.value as string);
-    console.log({condition})
     where.AND.push({ [f.field]: condition });
   }
 }

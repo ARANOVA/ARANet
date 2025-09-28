@@ -98,5 +98,15 @@ export const DELETE_QUERIES = {
         statusCode
       }
     }
-  `
+  `,
+  invoice_item: `
+    mutation DeleteInvoiceItems(
+      $ids: [Int!]!,
+    ) {
+      deleteInvoiceItems(ids: $ids) {
+        error
+        statusCode
+      }
+    }
+  `,
 }

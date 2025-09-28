@@ -21,6 +21,7 @@ export const deleteById = async (
     cash: prisma.aranet_cash_item,
     income: prisma.aranet_income_item,
     invoice: prisma.aranet_invoice,
+    invoice_item: prisma.aranet_invoice_item,
   };
 
   if ((ids || []).length === 0) {
@@ -41,7 +42,7 @@ export const deleteById = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err.toString().indexOf('No record was found for a delete') === -1) {
-      logError(`Error DELETE /api/graphtql (${model}): ${err}`);
+      logError(`Error POST (DELETE) /api/graphtql (${model}): ${err}`);
       return { statusCode: 500, error: 'Error inexperado'};
     }
     return { statusCode: 204 };

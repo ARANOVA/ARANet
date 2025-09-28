@@ -22,10 +22,12 @@ interface Props<T> {
   data?: ListResponse<T>;
   filters?: FilterDTO[],
   children?: React.ReactNode;
+  setEditingRowId: any;
 }
 
 export const SimpleTable = <T extends { id?: number }>({
   model,
+  setEditingRowId,
   ...props
 }: Props<T>) => {
   const formUi = useFormUiStore();
@@ -55,6 +57,7 @@ export const SimpleTable = <T extends { id?: number }>({
         alert={<ToastStoreAlert />}
         fetchDataFn={wrapGetListDataByModelGraphql}
         {...props}
+        setEditingRowId={setEditingRowId}
         deleteFn={handleDelete}
       />
     </>

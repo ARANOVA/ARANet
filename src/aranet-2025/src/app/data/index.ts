@@ -20,7 +20,8 @@ export type enumDeleteModel =
   'budget' |
   'invoice' |
   'income' |
-  'cash'
+  'cash' |
+  'invoice_item'
 ;
 
 export type enumSimpleListModel =

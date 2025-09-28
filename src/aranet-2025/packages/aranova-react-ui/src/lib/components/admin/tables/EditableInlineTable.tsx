@@ -26,6 +26,7 @@ interface Props<T> {
     sortDir: 'asc' | 'desc',
     filters?: FilterDTO[],
   ) => Promise<ListResponse<T>>;
+  setEditingRowId: any;
 }
 
 export const EditableInlineTable = <T extends { id?: number }>({
@@ -35,6 +36,7 @@ export const EditableInlineTable = <T extends { id?: number }>({
   deleteFn,
   exportFn,
   modalData,
+  setEditingRowId,
   alert,
   ui,
   ...rest
@@ -46,6 +48,7 @@ export const EditableInlineTable = <T extends { id?: number }>({
         {...rest}
         idField={idField}
         deleteFn={deleteFn}
+        setEditingRowId={setEditingRowId}
         ui={ui}
       />
       {/* {alert} */}

@@ -20,6 +20,8 @@ export const deleteSoftById = async (
     budget: prisma.aranet_budget,
     invoice: prisma.aranet_invoice,
     income: prisma.aranet_income_item,
+    invoice_item: prisma.aranet_invoice_item,
+    cash: prisma.aranet_cash_item,
   };
 
   if ((ids || []).length === 0) {
@@ -54,7 +56,7 @@ export const deleteSoftById = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     // Revisar el mensaje si no existe el id que se pasa
-    logError(`Error DELETE /api/graphtql (${model}): ${err}`);
+    logError(`Error POST (SOFT DELETE) /api/graphtql (${model}): ${err}`);
     return { statusCode: 500, error: 'Error inexperado'};
   };
 }

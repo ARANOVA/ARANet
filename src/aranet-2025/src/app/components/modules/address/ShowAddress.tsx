@@ -16,7 +16,7 @@ export const ShowAddress = ({ invoice, addresses, contacts }: Props) => {
 
   return (
     <address
-      className="max-w-md p-4 rounded-lg shadow-sm bg-gray-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 not-italic"
+      className="max-w-md not-italic p-4 relative h-full w-full rounded-xl bg-zinc-50 shadow-[0px_0px_0px_1px_rgba(9,9,11,0.07),0px_2px_2px_0px_rgba(9,9,11,0.05)] dark:bg-zinc-800 dark:shadow-[0px_0px_0px_1px_rgba(255,255,255,0.1)] dark:before:pointer-events-none dark:before:absolute dark:before:-inset-px dark:before:rounded-xl dark:before:shadow-[0px_2px_8px_0px_rgba(0,0,0,0.20),0px_1px_0px_0px_rgba(255,255,255,0.06)_inset] forced-colors:outline"
       itemType="https://schema.org/PostalAddress"
       itemScope
       aria-label="Dirección de contacto"

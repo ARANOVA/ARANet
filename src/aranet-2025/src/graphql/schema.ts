@@ -819,6 +819,7 @@ export const schema = createSchema<GraphQLContext>({
       deleteInvoices(ids: [Int!]!): SingleResponse!
       deleteIncomes(ids: [Int!]!): SingleResponse!
       deleteCashes(ids: [Int!]!): SingleResponse!
+      deleteInvoiceItems(ids: [Int!]!): SingleResponse!
     }
   `,
   resolvers: {
@@ -874,6 +875,9 @@ export const schema = createSchema<GraphQLContext>({
           return { statusCode: 204 };
         }
         return result;
+      },
+      deleteInvoiceItems: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {
+        return await deleteById(context.prisma, context.session, 'invoice_item', args.ids);
       },
       createInvoice: async (_: any, data: aranet_invoice, context: GraphQLContext) => {
         return context.prisma.aranet_invoice.create({ data });

@@ -59,6 +59,7 @@ interface Props<T> {
     filters?: FilterDTO[],
   ) => Promise<ListResponse<T>>;
   ui: any;
+  setEditingRowId: any;
 }
 
 export const SimpleTanstackTable = <T extends { id?: number }>({
@@ -72,9 +73,11 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
   deleteFn,
   fetchDataFn,
   ui,
+  setEditingRowId,
 }: Props<T>) => {
   idField = idField || 'id';
   const [returnAlert, setReturnAlert] = useState<React.ReactNode>(null);
+  const [currentEditingRowId, setCurrentEditingRowId] = useState<number | null>(null);
   const router = useRouter();
 
   // Column order
@@ -92,7 +95,14 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
 
   // Actions
   const pathname = usePathname();
-  const handleEdit = (data: any) => {
+  const handleSave = (data: any, id?: number) => {
+    console.log({id, data})
+    setEditingRowId(null);
+    setCurrentEditingRowId(null);
+  }
+  const handleEdit = (data: any, id?: number) => {
+    setEditingRowId(id);
+    setCurrentEditingRowId(id || null);
     // TODO
     ui.setModeForm('edit');
     ui.openDrawer(data);
@@ -113,12 +123,21 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
       return (
         <div className="inline-flex items-center justify-center gap-2">
           <span className="text-zinc-400 dark:text-zinc-500 hover:dark:text-white hover:text-black cursor-pointer">
-            <PencilIcon
-              className="w-[25px] h-[25px]"
-              onClick={() => {
-                handleEdit(data);
-              }}
-            />
+            {currentEditingRowId === null ? (
+              <PencilIcon
+                className="w-[25px] h-[25px]"
+                onClick={() => {
+                  handleEdit(data, row.original.id);
+                }}
+              />
+            ) : (
+              <CheckIcon
+                className="w-[25px] h-[25px]"
+                onClick={() => {
+                  handleSave(data, row.original.id);
+                }}
+              />
+            )}
           </span>
           <span className="text-zinc-400 dark:text-zinc-500 hover:dark:text-white hover:text-black cursor-pointer">
             <TrashIcon

@@ -13,6 +13,7 @@ const noSpacing = '!pl-0 !pr-0 !mr-0 !ml-0';
 const flexCenter = "mx-auto !pr-0 !pl-0 !px-0";
 const validWidths: Record<number, string> = {
   60: 'min-w-[60px] max-w-[60px] w-[60px]',
+  80: 'min-w-[80px] max-w-[80px] w-[80px]',
   110: 'min-w-[110px] max-w-[110px] w-[110px]',
   130: 'min-w-[130px] max-w-[130px] w-[130px]',
   170: 'min-w-[170px] max-w-[170px] w-[170px]',
@@ -24,9 +25,9 @@ const validMaxWidths: Record<number, string> = {
 } as const;
 
 const amountMeta = (w: number): ColumnMeta<AranovaColumnMeta, unknown> | undefined => ({
-  cellClass: clsx("text-right", noSpacing, noOverflow, validWidths[w]),
-  headerClass: clsx("!text-right", noSpacing, noOverflow, validWidths[w]),
-  footerClass: clsx("text-right", noSpacing, validWidths[w])
+  cellClass: clsx("text-right", noOverflow, validWidths[w]),
+  headerClass: clsx("!text-right", noOverflow, validWidths[w]),
+  footerClass: clsx("text-right", validWidths[w])
 });
 
 const dateMeta = (w: number): ColumnMeta<AranovaColumnMeta, unknown> | undefined => ({
@@ -53,6 +54,7 @@ export const tableLinkClassname = "flex items-center gap-1 text-sm font-normal t
 
 export const amountMeta130 = amountMeta(130);
 export const amountMeta60 = amountMeta(60);
+export const amountMeta80 = amountMeta(80);
 export const amountMeta110 = amountMeta(110);
 export const dateCenterMeta130 = dateMeta(130);
 export const textLeftMeta130 = textMeta(130);
