@@ -22,7 +22,7 @@ interface Props<T> {
     sortField: string,
     sortDir: 'asc' | 'desc',
     filters?: FilterDTO[],
-  ) => Promise<ListResponse<T extends { id: number }>>;
+  ) => Promise<ListResponse<T>>;
   editingRowId: number | null;
   editingRows: boolean;
   setEditingRowId: (v: number | null) => void;
