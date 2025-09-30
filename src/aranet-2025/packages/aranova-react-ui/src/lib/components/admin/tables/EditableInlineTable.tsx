@@ -17,12 +17,13 @@ interface Props<T> {
   filters?: FilterDTO[],
   deleteFn: (model: string, ids: number[]) => Promise<SingleResponse<void>>;
   ui: any;
-  fetchDataFn: <T extends { id: number }>(
+  fetchDataFn: <T>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
     filters?: FilterDTO[],
   ) => Promise<ListResponse<T>>;
+  editMode: boolean;
   editingRowId: number | null;
   editingRows: boolean;
   setEditingRowId: (v: number | null) => void;
@@ -31,7 +32,7 @@ interface Props<T> {
   title: string;
 }
 
-export const EditableInlineTable = <T extends { id: number }>( props: Props<T>) => {
+export const EditableInlineTable = <T,>( props: Props<T>) => {
   return (
     <>
       <SimpleTanstackTable<T>

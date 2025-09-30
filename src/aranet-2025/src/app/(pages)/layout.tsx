@@ -111,7 +111,7 @@ export default async function RootLayout({
       {
         name: 'Notificaciones',
         href: '/notificaciones',
-        component: <NotificationMenuIcon nbMessages={0} />,
+        component: <NotificationMenuIcon key="notificaciones" nbMessages={0} />,
       },
     ],
   };

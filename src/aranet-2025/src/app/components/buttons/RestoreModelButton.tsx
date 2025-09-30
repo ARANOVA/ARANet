@@ -8,6 +8,7 @@ import { restoreDataByModel } from "@/app/lib/api-wrappers/client";
 import { logError } from "@/app/lib/logger";
 import { useFormUiStore, useItemsStore } from "@/store";
 import { useRouter } from "next/navigation";
+import { refreshPage } from "@/app/actions";
 
 interface Props {
     model: string;
@@ -48,10 +49,10 @@ export const RestoreModelButton = ({ model, id }: Props) => {
       return restoreFn(model, ids);
     },
     onSuccess: data => {
+      console.log({model, id, status: data.statusCode})
       if (data.statusCode < 300) {
         setItems([]);
         resetItems(model, []);
-        queryClient.invalidateQueries({ queryKey: [model] });
         setIsOpen(false);
         setToastProps({
           type: 'success',
@@ -60,8 +61,15 @@ export const RestoreModelButton = ({ model, id }: Props) => {
         });
         showToast(3000);
         // Invalidar y redirigir
-        queryClient.invalidateQueries({ queryKey: [model, id] });
-        router.push(`/${model}/show/${id}`);
+        console.log({model, id})
+        queryClient.invalidateQueries({ queryKey: [model, id] })
+          .then(() => refreshPage(`/${model}/show/${id}`))
+          .then(() => refreshPage(`/${model}/edit/${id}`))
+          .then(() => refreshPage(`/${model}/list`))
+          .then(() => {
+            router.refresh();
+            console.log("REFRESH")
+        });
       } else {
         setIsOpen(false);
         setToastProps({

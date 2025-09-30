@@ -59,14 +59,14 @@ export const ShowInvoiceInfoTab = ({ invoice, tags }: Props) => {
       <DescriptionTerm className="!pt-0.5">Título</DescriptionTerm>
       <DescriptionDetails className="!pt-0.5 !pb-1">{title}</DescriptionDetails>
 
-      {service_from && service_to && (
+      {!!service_from && !!service_to && (
         <>
           <DescriptionTerm className="!pt-0.5">Fechas de servicio</DescriptionTerm>
           <DescriptionDetails className="!pt-0.5 !pb-1">{datePipe(service_from)} - {datePipe(service_to)}</DescriptionDetails>
         </>
       )}
 
-      {invoice.invoice_periodic && (
+      {!!invoice.invoice_periodic && (
         <>
           <DescriptionTerm className="!pt-0.5">Periodicidad</DescriptionTerm>
           <DescriptionDetails className="!pt-0.5 !pb-1">{invoice.invoice_periodic_current} / {invoice.invoice_periodic}</DescriptionDetails>

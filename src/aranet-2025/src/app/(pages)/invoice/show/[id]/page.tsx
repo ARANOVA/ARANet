@@ -1,4 +1,4 @@
-import { Divider, MenuItem, TopBreadcrumb } from "@aranova/aranova-react-ui";
+import { MenuItem, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
 import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert, InvoiceInfo, InvoiceItems } from "@/app/components";
@@ -54,11 +54,6 @@ export default async function InvoiceShowPage({ params }: Props) {
   const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}_${invoice.data.client?.client_unique_name}`;
   const prefix = (invoice.data.kind_of_invoice) ? `${invoice.data.kind_of_invoice?.kind_of_invoice_title} `: '';
 
-  let aux = '';
-  if (invoice?.data.deleted_at) {
-    aux = ` (borrado ${datePipe(invoice?.data.deleted_at)})`;
-  }
-
   const data: aranet_invoice_verifactu = {
     ...invoice.data,
     huellaPrev: null,
@@ -69,7 +64,7 @@ export default async function InvoiceShowPage({ params }: Props) {
     { name: 'Inicio', href: '/' },
     { name: 'Finanzas', href: null },
     { name: 'Facturas', href: '/invoice/list' },
-    { name: title + aux, href: '' },
+    { name: title, href: '' },
   ];
 
   return (
@@ -77,9 +72,10 @@ export default async function InvoiceShowPage({ params }: Props) {
       <TopBreadcrumb links={links} />
       <div className="flex flex-col flex-1">
         <PageStoreHeader
-          title={`${prefix}${title}${aux}`}
+          title={`${prefix}${title}`}
           subtitle="Vista de detalle del documento"
           model="invoice"
+          state={invoice?.data.deleted_at ? { value: 'deleted', suffix: datePipe(invoice?.data.deleted_at)} : undefined}
           data={data}
           edit_button_href={`/invoice/edit/${id}`}
           edit_button_text="Editar"
@@ -96,7 +92,7 @@ export default async function InvoiceShowPage({ params }: Props) {
           contacts={contacts?.data?.items || []}
         />
         <InvoiceItems
-          invoice_id={invoice.data.id}
+          invoice={invoice.data}
         />
       </div>
     </>

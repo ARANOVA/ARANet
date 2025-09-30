@@ -4,21 +4,22 @@ import { SimpleTable } from "@/app/components";
 import { getInvoiceItemColumns } from "@/app/data/invoice_item/invoiceItemColumns";
 import { createSingleDataByModel, updateSingleDataByModel } from "@/app/lib/api-wrappers/server";
 import { aranet_invoice_item } from "@/generated/prisma";
+import { aranet_invoice_join_all } from "@/interfaces";
 import { deepClone } from "@/utils";
 import { FilterDTO, SingleResponse } from "@aranova/aranova-react-ui";
 import { useState } from "react";
 
 interface Props {
-  invoice_id: number;
+  invoice: aranet_invoice_join_all;
 }
 
-export const InvoiceItems = ({ invoice_id }: Props) => {
+export const InvoiceItems = ({ invoice }: Props) => {
   const [editingRowId, setEditingRowId] = useState<number | null>(null);
   const [editingRows, setEditingRows] = useState<boolean>(false);
 
   const filter: FilterDTO = {
     field: "item_invoice_id",
-    value: invoice_id.toString(),
+    value: invoice.id.toString(),
   }
 
   const handleSave = async (
@@ -44,6 +45,7 @@ export const InvoiceItems = ({ invoice_id }: Props) => {
           model="invoice_item"
           idField="id"
           filters={[filter]}
+          editMode={invoice.deleted_at === null}
           editingRows={editingRows}
           title="Items de la factura"
           setEditingRows={setEditingRows}

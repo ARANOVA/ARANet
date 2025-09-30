@@ -54,13 +54,14 @@ interface Props<T> {
   data?: ListResponse<T>;
   filters?: FilterDTO[];
   deleteFn: (model: string, ids: number[]) => Promise<SingleResponse<void>>;
-  fetchDataFn: <T extends { id: number }>(
+  fetchDataFn: <T>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
     filters?: FilterDTO[],
   ) => Promise<ListResponse<T>>;
   ui: any;
+  editMode: boolean;
   editingRowId: number | null;
   setEditingRowId: (v: number | null) => void;
   editingRows: boolean;
@@ -69,13 +70,14 @@ interface Props<T> {
   title: string;
 }
 
-export const SimpleTanstackTable = <T extends { id: number }>({
+export const SimpleTanstackTable = <T,>({
   model,
   idField,
   sortField,
   sortDir,
   columns,
   title,
+  editMode,
   data,
   filters,
   deleteFn,
@@ -87,11 +89,8 @@ export const SimpleTanstackTable = <T extends { id: number }>({
   setEditingRows,
 }: Props<T>) => {
   idField = idField || 'id';
-  const initItems: any[] = data?.data?.items || [];
-  const initMetadata = data?.data?.metadata || {total: 0, page: 1, quantity: -1, last: 1};
   const [returnAlert, setReturnAlert] = useState<React.ReactNode>(null);
   const [currentEditingRowId, setCurrentEditingRowId] = useState<number | null>(null);
-  const [localRows, setLocalRows] = useState<ListResponse<any>>({statusCode: 200, data: { items: initItems, metadata: initMetadata}});
 
   // Column order
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
@@ -145,7 +144,6 @@ export const SimpleTanstackTable = <T extends { id: number }>({
   };
 
   const handleEdit = (data: any, id: number) => {
-    console.log({id})
     setEditingRowId(id);
     setCurrentEditingRowId(id || null);
     // TODO
@@ -195,12 +193,12 @@ export const SimpleTanstackTable = <T extends { id: number }>({
       return (
         <div className="inline-flex items-center justify-center gap-2">
           <span className="text-zinc-400 dark:text-zinc-500 hover:dark:text-white hover:text-black cursor-pointer">
-            {currentEditingRowId !== row.original.id ? (
+            {currentEditingRowId !== row.original[idField as keyof typeof row.original] ? (
               <PencilIcon
                 title="Editar línea"
                 className="w-[25px] h-[25px]"
                 onClick={() => {
-                  handleEdit(data, row.original.id);
+                  handleEdit(data, row.original[idField as keyof typeof row.original] as number);
                 }}
               />
             ) : (
@@ -208,7 +206,7 @@ export const SimpleTanstackTable = <T extends { id: number }>({
                 title="Guardar línea"
                 className="w-[25px] h-[25px]"
                 onClick={() => {
-                  wrapperSaveFn(data);
+                  !mutationSave.isPending ? wrapperSaveFn(data) : null;
                 }}
               />
             )}
@@ -244,7 +242,6 @@ export const SimpleTanstackTable = <T extends { id: number }>({
       return saveRowFn(model as any, data);
      },
      onSuccess: data => {
-      console.log({result: data})
       if (data.statusCode < 300) {
         queryClient.invalidateQueries({ queryKey: [model] });
         setEditingRowId(null);
@@ -313,7 +310,6 @@ export const SimpleTanstackTable = <T extends { id: number }>({
       model,
       { sorting },
     ],
-    //queryFn: () => Promise.resolve(localRows), // wrap en una promesa
     queryFn: () => {
       return fetchDataFn(
         model,
@@ -363,9 +359,14 @@ export const SimpleTanstackTable = <T extends { id: number }>({
     updateAlert();
   }, [dataQuery.isFetched, dataQuery.isLoading, dataQuery.error, dataQuery.data?.error, dataQuery.data?.data]);
 
+  const tableCols = [...columns];
+  if (editMode) {
+    tableCols.push(actionsColumn);
+  }
+
   const table = useReactTable<any>({
     data: dataQuery.data?.data?.items || [],
-    columns: [...columns, actionsColumn],
+    columns: tableCols,
     getCoreRowModel: getCoreRowModel(),
     getRowId: (row, index) => {
       return String(row[idField as keyof typeof row] ?? index);
@@ -395,35 +396,35 @@ export const SimpleTanstackTable = <T extends { id: number }>({
               </h3>
             </div>
           </div>
-          <div className="flex justify-end grow sm:flex-none">
-            <div className="flex gap-4">
-              {/* Edit/Save button */}
-              {!editingRows ? (
-                <Button
-                  title="Editar items"
-                  className="cursor-pointer"
-                  color="dark/zinc"
-                  onClick={() => setEditingRows(true)}
-                >
-                  <PencilSquareIcon className="w-6 h-6" />
-                  Editar
-                </Button>
-              ) : (
-                <Button
-                  title="Guardar items"
-                  className="cursor-pointer"
-                  color="dark/white"
-                  onClick={() => wrapperSaveAllFn()}
-                >
-                  <CheckIcon className="w-6 h-6" />
-                  Guardar
-                </Button>
-              )}
+          {editMode && (
+            <div className="flex justify-end grow sm:flex-none">
+              <div className="flex gap-4">
+                {/* Edit/Save button */}
+                {!editingRows ? (
+                  <Button
+                    title="Editar items"
+                    className="cursor-pointer"
+                    color="dark/zinc"
+                    onClick={() => setEditingRows(true)}
+                  >
+                    <PencilSquareIcon className="w-6 h-6" />
+                    Editar
+                  </Button>
+                ) : (
+                  <Button
+                    title="Guardar items"
+                    className="cursor-pointer"
+                    color="dark/white"
+                    onClick={() => wrapperSaveAllFn()}
+                  >
+                    <CheckIcon className="w-6 h-6" />
+                    Guardar
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
-
-
 
       {returnAlert ? (
         returnAlert

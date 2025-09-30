@@ -9,7 +9,10 @@ import { useCallback, useEffect } from 'react';
 
 interface Props {
   title: string;
-  state?: number;
+  state?: {
+    value: string;
+    suffix?: string;
+  },
   subtitle?: string;
   model: string;
   search_placeholder?: string;

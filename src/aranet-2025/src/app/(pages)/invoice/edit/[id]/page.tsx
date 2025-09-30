@@ -50,16 +50,12 @@ export default async function ClientShowPage({ params }: Props) {
 
   const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}_${invoice.data.client?.client_unique_name}`;
   const prefix = (invoice.data.kind_of_invoice) ? `${invoice.data.kind_of_invoice?.kind_of_invoice_title} `: '';
-  let aux = '';
-  if (invoice?.data.deleted_at) {
-    aux = ` (borrado ${datePipe(invoice?.data.deleted_at)})`;
-  }
   
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
     { name: 'Finanzas', href: null },
     { name: 'Facturas', href: '/invoice/list' },
-    { name: title + aux, href: '' },
+    { name: title, href: '' },
   ];
 
   return (
@@ -67,9 +63,10 @@ export default async function ClientShowPage({ params }: Props) {
       <TopBreadcrumb links={links} />
       <div className="flex flex-col flex-1">
         <PageStoreHeader
-          title={`${prefix}${title}${aux}`}
+          title={`${prefix}${title}`}
           subtitle="Editar documento"
           model="invoice"
+          state={invoice?.data.deleted_at ? { value: 'deleted', suffix: datePipe(invoice?.data.deleted_at)} : undefined}
           main_button={!invoice.data.deleted_at ?
             (<DeleteModelButton model="invoice" id={Number(id)} />) :
             (<RestoreModelButton model="invoice" id={Number(id)} />)

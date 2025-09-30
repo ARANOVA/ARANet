@@ -28,6 +28,7 @@ interface Props<T> {
   editingRows: boolean;
   setEditingRows: (v: boolean) => void;
   title: string;
+  editMode: boolean;
 }
 
 export const SimpleTable = <T extends { id: number }>({
@@ -46,7 +47,7 @@ export const SimpleTable = <T extends { id: number }>({
     return deleteDataByModelGraphql(model, ids);
   };
 
-  const wrapGetListDataByModelGraphql = async <T extends { id: number }>(
+  const wrapGetListDataByModelGraphql = async <T,>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',

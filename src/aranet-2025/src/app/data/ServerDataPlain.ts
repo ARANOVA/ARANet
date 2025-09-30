@@ -57,7 +57,7 @@ class ServerDataPlain {
       queryKey: ['invoice', id],
       queryFn: () => getSingleDataByModelGraphql<aranet_invoice_join_all>('invoice', id),
       retry: 3,
-      staleTime: 1000 * 60 * 15, // 15 minutos
+      staleTime: 0, //1000 * 60 * 5, // 5 minutos - no funciona la actualización
     });
   }
 

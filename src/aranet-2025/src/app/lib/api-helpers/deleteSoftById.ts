@@ -45,7 +45,7 @@ export const deleteSoftById = async (
 
     const x = await (fn as any).updateMany({
       where: { id: {
-        in: ids.map(i => i*100000)
+        in: ids.map(i => i)
       } },
       data
     });
