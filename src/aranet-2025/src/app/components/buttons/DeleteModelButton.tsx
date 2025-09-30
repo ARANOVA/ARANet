@@ -49,7 +49,6 @@ export const DeleteModelButton = ({ model, id }: Props) => {
       return deleteFn(model, ids);
     },
     onSuccess: data => {
-      console.log({model, id, status: data.statusCode})
       if (data.statusCode < 300) {
         setItems([]);
         resetItems(model, []);
@@ -61,7 +60,6 @@ export const DeleteModelButton = ({ model, id }: Props) => {
         });
         showToast(3000);
         // Invalidar y redirigir
-        console.log({model, id})
         queryClient.invalidateQueries({ queryKey: [model, id] })
           .then(() => refreshPage(`/${model}/show/${id}`))
           .then(() => refreshPage(`/${model}/edit/${id}`))

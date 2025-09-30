@@ -1,6 +1,6 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
-import { getContacts, getById, deleteSoftById, deleteById, updateLatestBudgetRevisions, listById, updateById, createData } from '@/app/lib/api-helpers';
+import { getContacts, getById, deleteSoftById, restoreById, deleteById, updateLatestBudgetRevisions, listById, updateById, createData } from '@/app/lib/api-helpers';
 import { createGetQuery, createListQuery } from './queries';
 import { aranet_invoice } from '@/generated/prisma';
 
@@ -835,6 +835,7 @@ export const schema = createSchema<GraphQLContext>({
       deleteIncomes(ids: [Int!]!): SingleResponse!
       deleteCashes(ids: [Int!]!): SingleResponse!
       deleteInvoiceItems(ids: [Int!]!): SingleResponse!
+      restoreRegister(model: String!, ids: [Int!]!): SingleResponse!
 
       updateInvoiceItem(id: Int!, data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
       createInvoiceItem(data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
@@ -905,6 +906,9 @@ export const schema = createSchema<GraphQLContext>({
       },
       createInvoiceItem: async (_: any, args: { data: unknown}, context: GraphQLContext) => {
         return await createData(context.prisma, context.session, 'invoice_item', args.data);
+      },
+      restoreRegister: async (_: any, args: { model: string; ids: number[]}, context: GraphQLContext) => {
+        return await restoreById(context.prisma, context.session, args.model, args.ids);
       },
     },
     Budget: {

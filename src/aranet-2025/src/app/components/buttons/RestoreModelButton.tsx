@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ExclamationTriangleIcon } from "@heroicons/react/16/solid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertActions, AlertTitle, Button, SingleResponse } from "@aranova/aranova-react-ui";
-import { restoreDataByModel } from "@/app/lib/api-wrappers/client";
+import { restoreDataByModelGraphql } from "@/app/lib/api-wrappers/client";
 import { logError } from "@/app/lib/logger";
 import { useFormUiStore, useItemsStore } from "@/store";
 import { useRouter } from "next/navigation";
@@ -38,7 +38,7 @@ export const RestoreModelButton = ({ model, id }: Props) => {
     ids: number[]
   ): Promise<SingleResponse<void>> => {
     closeAlert();
-    return restoreDataByModel(model, ids);
+    return restoreDataByModelGraphql(model, ids);
   };
 
   const mutation = useMutation<SingleResponse<void>, Error, number[]>({
@@ -49,7 +49,6 @@ export const RestoreModelButton = ({ model, id }: Props) => {
       return restoreFn(model, ids);
     },
     onSuccess: data => {
-      console.log({model, id, status: data.statusCode})
       if (data.statusCode < 300) {
         setItems([]);
         resetItems(model, []);
@@ -61,15 +60,11 @@ export const RestoreModelButton = ({ model, id }: Props) => {
         });
         showToast(3000);
         // Invalidar y redirigir
-        console.log({model, id})
         queryClient.invalidateQueries({ queryKey: [model, id] })
           .then(() => refreshPage(`/${model}/show/${id}`))
           .then(() => refreshPage(`/${model}/edit/${id}`))
           .then(() => refreshPage(`/${model}/list`))
-          .then(() => {
-            router.refresh();
-            console.log("REFRESH")
-        });
+          .then(() => router.refresh());
       } else {
         setIsOpen(false);
         setToastProps({

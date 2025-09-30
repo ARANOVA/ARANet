@@ -179,10 +179,7 @@ export const SimpleTanstackTable = <T,>({
             <PlusCircleIcon
               title="Añadir línea"
               className="w-[25px] h-[25px]"
-              onClick={() => {
-                console.log("ADD Line");
-                addEmptyRow();
-              }}
+              onClick={addEmptyRow}
             />
           </span>
         </div>

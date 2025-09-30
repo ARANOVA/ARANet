@@ -5,5 +5,6 @@ export * from './getById';
 export * from './getContacts';
 export * from './listById';
 export * from './listByModel';
+export * from './restoreById';
 export * from './updateById';
 export * from './updateLatestBudgetRevisions';

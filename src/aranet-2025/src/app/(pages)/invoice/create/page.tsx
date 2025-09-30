@@ -1,10 +1,8 @@
 import { MenuItem, TopBreadcrumb } from "@aranova/aranova-react-ui";
-import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
-import { PageStoreHeader, DeleteModelButton } from "@/app/components";
+import { PageStoreHeader } from "@/app/components";
 import { Metadata } from "next";
-import { notFound, unauthorized } from "next/navigation";
-import { isValidId } from "@/utils";
+import { unauthorized } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
