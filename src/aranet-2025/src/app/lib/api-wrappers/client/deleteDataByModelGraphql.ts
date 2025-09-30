@@ -13,6 +13,7 @@ export const deleteDataByModelGraphql = async (
   }
 
   const query = (DELETE_QUERIES as Record<any, string>)[model];
+  if (!query) return { statusCode: 404, error: 'Query not found' };
   try {
     const res = await fetch('/api/graphql', {
       method: "POST",
@@ -30,7 +31,7 @@ export const deleteDataByModelGraphql = async (
     return json.data[keys[0]] as SingleResponse<void>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    logError(`Error fetching api/graphql ${query}: ${err}`);
+    logError(`DELETE /api/graphql ${model}: ${err}`);
     return {
       statusCode: 500,
       error: `${err}`,

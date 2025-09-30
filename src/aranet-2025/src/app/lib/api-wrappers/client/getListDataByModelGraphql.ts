@@ -34,7 +34,7 @@ export const getListDataByModelGraphql = async <T>(
 
   // TODO: Partir a variable search
   const query = (LIST_QUERIES as Record<any, string>)[model];
-  console.log({query: model})
+  if (!query) return { statusCode: 404, error: 'Query not found' };
   try {
       const res = await fetch('/api/graphql', {
         method: "POST",
@@ -52,7 +52,7 @@ export const getListDataByModelGraphql = async <T>(
       return json.data[keys[0]] as ListResponse<T>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      logError(`Error fetching api/graphql ${query}: ${err}`);
+      logError(`UPDATE /api/graphql ${model}: ${err}`);
       return {
         statusCode: 500,
         error: `${err}`,

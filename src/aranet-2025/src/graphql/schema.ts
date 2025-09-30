@@ -1,6 +1,6 @@
 import { createSchema } from 'graphql-yoga'
 import type { GraphQLContext } from './context'
-import { getContacts, getById, deleteSoftById, deleteById, updateLatestBudgetRevisions, listById } from '@/app/lib/api-helpers';
+import { getContacts, getById, deleteSoftById, deleteById, updateLatestBudgetRevisions, listById, updateById, createData } from '@/app/lib/api-helpers';
 import { createGetQuery, createListQuery } from './queries';
 import { aranet_invoice } from '@/generated/prisma';
 
@@ -524,6 +524,15 @@ export const schema = createSchema<GraphQLContext>({
       type_of_item: TypeOfItem
     }
 
+    input InvoiceItemUpdate {
+      item_type_id: Int
+      item_description: String!
+      item_quantity: Int!
+      item_cost: Float!
+      item_tax_rate: Float!
+      item_invoice_id: Int!
+    }
+
     type TypeOfItem {
       type_of_item_title: String!
     }
@@ -700,6 +709,12 @@ export const schema = createSchema<GraphQLContext>({
       error: String
       data: InvoiceItemData!
     }
+
+    type InvoiceItemSingleResponse {
+      statusCode: Int!
+      error: String
+      data: InvoiceItem!
+    }
       
     type Query {
       invoices(
@@ -820,6 +835,9 @@ export const schema = createSchema<GraphQLContext>({
       deleteIncomes(ids: [Int!]!): SingleResponse!
       deleteCashes(ids: [Int!]!): SingleResponse!
       deleteInvoiceItems(ids: [Int!]!): SingleResponse!
+
+      updateInvoiceItem(id: Int!, data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
+      createInvoiceItem(data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
     }
   `,
   resolvers: {
@@ -881,6 +899,12 @@ export const schema = createSchema<GraphQLContext>({
       },
       createInvoice: async (_: any, data: aranet_invoice, context: GraphQLContext) => {
         return context.prisma.aranet_invoice.create({ data });
+      },
+      updateInvoiceItem: async (_: any, args: { id: number, data: unknown}, context: GraphQLContext) => {
+        return await updateById(context.prisma, context.session, 'invoice_item', args.id, args.data);
+      },
+      createInvoiceItem: async (_: any, args: { data: unknown}, context: GraphQLContext) => {
+        return await createData(context.prisma, context.session, 'invoice_item', args.data);
       },
     },
     Budget: {

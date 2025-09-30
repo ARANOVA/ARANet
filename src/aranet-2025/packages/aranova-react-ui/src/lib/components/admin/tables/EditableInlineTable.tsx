@@ -13,51 +13,37 @@ interface Props<T> {
   sortDir?: 'desc' | 'asc';
   columns: ColumnDef<T, any>[];
   data?: ListResponse<T>;
-  children?: React.ReactNode;
   alert: React.ReactNode;
   filters?: FilterDTO[],
   deleteFn: (model: string, ids: number[]) => Promise<SingleResponse<void>>;
-  exportFn?: (model: string, ids: number[], exportData?: Record<string, unknown>) => Promise<boolean>;
-  modalData?: { title: string; description?: string; body?: React.ReactNode };
   ui: any;
-  fetchDataFn: <T extends { id?: number }>(
+  fetchDataFn: <T extends { id: number }>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
     filters?: FilterDTO[],
-  ) => Promise<ListResponse<T>>;
-  setEditingRowId: any;
+  ) => Promise<ListResponse<T extends { id: number }>>;
+  editingRowId: number | null;
+  editingRows: boolean;
+  setEditingRowId: (v: number | null) => void;
+  setEditingRows: (v: boolean) => void;
+  saveRowFn: (model: string, data: unknown) => Promise<SingleResponse<unknown>>;
+  title: string;
 }
 
-export const EditableInlineTable = <T extends { id?: number }>({
-  idField,
-  data,
-  children,
-  deleteFn,
-  exportFn,
-  modalData,
-  setEditingRowId,
-  alert,
-  ui,
-  ...rest
-}: Props<T>) => {
+export const EditableInlineTable = <T extends { id: number }>( props: Props<T>) => {
   return (
     <>
       <SimpleTanstackTable<T>
-        data={data}
-        {...rest}
-        idField={idField}
-        deleteFn={deleteFn}
-        setEditingRowId={setEditingRowId}
-        ui={ui}
+        {...props}
       />
       {/* {alert} */}
       <FormAlert
         title={`¿Estas seguro que quieres eliminar el registro?`}
-        deleteFn={deleteFn}
-        model={rest.model}
-        idField={idField}
-        ui={ui}
+        deleteFn={props.deleteFn}
+        model={props.model}
+        idField={props.idField}
+        ui={props.ui}
       />
     </>
   );

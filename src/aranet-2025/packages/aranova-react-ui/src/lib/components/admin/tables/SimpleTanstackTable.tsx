@@ -10,7 +10,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import clsx from 'clsx';
 import {
   ChevronDownIcon,
@@ -19,6 +18,7 @@ import {
   ChevronUpIcon,
   CheckIcon,
   XMarkIcon,
+  PlusCircleIcon,
 } from '@heroicons/react/16/solid';
 
 import {
@@ -33,6 +33,7 @@ import {
   SingleResponse,
 } from '../../../interfaces';
 import {
+  Button,
   Table,
   TableBody,
   TableCell,
@@ -42,6 +43,7 @@ import {
 } from '../../tw';
 import { NotificationAlert, SyncLoader } from '../../elements';
 import { customFlexRender } from '../../../helpers';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 
 interface Props<T> {
   model: string;
@@ -52,33 +54,44 @@ interface Props<T> {
   data?: ListResponse<T>;
   filters?: FilterDTO[];
   deleteFn: (model: string, ids: number[]) => Promise<SingleResponse<void>>;
-  fetchDataFn: <T extends { id?: number }>(
+  fetchDataFn: <T extends { id: number }>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
     filters?: FilterDTO[],
   ) => Promise<ListResponse<T>>;
   ui: any;
-  setEditingRowId: any;
+  editingRowId: number | null;
+  setEditingRowId: (v: number | null) => void;
+  editingRows: boolean;
+  setEditingRows: (v: boolean) => void;
+  saveRowFn: (model: string, data: unknown) => Promise<SingleResponse<unknown>>;
+  title: string;
 }
 
-export const SimpleTanstackTable = <T extends { id?: number }>({
+export const SimpleTanstackTable = <T extends { id: number }>({
   model,
   idField,
   sortField,
   sortDir,
   columns,
+  title,
   data,
   filters,
   deleteFn,
+  saveRowFn,
   fetchDataFn,
   ui,
   setEditingRowId,
+  editingRows,
+  setEditingRows,
 }: Props<T>) => {
   idField = idField || 'id';
+  const initItems: any[] = data?.data?.items || [];
+  const initMetadata = data?.data?.metadata || {total: 0, page: 1, quantity: -1, last: 1};
   const [returnAlert, setReturnAlert] = useState<React.ReactNode>(null);
   const [currentEditingRowId, setCurrentEditingRowId] = useState<number | null>(null);
-  const router = useRouter();
+  const [localRows, setLocalRows] = useState<ListResponse<any>>({statusCode: 200, data: { items: initItems, metadata: initMetadata}});
 
   // Column order
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
@@ -94,13 +107,45 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
   const [sorting] = useState<SortingState>(defaultSort);
 
   // Actions
-  const pathname = usePathname();
-  const handleSave = (data: any, id?: number) => {
-    console.log({id, data})
-    setEditingRowId(null);
-    setCurrentEditingRowId(null);
-  }
-  const handleEdit = (data: any, id?: number) => {
+  const addEmptyRow = async () => {
+    const newRow: any = {
+      item_description: '',
+      item_cost: 0,
+      item_quantity: 0,
+      item_tax_rate: 0,
+    };
+    await wrapperSaveFn(newRow);
+  };
+
+  const wrapperSaveFn = async (data: any): Promise<boolean> => {
+    try {
+      setNbsaved(1);
+      await mutationSave.mutateAsync(data); // espera a que acabe
+      return mutationSave.isSuccess;
+    } catch (error) {
+      // TODO:
+      console.error("Error al guardar", error);
+      return false;
+    }
+  };
+
+  const wrapperSaveAllFn = async (): Promise<boolean> => {
+    const rows = table.getCoreRowModel().rows;
+    setNbsaved(rows.length);
+    try {
+      for (const r of rows) {
+        await wrapperSaveFn(r.original); 
+      }
+      return true;
+    } catch (error) {
+      // TODO
+      console.error("Error al guardar todas", error);
+      return false;
+    }
+  };
+
+  const handleEdit = (data: any, id: number) => {
+    console.log({id})
     setEditingRowId(id);
     setCurrentEditingRowId(id || null);
     // TODO
@@ -109,7 +154,18 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
     ui.setSelectedItem(data);
   };
 
-  const className = "text-right !pl-0 !pr-0 !mr-0 !ml-0 overflow-hidden whitespace-nowrap text-ellipsis min-w-[90px] max-w-[90px] w-[90px]";
+  const wrapperDeleteFn = (
+    ids: number[] | number
+  ): boolean => {
+    if (!Array.isArray(ids)) {
+      ids = [ids];
+    }
+    setNbdeleted(ui.items.length);
+    mutation.mutate(ids);
+    return mutation.isSuccess;
+  };
+
+  const className = "text-right overflow-hidden whitespace-nowrap text-ellipsis min-w-[90px] max-w-[90px] w-[90px]";
   const actionsColumn: ColumnDef<T> = {
     id: 'actions',
     meta: {
@@ -118,13 +174,30 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
       footerClass: className,
     },
     header: () => 'Acciones',
+    footer: () => {
+      return (
+        <div className="inline-flex items-center justify-center gap-2">
+          <span className="text-zinc-400 dark:text-zinc-500 hover:dark:text-white hover:text-black cursor-pointer">
+            <PlusCircleIcon
+              title="Añadir línea"
+              className="w-[25px] h-[25px]"
+              onClick={() => {
+                console.log("ADD Line");
+                addEmptyRow();
+              }}
+            />
+          </span>
+        </div>
+      );
+    },
     cell: ({ row }) => {
       const data = row.original;
       return (
         <div className="inline-flex items-center justify-center gap-2">
           <span className="text-zinc-400 dark:text-zinc-500 hover:dark:text-white hover:text-black cursor-pointer">
-            {currentEditingRowId === null ? (
+            {currentEditingRowId !== row.original.id ? (
               <PencilIcon
+                title="Editar línea"
                 className="w-[25px] h-[25px]"
                 onClick={() => {
                   handleEdit(data, row.original.id);
@@ -132,15 +205,17 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
               />
             ) : (
               <CheckIcon
+                title="Guardar línea"
                 className="w-[25px] h-[25px]"
                 onClick={() => {
-                  handleSave(data, row.original.id);
+                  wrapperSaveFn(data);
                 }}
               />
             )}
           </span>
           <span className="text-zinc-400 dark:text-zinc-500 hover:dark:text-white hover:text-black cursor-pointer">
             <TrashIcon
+              title="Eliminar línea"
               className="w-[25px] h-[25px]"
               onClick={() => {
                 ui.openAlert(data);
@@ -155,7 +230,48 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
   // Delete/Batch
   const [nbdeleted, setNbdeleted] = useState<number>(0);
 
+  // Save/Batch
+  const [nbsaved, setNbsaved] = useState<number>(0);
+
   const queryClient = useQueryClient();
+
+  const mutationSave = useMutation<SingleResponse<unknown>, Error, unknown>({
+     mutationFn: data => {
+      filters?.forEach(f => {
+        // TODO: Mejorar
+        (data as any)[f.field] = f.field.endsWith('_id') ? Number(f.value) : f.value;
+      });
+      return saveRowFn(model as any, data);
+     },
+     onSuccess: data => {
+      console.log({result: data})
+      if (data.statusCode < 300) {
+        queryClient.invalidateQueries({ queryKey: [model] });
+        setEditingRowId(null);
+        setCurrentEditingRowId(null);
+        ui.setToastProps({
+          type: 'success',
+          title: '¡Conseguido!',
+          subtitle: nbsaved === 1 ? 'Registro guardado' : `${nbsaved} Registros guardados`,
+        });
+      } else {
+        ui.setToastProps({
+          type: 'error',
+          title: 'Algo fué mal!',
+          subtitle: nbsaved === 1 ? `No se pudo guardar el registro` : `No se pudieron guardar todos los registros`,
+        });
+      }
+      ui.showToast(3000);
+    },
+    onError: error => {
+      ui.setToastProps({
+        type: 'warning',
+        title: 'Algo fué mal!',
+        subtitle: nbsaved === 1 ? `No se pudo guardar el registro` : `No se pudieron guardar ${nbsaved} registros`,
+      });
+      ui.showToast(3000);
+    },
+  });
 
   const mutation = useMutation<SingleResponse<void>, Error, number[]>({
     mutationFn: ids => {
@@ -185,7 +301,7 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
       ui.setToastProps({
         type: 'warning',
         title: 'Algo fué mal!',
-        subtitle: nbdeleted === 1 ? `No se pudo eliminar el registro` : `No se pudieron eliminar ${nbdeleted} registro(s)`,
+        subtitle: nbdeleted === 1 ? `No se pudo eliminar el registro` : `No se pudieron eliminar ${nbdeleted} registros`,
       });
       ui.showToast(3000);
     },
@@ -197,6 +313,7 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
       model,
       { sorting },
     ],
+    //queryFn: () => Promise.resolve(localRows), // wrap en una promesa
     queryFn: () => {
       return fetchDataFn(
         model,
@@ -246,8 +363,6 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
     updateAlert();
   }, [dataQuery.isFetched, dataQuery.isLoading, dataQuery.error, dataQuery.data?.error, dataQuery.data?.data]);
 
-  const searchParams = useSearchParams();
-
   const table = useReactTable<any>({
     data: dataQuery.data?.data?.items || [],
     columns: [...columns, actionsColumn],
@@ -270,6 +385,46 @@ export const SimpleTanstackTable = <T extends { id?: number }>({
 
   return (
     <div className="mt-4 sm:mx-0 table-none md:table-auto w-full">
+
+        <div className="max-sm:w-full sm:flex-1 flex flex-wrap items-center gap-2 mb-4">
+
+          <div className="flex-grow">
+            <div className="flex items-center flex-1 gap-4 print:gap-0">
+              <h3 className="text-lg/7 font-semibold tracking-[-0.015em] text-zinc-950 sm:text-base/7 dark:text-white">
+                {title}
+              </h3>
+            </div>
+          </div>
+          <div className="flex justify-end grow sm:flex-none">
+            <div className="flex gap-4">
+              {/* Edit/Save button */}
+              {!editingRows ? (
+                <Button
+                  title="Editar items"
+                  className="cursor-pointer"
+                  color="dark/zinc"
+                  onClick={() => setEditingRows(true)}
+                >
+                  <PencilSquareIcon className="w-6 h-6" />
+                  Editar
+                </Button>
+              ) : (
+                <Button
+                  title="Guardar items"
+                  className="cursor-pointer"
+                  color="dark/white"
+                  onClick={() => wrapperSaveAllFn()}
+                >
+                  <CheckIcon className="w-6 h-6" />
+                  Guardar
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+
+
       {returnAlert ? (
         returnAlert
       ) : (

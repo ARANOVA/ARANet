@@ -22,12 +22,18 @@ interface Props<T> {
   data?: ListResponse<T>;
   filters?: FilterDTO[],
   children?: React.ReactNode;
-  setEditingRowId: any;
+  saveRowFn: (model: string, data: unknown) => Promise<SingleResponse<unknown>>;
+  editingRowId: number | null;
+  setEditingRowId: (v: number | null) => void;
+  editingRows: boolean;
+  setEditingRows: (v: boolean) => void;
+  title: string;
 }
 
-export const SimpleTable = <T extends { id?: number }>({
+export const SimpleTable = <T extends { id: number }>({
   model,
   setEditingRowId,
+  saveRowFn,
   ...props
 }: Props<T>) => {
   const formUi = useFormUiStore();
@@ -40,7 +46,7 @@ export const SimpleTable = <T extends { id?: number }>({
     return deleteDataByModelGraphql(model, ids);
   };
 
-  const wrapGetListDataByModelGraphql = async <T extends { id?: number }>(
+  const wrapGetListDataByModelGraphql = async <T extends { id: number }>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
@@ -59,6 +65,7 @@ export const SimpleTable = <T extends { id?: number }>({
         {...props}
         setEditingRowId={setEditingRowId}
         deleteFn={handleDelete}
+        saveRowFn={saveRowFn}
       />
     </>
   );

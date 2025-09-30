@@ -10,6 +10,14 @@ import { PROJECT_TEXT_FIELDS, PROJECT_VALID_FIELDS } from "./project";
 import { USER_TEXT_FIELDS, USER_VALID_FIELDS } from "./user";
 import { VENDOR_TEXT_FIELDS, VENDOR_VALID_FIELDS } from "./vendor";
 
+export type enumUpdateModel = 
+'invoice_item'
+;
+
+export type enumCreateModel = 
+'invoice_item'
+;
+
 export type enumDeleteModel = 
   'contact' |
   'client' |

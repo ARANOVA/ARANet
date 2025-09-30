@@ -1,22 +1,30 @@
 'use server';
 
 import { SingleResponse } from "@aranova/aranova-react-ui";
-import { logError } from "../../logger";
-import { ID_QUERIES } from '@/graphql/queries';
 import { cookies } from "next/headers";
+import { logError, logWarn } from "../../logger";
+import { CREATE_QUERIES } from "@/graphql/queries";
+import { isValidId } from "@/utils";
 
-  
-export const getSingleDataByModelGraphql = async <T>(
+export const createSingleDataByModel = async <T>(
   model: string,
-  id: number,
+  data?: Partial<T>,
 ): Promise<SingleResponse<T>> => {
-  const args: Record<string, unknown> = {
-    id,
-  };
+  if (!data) {
+    logWarn(`CREATE /api/graphql ${model}: Intento de acceso inválido. Data`);
+    return {
+      statusCode: 400,
+      error: "Bad Request",
+    };
+  }
+  
+const args: Record<string, unknown> = {
+  data,
+};
 
   // TODO: Partir a variable search
-  const query = (ID_QUERIES as Record<any, string>)[model];
-  if (!query) return { statusCode: 404, error: 'Query not found' } as SingleResponse<T>
+  const query = (CREATE_QUERIES as Record<any, string>)[model];
+  if (!query) return { statusCode: 404, error: 'Query not found' };
   try {
     let res;
     if (typeof process !== 'undefined') {
@@ -51,7 +59,7 @@ export const getSingleDataByModelGraphql = async <T>(
     return json.data[keys[0]] as SingleResponse<T>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    logError(`UPDATE /api/graphql ${model}: ${err}`);
+    logError(`CREATE /api/graphql ${model}: ${err}`);
     return {
       statusCode: 500,
       error: `${err}`,

@@ -33,7 +33,6 @@ export const listByModel = async <T>(
     invoice_item: prisma.aranet_invoice_item,
   };
 
-  console.log({filters1: filters})
   const noIncludeDelete = ['invoice_item'];
 
   const validFields = getValidFields(model);

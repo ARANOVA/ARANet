@@ -1,8 +1,7 @@
 'use client'
 
-import { numberColumn } from '@/app/lib/helpers';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
-import { amountMeta110, amountMeta130, amountMeta60, amountMeta80, checkCenterMeta60, textLeftMetaMax340 } from '../consts.utils';
+import { amountMeta110, amountMeta130, checkCenterMeta60, textLeftMetaMax340 } from '../consts.utils';
 import { aranet_invoice_item } from '@/generated/prisma';
 import { Input, Textarea } from '@aranova/aranova-react-ui';
 
@@ -13,7 +12,7 @@ const locale = 'es-ES'; //navigator?.language ?? 'es-ES';
 
 export const getInvoiceItemColumns = (
   editingRowId: number | null,
-  setEditingRowId: (id: number | null) => void
+  editingRows: boolean,
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): ColumnDef<any, any>[] => {
  return [
@@ -45,7 +44,7 @@ export const getInvoiceItemColumns = (
       enableResizing: false,
       cell: ({ row }) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        return (editingRowId === row.original.id) ? (
+        return (editingRowId === row.original.id || editingRows === true) ? (
           <Textarea
             defaultValue={row.original.item_description || ''}
             rows={5}
@@ -71,7 +70,7 @@ export const getInvoiceItemColumns = (
       enableResizing: false,
       cell: ({ row }) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        return (editingRowId === row.original.id) ? (
+        return (editingRowId === row.original.id || editingRows === true) ? (
           <Input
             type="number"
             defaultValue={row.original.item_quantity || 0}
@@ -98,7 +97,7 @@ export const getInvoiceItemColumns = (
       enableResizing: false,
       cell: ({ row }) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        return (editingRowId === row.original.id) ? (
+        return (editingRowId === row.original.id || editingRows === true) ? (
           <Input
             type="number"
             step={0.01}
@@ -165,7 +164,7 @@ export const getInvoiceItemColumns = (
       enableResizing: false,
       cell: ({ row }) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        return (editingRowId === row.original.id) ? (
+        return (editingRowId === row.original.id || editingRows === true) ? (
           <Input
             type="number"
             step={0.1}
