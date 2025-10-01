@@ -1,3 +1,5 @@
 # Mac OSX
 .DS_Store
-/src/aranet-2025/packages/aranova-react-ui
+#/src/aranet-2025/packages/aranova-react-ui
+src/aranet-2025/scripts/report.js
+/src/aranet-2025/reports
