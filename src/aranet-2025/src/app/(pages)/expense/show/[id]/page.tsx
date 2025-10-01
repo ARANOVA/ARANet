@@ -61,7 +61,7 @@ export default async function ExpenseShowPage({ params }: Props) {
           model="expense"
           edit_button_href={`/expense/edit/${id}`}
           edit_button_text="Editar"
-          print_button_text={expense.data.deleted_at ? undefined : 'Imprimir'}
+          print_button_text={expense.data.deleted_at ? undefined : 'Alta Verifactu'}
           main_button={!expense.data.deleted_at ?
             (<DeleteModelButton model="expense" id={Number(id)} />) :
             (<RestoreModelButton model="expense" id={Number(id)} />)

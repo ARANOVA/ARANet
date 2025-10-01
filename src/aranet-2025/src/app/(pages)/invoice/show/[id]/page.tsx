@@ -1,12 +1,13 @@
 import { MenuItem, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
-import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert, InvoiceInfo, InvoiceItems } from "@/app/components";
+import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert, InvoiceInfo, InvoiceItems, SendInvoiceButton } from "@/app/components";
 import { Metadata } from "next";
 import { notFound, unauthorized } from "next/navigation";
 import { isValidId } from "@/utils";
 import { datePipe } from "@/app/lib/helpers";
 import { aranet_invoice_verifactu } from "@/interfaces";
+import { verifactuFlow } from "@/utils/server/verifactu.utils";
 
 export const dynamic = 'force-dynamic';
 
@@ -67,6 +68,14 @@ export default async function InvoiceShowPage({ params }: Props) {
     { name: title, href: '' },
   ];
 
+  const printClick = (): void => {
+    // Test verifactu
+    console.log('print_button_click, 2025, 9');
+    // verifactuConsulta(2025, 9).then(console.log).catch(console.log);
+    verifactuFlow(data).then(console.log).catch(console.log);
+  };
+  
+
   return (
     <>
       <TopBreadcrumb links={links} />
@@ -79,7 +88,7 @@ export default async function InvoiceShowPage({ params }: Props) {
           data={data}
           edit_button_href={`/invoice/edit/${id}`}
           edit_button_text="Editar"
-          print_button_text={invoice.data.deleted_at ? undefined : 'Imprimir'}
+          print_button={<SendInvoiceButton data={data} />}
           main_button={!invoice.data.deleted_at ?
             (<DeleteModelButton model="invoice" id={Number(id)} />) :
             (<RestoreModelButton model="invoice" id={Number(id)} />)

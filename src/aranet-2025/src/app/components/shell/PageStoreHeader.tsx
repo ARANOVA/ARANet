@@ -2,7 +2,6 @@
 
 import { aranet_invoice_verifactu } from '@/interfaces';
 import { useFormUiStore, useSearchStore } from '@/store';
-import { verifactuFlow, verifactuConsulta } from '@/utils/server/verifactu.utils';
 import { PageHeader } from '@aranova/aranova-react-ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
@@ -25,6 +24,7 @@ interface Props {
   edit_button_text?: string;
   edit_button_href?: string;
   print_button_text?: string;
+  print_button?: React.ReactNode;
   data?: aranet_invoice_verifactu;
 }
 
@@ -35,8 +35,8 @@ export const PageStoreHeader = ({
   add_button_href,
   add_button_text,
   print_button_text,
+  print_button,
   state,
-  data,
   ...props
 }: Props) => {
   const { setSearchTerm, openDrawer } = useFormUiStore();
@@ -58,13 +58,7 @@ export const PageStoreHeader = ({
   }
 
   if (print_button_text) {
-    const printClick = () => {
-      // Test verifactu
-      console.log('print_button_click, 2025, 9');
-      // verifactuConsulta(2025, 9).then(console.log).catch(console.log);
-      verifactuFlow(data as aranet_invoice_verifactu).then(console.log).catch(console.log);
-    };
-    add_props.print_button_click = printClick; //() => window.print();
+    add_props.print_button_click = () => window.print();
   }
 
   // Funcion que se ejecuta al hacer click en buscar
@@ -99,6 +93,7 @@ export const PageStoreHeader = ({
         searchFn={handleSearch}
         state={state}
         main_button={main_button}
+        print_button={print_button}
         {...add_props}
       />
     </>

@@ -390,6 +390,13 @@ model aranet_invoice {
   updated_by                                             Int?
   deleted_at                                             DateTime?                 @db.DateTime(0)
   deleted_by                                             Int?
+  freeze_at                                              DateTime?                 @db.DateTime(0)
+  freeze_by                                              Int?
+  signed_at                                              DateTime?                 @db.DateTime(0)
+  signed_by                                              Int?
+  sent_at                                                DateTime?                 @db.DateTime(0)
+  sent_by                                                Int?
+  sent_hash                                              String?                   @db.VarChar(128)
   invoice_periodic                                       Int?                      @default(0)
   invoice_periodic_current                               Int?                      @default(0)
   invoice_service_from                                   DateTime?                 @db.Date
