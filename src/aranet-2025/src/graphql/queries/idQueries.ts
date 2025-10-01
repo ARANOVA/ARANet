@@ -59,6 +59,10 @@ export const ID_QUERIES = {
           created_at
           updated_at
           deleted_at
+          freeze_at
+          signed_at
+          sent_at
+          sent_hash
           payment_status {
             payment_status_title
           }

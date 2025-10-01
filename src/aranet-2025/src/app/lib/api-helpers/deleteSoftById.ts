@@ -6,7 +6,7 @@ import { enumDeleteModel } from "@/app/data";
 
 export const deleteSoftById = async (
   prisma: PrismaClient,
-  session: SessionPayload | null,
+  session: SessionPayload | null | Promise<SessionPayload | null>,
   model: enumDeleteModel,
   ids: number[],
 ): Promise<SingleResponse<void>> => {

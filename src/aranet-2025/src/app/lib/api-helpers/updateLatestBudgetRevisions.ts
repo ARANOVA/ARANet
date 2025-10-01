@@ -49,7 +49,7 @@ const setLastBudget = async (prisma: PrismaClient, id: number): Promise<void>  =
 
 export const updateLatestBudgetRevisions = async (
   prisma: PrismaClient,
-  session: SessionPayload | null,
+  session: SessionPayload | null | Promise<SessionPayload | null>,
   ids: number[],
 ): Promise<Error | void> => {
   if ((ids || []).length === 0) return new Error('Necesitas al menos un id para actualizar');

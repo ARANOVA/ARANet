@@ -251,7 +251,7 @@ export const SimpleTanstackTable = <T,>({
       } else {
         ui.setToastProps({
           type: 'error',
-          title: 'Algo fué mal!',
+          title: '¡Algo fué mal!',
           subtitle: nbsaved === 1 ? `No se pudo guardar el registro` : `No se pudieron guardar todos los registros`,
         });
       }
@@ -260,7 +260,7 @@ export const SimpleTanstackTable = <T,>({
     onError: error => {
       ui.setToastProps({
         type: 'warning',
-        title: 'Algo fué mal!',
+        title: '¡Algo fué mal!',
         subtitle: nbsaved === 1 ? `No se pudo guardar el registro` : `No se pudieron guardar ${nbsaved} registros`,
       });
       ui.showToast(3000);
@@ -285,7 +285,7 @@ export const SimpleTanstackTable = <T,>({
       } else {
         ui.setToastProps({
           type: 'error',
-          title: 'Algo fué mal!',
+          title: '¡Algo fué mal!',
           subtitle: nbdeleted === 1 ? `No se pudo eliminar el registro` : `No se pudieron eliminar todos los registros`,
         });
       }
@@ -294,7 +294,7 @@ export const SimpleTanstackTable = <T,>({
     onError: error => {
       ui.setToastProps({
         type: 'warning',
-        title: 'Algo fué mal!',
+        title: '¡Algo fué mal!',
         subtitle: nbdeleted === 1 ? `No se pudo eliminar el registro` : `No se pudieron eliminar ${nbdeleted} registros`,
       });
       ui.showToast(3000);

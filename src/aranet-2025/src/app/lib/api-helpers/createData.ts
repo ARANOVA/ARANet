@@ -6,7 +6,7 @@ import { enumCreateModel } from "@/app/data";
 
 export const createData = async (
   prisma: PrismaClient,
-  session: SessionPayload | null,
+  session: SessionPayload | null | Promise<SessionPayload | null>,
   model: enumCreateModel,
   data: unknown,
 ): Promise<SingleResponse<void>> => {

@@ -32,7 +32,7 @@ export const DeleteModelButton = ({ model, id }: Props) => {
   // Delete/Batch
   const [nbdeleted, setNbdeleted] = useState<number>(id !== undefined ? 1 : getItems(model).length);
 
-  // // Modal (delete row)
+  // Modal (delete row)
   const deleteFn = (
     model: string,
     ids: number[]
@@ -71,7 +71,7 @@ export const DeleteModelButton = ({ model, id }: Props) => {
         setIsOpen(false);
         setToastProps({
           type: 'error',
-          title: 'Algo fué mal!',
+          title: '¡Algo fué mal!',
           subtitle: nbdeleted === 1 ? `No se pudo eliminar el registro` : `No se pudieron eliminar todos los registros`,
         });
         showToast(3000);
@@ -82,7 +82,7 @@ export const DeleteModelButton = ({ model, id }: Props) => {
       setIsOpen(false);
       setToastProps({
         type: 'warning',
-        title: 'Algo fué mal!',
+        title: '¡Algo fué mal!',
         subtitle: nbdeleted === 1 ? `No se pudo eliminar el registro` : `No se pudieron eliminar ${nbdeleted} registro(s)`,
       });
       showToast(3000);

@@ -69,7 +69,7 @@ export const RestoreModelButton = ({ model, id }: Props) => {
         setIsOpen(false);
         setToastProps({
           type: 'error',
-          title: 'Algo fué mal!',
+          title: '¡Algo fué mal!',
           subtitle: nbrestored === 1 ? `No se pudo restaurar el registro` : `No se pudieron restaurar todos los registros`,
         });
         showToast(3000);
@@ -80,7 +80,7 @@ export const RestoreModelButton = ({ model, id }: Props) => {
       setIsOpen(false);
       setToastProps({
         type: 'warning',
-        title: 'Algo fué mal!',
+        title: '¡Algo fué mal!',
         subtitle: nbrestored === 1 ? `No se pudo restaurar el registro` : `No se pudieron restaurar ${nbrestored} registro(s)`,
       });
       showToast(3000);

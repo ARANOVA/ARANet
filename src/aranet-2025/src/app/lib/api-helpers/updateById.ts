@@ -6,13 +6,14 @@ import { enumUpdateModel } from "@/app/data";
 
 export const updateById = async (
   prisma: PrismaClient,
-  session: SessionPayload | null,
+  session: SessionPayload | null | Promise<SessionPayload | null>,
   model: enumUpdateModel,
   id: number,
   data: unknown,
 ): Promise<SingleResponse<void>> => {
   const modelMap: Record<enumUpdateModel, any> = {
     invoice_item: prisma.aranet_invoice_item,
+    invoice: prisma.aranet_invoice,
   };
 
   if (!id) {

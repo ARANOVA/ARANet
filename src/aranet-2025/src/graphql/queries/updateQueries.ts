@@ -19,4 +19,18 @@ export const UPDATE_QUERIES = {
       }
     }
   `,
+  invoice: `
+    mutation UpdateInvoice(
+      $id: Int!,
+      $data: InvoiceUpdate!,
+    ) {
+      updateInvoice(id: $id, data: $data) {
+        error
+        statusCode
+        data {
+          id
+        }
+      }
+    }
+  `,
 }

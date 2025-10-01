@@ -5,9 +5,9 @@ import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert
 import { Metadata } from "next";
 import { notFound, unauthorized } from "next/navigation";
 import { isValidId } from "@/utils";
-import { datePipe } from "@/app/lib/helpers";
 import { aranet_invoice_verifactu } from "@/interfaces";
-import { verifactuFlow } from "@/utils/server/verifactu.utils";
+import { getModelState } from "@/utils";
+import { de } from "zod/v4/locales";
 
 export const dynamic = 'force-dynamic';
 
@@ -67,14 +67,21 @@ export default async function InvoiceShowPage({ params }: Props) {
     { name: 'Facturas', href: '/invoice/list' },
     { name: title, href: '' },
   ];
-
-  const printClick = (): void => {
-    // Test verifactu
-    console.log('print_button_click, 2025, 9');
-    // verifactuConsulta(2025, 9).then(console.log).catch(console.log);
-    verifactuFlow(data).then(console.log).catch(console.log);
-  };
   
+  const state = getModelState(invoice.data);
+
+  let printButton: React.ReactNode | null = null;
+
+  switch (state?.value) {
+    case 'deleted':
+      printButton = null;
+      break;
+    case 'sent':
+      printButton = null;
+      break;
+    default:
+      printButton = <SendInvoiceButton data={data} key="send-invoice-button" />
+  }
 
   return (
     <>
@@ -84,17 +91,18 @@ export default async function InvoiceShowPage({ params }: Props) {
           title={`${prefix}${title}`}
           subtitle="Vista de detalle del documento"
           model="invoice"
-          state={invoice?.data.deleted_at ? { value: 'deleted', suffix: datePipe(invoice?.data.deleted_at)} : undefined}
+          state={state}
           data={data}
           edit_button_href={`/invoice/edit/${id}`}
           edit_button_text="Editar"
-          print_button={<SendInvoiceButton data={data} />}
+          print_button={printButton}
           main_button={!invoice.data.deleted_at ?
             (<DeleteModelButton model="invoice" id={Number(id)} />) :
             (<RestoreModelButton model="invoice" id={Number(id)} />)
           }
         />
         <ToastStoreAlert />
+        {/* Esto no funciona bien */}
         <InvoiceInfo
           invoice={invoice.data}
           addresses={addresses?.data?.items || []}

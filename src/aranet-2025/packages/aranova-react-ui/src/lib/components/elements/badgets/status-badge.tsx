@@ -1,7 +1,7 @@
 import { Badge } from "../../tw";
 
-type enumStates = 'draft' | 'temp' | 'request' | 'approved' | 'deleted' | 'published';
-const enumStates: string[] = ['draft', 'temp', 'request', 'approved', 'deleted', 'published'];
+type enumStates = 'draft' | 'temp' | 'request' | 'approved' | 'deleted' | 'published' | 'sent' | 'canceled' | 'signed' | 'frozen';
+const enumStates: string[] = ['draft', 'temp', 'request', 'approved', 'deleted', 'published', 'sent', 'canceled', 'signed', 'frozen'];
 
 interface Props {
     state?: {
@@ -37,13 +37,17 @@ export const StatusBagde = ({ state }: Props) => {
     | undefined;
   label: string; 
 }> = {
-    approved: { color: "green", label: "Aprobado" },
-    temp: { color: "blue", label: "Temporal" },
-    request: { color: "violet", label: "Solicitud" },
-    deleted: { color: "red", label: "Eliminado" },
-    draft: { color: "amber", label: "Borrador" },
-    published: { color: "teal", label: "Publicado" },
-  };
+  approved: { color: "green", label: "Aprobado" },
+  temp: { color: "blue", label: "Temporal" },
+  request: { color: "violet", label: "Solicitud" },
+  deleted: { color: "red", label: "Eliminado" },
+  draft: { color: "amber", label: "Borrador" },
+  published: { color: "teal", label: "Publicado" },
+  sent: { color: "purple", label: "Registrado" },
+  canceled: { color: "orange", label: "Cancelado" },
+  signed: { color: "indigo", label: "Firmado" },
+  frozen: { color: "cyan", label: "Congelado" },
+};
 
   const badge = colorMap[state.value as enumStates];
   return (

@@ -11,7 +11,8 @@ import { USER_TEXT_FIELDS, USER_VALID_FIELDS } from "./user";
 import { VENDOR_TEXT_FIELDS, VENDOR_VALID_FIELDS } from "./vendor";
 
 export type enumUpdateModel = 
-'invoice_item'
+'invoice_item' |
+'invoice'
 ;
 
 export type enumCreateModel = 
