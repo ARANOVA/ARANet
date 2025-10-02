@@ -71,16 +71,20 @@ export default async function InvoiceShowPage({ params }: Props) {
   const state = getModelState(invoice.data);
 
   let printButton: React.ReactNode | null = null;
+  let mainButton: React.ReactNode | null = null;
 
   switch (state?.value) {
     case 'deleted':
       printButton = null;
+      mainButton = <RestoreModelButton model="invoice" id={Number(id)} />;
       break;
     case 'sent':
       printButton = null;
+      mainButton = null;
       break;
     default:
-      printButton = <SendInvoiceButton data={data} key="send-invoice-button" />
+      printButton = <SendInvoiceButton data={data} key="send-invoice-button" />;
+      mainButton = <DeleteModelButton model="invoice" id={Number(id)} />;
   }
 
   return (
@@ -96,10 +100,7 @@ export default async function InvoiceShowPage({ params }: Props) {
           edit_button_href={`/invoice/edit/${id}`}
           edit_button_text="Editar"
           print_button={printButton}
-          main_button={!invoice.data.deleted_at ?
-            (<DeleteModelButton model="invoice" id={Number(id)} />) :
-            (<RestoreModelButton model="invoice" id={Number(id)} />)
-          }
+          main_button={mainButton}
         />
         <ToastStoreAlert />
         {/* Esto no funciona bien */}
@@ -109,6 +110,7 @@ export default async function InvoiceShowPage({ params }: Props) {
           contacts={contacts?.data?.items || []}
         />
         <InvoiceItems
+          className="mt-4"
           invoice={invoice.data}
         />
       </div>

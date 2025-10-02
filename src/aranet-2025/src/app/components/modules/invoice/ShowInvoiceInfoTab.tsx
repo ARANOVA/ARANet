@@ -1,6 +1,8 @@
-import { datePipe } from "@/app/lib/helpers";
+'use client';
+
 import { sf_tag } from "@/generated/prisma";
 import { aranet_invoice_join_all } from "@/interfaces";
+import { toShortDate } from "@/utils";
 import { DescriptionDetails, DescriptionList, DescriptionTerm, Link } from "@aranova/aranova-react-ui";
 
 interface Props {
@@ -26,8 +28,8 @@ export const ShowInvoiceInfoTab = ({ invoice, tags }: Props) => {
     budget: budget,
   } = invoice;
 
-  const payment_date = invoice_payment_date ? datePipe(invoice_payment_date) : '';
-  const invoice_date = invoice_date_raw ? datePipe(invoice_date_raw) : '';
+  const payment_date = invoice_payment_date ? toShortDate(invoice_payment_date) : '';
+  const invoice_date = invoice_date_raw ? toShortDate(invoice_date_raw) : '';
 
   return (
     <DescriptionList>
@@ -62,7 +64,7 @@ export const ShowInvoiceInfoTab = ({ invoice, tags }: Props) => {
       {!!service_from && !!service_to && (
         <>
           <DescriptionTerm className="!pt-0.5">Fechas de servicio</DescriptionTerm>
-          <DescriptionDetails className="!pt-0.5 !pb-1">{datePipe(service_from)} - {datePipe(service_to)}</DescriptionDetails>
+          <DescriptionDetails className="!pt-0.5 !pb-1">{toShortDate(service_from)} - {toShortDate(service_to)}</DescriptionDetails>
         </>
       )}
 

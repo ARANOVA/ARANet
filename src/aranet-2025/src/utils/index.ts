@@ -3,3 +3,4 @@ export * from './object.utils';
 export * from './strings';
 export * from './validations.utils';
 export * from './model.utils';
+export * from './date.utils';

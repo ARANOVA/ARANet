@@ -40,6 +40,7 @@ export const datePipe = (raw: Date | string, locale: string = navigator?.languag
     // TS en string
     date = new Date(parseInt(raw, 10));
   } else if (typeof raw === 'string') {
+    // ISO en string
     date = new Date(raw);
   }
   return date
