@@ -7,6 +7,9 @@ import { aranet_invoice_join_all } from '@/interfaces';
 import { getSession } from '@/app/lib/session';
 import { aranet_invoice } from '@/generated/prisma';
 import { UpdateAranetInvoiceDto } from '@/interfaces/dto';
+import { renderToBuffer } from '@react-pdf/renderer';
+import InvoicePDF from '@/app/components/print/PdfInvoice';
+import React from 'react';
 
 interface Params {
   params: Promise<{
@@ -50,10 +53,20 @@ export async function GET(
         error: "Not Found",
       }, { status: 404 });
     }
-    return NextResponse.json({
-      statusCode: 200,
-      data: invoice,
+
+    // 2. Renderizar el componente React a un Buffer
+    const pdfBuffer = await renderToBuffer(
+      React.createElement(InvoicePDF, { invoice })
+    );
+    return new NextResponse(pdfBuffer as BodyInit, {
+      status: 200,
+      headers: {
+        // Encabezados para forzar la descarga del archivo PDF
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="factura_${invoice.invoice_number}.pdf"`,
+      },
     });
+
   } catch (err) {
     logError(`Error GET /api/invoice/${id}: ${err}`);
     return NextResponse.json({

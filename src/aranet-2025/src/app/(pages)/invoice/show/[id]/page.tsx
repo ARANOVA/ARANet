@@ -51,6 +51,8 @@ export default async function InvoiceShowPage({ params }: Props) {
   }
   const addresses = await dataPlain.useAddressesByObjectAndObjectId('client', parseInt(id, 10));
   const contacts = await dataPlain.useContactsByObjectAndObjectId('invoice', parseInt(id, 10));
+  const defaultAddress = (addresses.data?.items || []).find(a => a.objectaddress_is_default);
+  const defaultContact = (contacts.data?.items || []).find(c => c.objectcontact_is_default);
 
   const title = `${invoice.data?.invoice_prefix}${invoice.data?.invoice_number}_${invoice.data.client?.client_unique_name}`;
   const prefix = (invoice.data.kind_of_invoice) ? `${invoice.data.kind_of_invoice?.kind_of_invoice_title} `: '';
