@@ -1,7 +1,7 @@
 'use server';
 
 import { QueryClient } from "@tanstack/react-query";
-import { FilterDTO, ListResponse, SearchDTO, SingleResponse } from '@aranova/aranova-react-ui';
+import { FilterDTO, ListResponse, SearchDTO, SingleResponse, WhereInput } from '@aranova/aranova-react-ui';
 import { aranet_expense_item_join_all, aranet_invoice_join_all, User } from "@/interfaces";
 import { getUserById, getSingleDataByModel, getRelationsByObjectAndObjectId, getSingleDataByModelGraphql, getListDataByModelGraphql } from "@/app/lib/api-wrappers/server";
 import { aranet_address, aranet_client, aranet_contact, aranet_invoice, aranet_objectaddress, aranet_objectcontact } from "@/generated/prisma";
@@ -58,7 +58,7 @@ class ServerDataPlain {
     sortField = 'invoice_date',
     sortDir: 'asc' | 'desc' = 'asc',
     searches: SearchDTO[] = [],
-    filters: FilterDTO[] = [],
+    filters: WhereInput | null = null,
 ): Promise<ListResponse<aranet_invoice_join_all>> {
     return this.queryClient.fetchQuery<ListResponse<aranet_invoice_join_all>>({
       queryKey: ['invoice'],

@@ -31,7 +31,6 @@ export async function POST(
     // TODO: Valida
     const invoice_items: aranet_invoice_item[] = body.invoice_items || [];
 
-    console.log({ body })
     let data = UpdateAranetInvoiceDto.parse(body);
     const id = data.id;
     if (!id || !isValidId(id)) {
@@ -191,7 +190,6 @@ export async function POST(
       }, { status: 400 });
     }
 
-    console.log({ resp })
     // 7. Actualizar con el resultado
     updateData = {
       sent_at: new Date().toISOString(),

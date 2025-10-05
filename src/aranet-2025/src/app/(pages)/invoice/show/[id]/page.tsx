@@ -1,9 +1,9 @@
-import { MenuItem, NotAuthorized, TopBreadcrumb } from "@aranova/aranova-react-ui";
+import { MenuItem, NotAuthorized, TopBreadcrumb, WhereInput } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
 import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert, InvoiceInfo, InvoiceItems, SendInvoiceButton } from "@/app/components";
 import { Metadata } from "next";
-import { notFound, unauthorized } from "next/navigation";
+import { notFound } from "next/navigation";
 import { isValidId } from "@/utils";
 import { aranet_invoice_verifactu } from "@/interfaces";
 import { getModelState } from "@/utils";
@@ -68,9 +68,11 @@ export default async function InvoiceShowPage({ params }: Props) {
   };
 
   // TODO: recuperar la anterior en la serie
-  const prevInvoices = await dataPlain.useInvoices(1, 1, 'invoice_date', 'desc', [], [
-    { field: 'sent_at', value: `<${data.invoice_date?.toString() || ''}` },
-  ]);
+  const prevFilter: WhereInput = {
+    // invoice_prefix: { equals: data.invoice_prefix || undefined},
+    sent_at: { not: null },
+  }
+  const prevInvoices = await dataPlain.useInvoices(1, 1, 'sent_at', 'desc', [], prevFilter);
   // TODO: Comprobar si es correcto
   console.log('Prev invoices:', prevInvoices?.data?.items);
   if ((prevInvoices?.data?.items || []).length > 0) {

@@ -201,7 +201,6 @@ export const verifactuCalcHuella = async (
     ];
     inputStr = input.join('&');
   }
-  console.log({inputStr})
   const hash = crypto.createHash('sha256').update(inputStr, 'utf8').digest('hex').toUpperCase();
   return hash;
 }
@@ -246,7 +245,6 @@ export const verifactuValidateXmlAgainstXsd = async (
   // Escribir el XML en un archivo temporal
   fs.writeFileSync(tempXmlPath, bodyXml, { encoding: 'utf-8' });
 
-  console.log({tempXmlPath})
   return new Promise((resolve, reject) => {
     exec(`xmllint --noout --nonet --schema ${xsdPath} ${tempXmlPath}`, (err, stdout, stderr) => {
       // Borrar

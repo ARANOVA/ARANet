@@ -101,7 +101,6 @@ export const toDateIso = (raw: Date | string | null): string => {
 
   // Y la formateamos al estilo ISO con offset (+01:00 o +02:00)
   const formatted = dt.toISO({ precision: "seconds" });
-  console.log({formatted})
   return formatted || '';
 }
 

@@ -52,7 +52,7 @@ export const getListDataByModelGraphql = async <T>(
       return json.data[keys[0]] as ListResponse<T>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      logError(`UPDATE /api/graphql ${model}: ${err}`);
+      logError(`POST /api/graphql ${model}: ${err}`);
       return {
         statusCode: 500,
         error: `${err}`,

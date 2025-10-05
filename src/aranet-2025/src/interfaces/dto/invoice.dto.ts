@@ -51,8 +51,8 @@ export const AranetInvoiceBase = z.object({
   sent_response_message: z.string().nullable().optional(),
   sent_response_data: z.string().nullable().optional(),
 
-  invoice_periodic: z.number().int().default(0).optional(),
-  invoice_periodic_current: z.number().int().default(0).optional(),
+  invoice_periodic: z.number().int().nullable().optional(),
+  invoice_periodic_current: z.number().int().nullable().optional(),
   invoice_service_from: z.coerce.date().nullable().optional(),
   invoice_service_to: z.coerce.date().nullable().optional(),
 });
