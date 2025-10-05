@@ -1,4 +1,4 @@
-import { FilterDTO, ListResponse, SearchDTO } from "@aranova/aranova-react-ui";
+import { WhereInput, ListResponse, SearchDTO } from "@aranova/aranova-react-ui";
 import { logError } from "../../logger";
 import { LIST_QUERIES } from '@/graphql/queries';
 
@@ -14,7 +14,7 @@ export const getListDataByModelGraphql = async <T>(
   sortField = '',
   sortDir: '' | 'asc' | 'desc' = '',
   searches: SearchDTO[] = [],
-  filters: FilterDTO[] = [],
+  filters: WhereInput | null,
 ): Promise<ListResponse<T>> => {
   const args: Record<string, unknown> = {
     page,
@@ -27,7 +27,8 @@ export const getListDataByModelGraphql = async <T>(
   if (searches && searches.length > 0) {
     args.search = searches;
   }
-  if (filters && filters.length > 0) {
+  
+  if (filters && Object.keys(filters).length > 0) {
     args.filters = filters;
   }
 

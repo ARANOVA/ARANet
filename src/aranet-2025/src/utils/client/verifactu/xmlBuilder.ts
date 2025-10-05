@@ -191,7 +191,7 @@ export const buildXmlRegistro = (
       detalle.ele("sf:CalificacionOperacion").txt('S1').up(); // TODO
       detalle.ele("sf:TipoImpositivo").txt((d.item_tax_rate || 0).toFixed(0)).up(); // TODO
       detalle.ele("sf:BaseImponibleOimporteNoSujeto").txt(round2(d.item_cost).toFixed(2)).up();
-      // Optional detalle.ele("sf:CuotaRepercutida").txt(round2(tax_amount).toFixed(2)).up();
+      detalle.ele("sf:CuotaRepercutida").txt(round2(tax_amount).toFixed(2)).up();
       detalle.up();
     });
     desglose.up();

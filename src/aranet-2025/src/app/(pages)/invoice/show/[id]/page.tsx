@@ -114,7 +114,6 @@ export default async function InvoiceShowPage({ params }: Props) {
           model="invoice"
           state={state}
           data={data}
-          me={me.data}
           edit_button_href={`/invoice/edit/${id}`}
           edit_button_text="Editar"
           print_button={printButton}

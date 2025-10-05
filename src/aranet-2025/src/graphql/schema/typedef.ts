@@ -38,8 +38,8 @@ type Invoice {
   sent_hash: String
   invoice_periodic: Int
   invoice_periodic_current: Int
-  invoice_service_from: String
-  invoice_service_to: String
+  invoice_service_from: DateTime
+  invoice_service_to: DateTime
 
   # Relaciones básicas
   client: Client
@@ -776,6 +776,7 @@ input WhereInput {
   NOT: [WhereInput!]
   id: IntFilter
   sent_at: DateTimeFilter
+  item_invoice_id: IntFilter
 }
 
 type Query {
@@ -785,7 +786,7 @@ type Query {
     sortField: String = "invoice_date",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [WhereInput!]
+    filters: WhereInput
   ): InvoiceListResponse!
 
   users(
@@ -794,7 +795,7 @@ type Query {
     sortField: String = "id",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [WhereInput!]
+    filters: WhereInput
   ): UserListResponse!
 
   clients(
@@ -803,7 +804,7 @@ type Query {
     sortField: String = "id",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [WhereInput!]
+    filters: WhereInput
   ): ClientListResponse!
 
   vendors(
@@ -812,7 +813,7 @@ type Query {
     sortField: String = "id",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [WhereInput!]
+    filters: WhereInput
   ): VendorListResponse!
 
   contacts(
@@ -821,7 +822,7 @@ type Query {
     sortField: String = "contact_first_name",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [WhereInput!]
+    filters: WhereInput
   ): ContactListResponse!
 
   projects(
@@ -830,7 +831,7 @@ type Query {
     sortField: String = "created_at",
     sortDir: String = "dsc",
     search: [SearchInput!],
-    filters: [WhereInput!]
+    filters: WhereInput
   ): ProjectListResponse!
 
   budgets(
@@ -839,7 +840,7 @@ type Query {
     sortField: String = "created_at",
     sortDir: String = "desc",
     search: [SearchInput!],
-    filters: [WhereInput!]
+    filters: WhereInput
   ): BudgetListResponse!
 
   expenses(
@@ -848,7 +849,7 @@ type Query {
     sortField: String = "expense_purchase_date",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [WhereInput!]
+    filters: WhereInput
   ): ExpenseListResponse!
 
   incomes(
@@ -857,7 +858,7 @@ type Query {
     sortField: String = "income_date",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [WhereInput!]
+    filters: WhereInput
   ): IncomeListResponse!
 
   cashes(
@@ -866,13 +867,13 @@ type Query {
     sortField: String = "cash_item_date",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [WhereInput!]
+    filters: WhereInput
   ): CashItemListResponse!
 
   invoice_items(
     sortField: String = "id",
     sortDir: String = "asc",
-    filters: [WhereInput!]
+    filters: WhereInput
   ): InvoiceItemListResponse!
 
   expense(

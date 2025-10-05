@@ -1,7 +1,30 @@
 import { DateTime } from 'luxon';
 
-export const toShortDate = (date: string | Date): string => {
-  return DateTime.fromJSDate(new Date(date)).toLocaleString(DateTime.DATE_SHORT);
+export const toShortDate = (date: string | Date | null): string => {
+  if (!date) return "";
+  let dt: DateTime;
+
+  if (typeof date === "number" || /^\d+$/.test(String(date))) {
+    // Si es timestamp en milisegundos
+    dt = DateTime.fromMillis(Number(date));
+  } else if (typeof date === "string") {
+    // Si es string ISO u otro formato reconocible
+    dt = DateTime.fromISO(date, { zone: "utc" });
+    if (!dt.isValid) {
+      // fallback: intentar parsear como fecha nativa
+      dt = DateTime.fromJSDate(new Date(date));
+    }
+  } else if (date instanceof Date) {
+    dt = DateTime.fromJSDate(date);
+  } else {
+    return "";
+  }
+
+  // Si sigue siendo inválido, devolver vacío
+  if (!dt.isValid) return "";
+
+  // ✅ Formato corto local, como "04/10/2025"
+  return dt.toFormat("dd/MM/yyyy"); //.toLocaleString(DateTime.DATE_SHORT);
 };
 
 export const toISODate = (date: string | Date): string => {
@@ -73,9 +96,13 @@ export const toDateIso = (raw: Date | string | null): string => {
   } else if (raw instanceof Date) {
     date = raw;
   }
-  return date
-    ? date.toISOString().replace('.000Z', '+01:00')
-    : '';
+  // La convertimos a la zona que quieras (por ejemplo, Europa/Madrid)
+  const dt = DateTime.fromJSDate(date, { zone: "Europe/Madrid" });
+
+  // Y la formateamos al estilo ISO con offset (+01:00 o +02:00)
+  const formatted = dt.toISO({ precision: "seconds" });
+  console.log({formatted})
+  return formatted || '';
 }
 
 export const toTimeString = (raw: Date | string): string => {

@@ -2,7 +2,7 @@
 
 import {
   EditableInlineTable,
-  FilterDTO,
+  WhereInput,
   ListResponse,
   SingleResponse,
 } from '@aranova/aranova-react-ui';
@@ -20,9 +20,9 @@ interface Props<T> {
   idField: string;
   columns: ColumnDef<T, unknown>[];
   data?: ListResponse<T>;
-  filters?: FilterDTO[],
+  filters?: WhereInput,
   children?: React.ReactNode;
-  saveRowFn: (model: string, data: unknown) => Promise<SingleResponse<unknown>>;
+  saveRowFn: (model: string, data: unknown, filters: WhereInput | null) => Promise<SingleResponse<unknown>>;
   editingRowId: number | null;
   setEditingRowId: (v: number | null) => void;
   editingRows: boolean;
@@ -51,9 +51,10 @@ export const SimpleTable = <T extends { id: number }>({
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
-    filters?: FilterDTO[],
+    filters?: WhereInput | null,
   ): Promise<ListResponse<T>> => {
-    return getListDataByModelGraphql<T>(model, '', '', 1, -1, sortField, sortDir, undefined, filters);
+    console.log({filters})
+    return getListDataByModelGraphql<T>(model, '', '', 1, -1, sortField, sortDir, undefined, filters || null);
   }
 
   return (

@@ -31,9 +31,9 @@ export async function POST(
     // TODO: Valida
     const invoice_items: aranet_invoice_item[] = body.invoice_items || [];
 
+    console.log({ body })
     let data = UpdateAranetInvoiceDto.parse(body);
     const id = data.id;
-    console.log({ id, data, body })
     if (!id || !isValidId(id)) {
       return NextResponse.json({
         statusCode: 400,
@@ -55,12 +55,12 @@ export async function POST(
       }, { status: 404 });
     }
     // No se puede actualizar si está congelada
-    if (existing.freeze_at) {
-      return NextResponse.json({
-        statusCode: 400,
-        error: "Invoice is freezed and cannot be modified",
-      }, { status: 400 });
-    }
+    // if (existing.freeze_at) {
+    //   return NextResponse.json({
+    //     statusCode: 400,
+    //     error: "Invoice is freezed and cannot be modified",
+    //   }, { status: 400 });
+    // }
     // No se puede actualizar si ya se ha enviado a Verifactu
     if (existing.sent_at) {
       return NextResponse.json({

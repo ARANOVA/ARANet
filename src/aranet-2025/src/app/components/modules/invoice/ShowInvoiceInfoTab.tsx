@@ -26,8 +26,8 @@ export const ShowInvoiceInfoTab = ({ invoice, tags }: Props) => {
     budget: budget,
   } = invoice;
 
-  const payment_date = formatDate(invoice.invoice_payment_date);
-  const invoice_date = formatDate(invoice.invoice_date);
+  const payment_date = toShortDate(invoice.invoice_payment_date);
+  const invoice_date = toShortDate(invoice.invoice_date);
   const freezeInfo = invoice.freeze_at ? (
     <>
       <br />

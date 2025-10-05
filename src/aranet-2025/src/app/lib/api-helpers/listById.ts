@@ -1,11 +1,12 @@
 import { enumSimpleListModel } from "@/app/data";
 import { logError } from "../logger";
 import { PrismaClient } from "@/generated/prisma";
+import { WhereInput } from "@aranova/aranova-react-ui";
 
 export const listById = async <T>(
   prisma: PrismaClient,
   model: enumSimpleListModel,
-  where: Record<string, any>,
+  where: WhereInput,
 ): Promise<T[] | null> => {
   const modelMap: Record<enumSimpleListModel, any> = {
     expense_item: prisma.aranet_expense_item,

@@ -178,7 +178,6 @@ export const buildXmlRegistro = (
   // Items
   let total_items_tax_amount = 0;
   let total_items_base_amount = 0;
-  console.log({invoice_item: invoice.invoice_items})
   if (invoice.invoice_items || [].length > 0) {
     const desglose = body.ele("sf:Desglose");
     (invoice.invoice_items || []).forEach((d) => {
@@ -191,7 +190,7 @@ export const buildXmlRegistro = (
       detalle.ele("sf:CalificacionOperacion").txt('S1').up(); // TODO
       detalle.ele("sf:TipoImpositivo").txt((d.item_tax_rate || 0).toFixed(0)).up(); // TODO
       detalle.ele("sf:BaseImponibleOimporteNoSujeto").txt(round2(d.item_cost).toFixed(2)).up();
-      // Optional detalle.ele("sf:CuotaRepercutida").txt(round2(tax_amount).toFixed(2)).up();
+      detalle.ele("sf:CuotaRepercutida").txt(round2(tax_amount).toFixed(2)).up();
       detalle.up();
     });
     desglose.up();
@@ -234,7 +233,7 @@ export const buildXmlRegistro = (
     .ele("sf:IndicadorMultiplesOT").txt("N").up()
   .up();
 
-  body.ele("sf:FechaHoraHusoGenRegistro").txt(toDateIso(invoice.created_at)).up();
+  body.ele("sf:FechaHoraHusoGenRegistro").txt(toDateIso(invoice.freeze_at)).up();
   body.ele("sf:TipoHuella").txt('01').up();
   body.ele("sf:Huella").txt('HUELLA_PLACEHOLDER').up();
   if (!onlyBody) {

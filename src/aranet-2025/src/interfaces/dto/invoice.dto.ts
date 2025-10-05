@@ -42,7 +42,7 @@ export const AranetInvoiceBase = z.object({
   sent_by: z.number().int().nullable().optional(),
   sent_hash: z.string().max(64).nullable().optional(),
   freeze_at: z.coerce.date().nullable().optional(),
-  freeze_bt: z.number().int().nullable().optional(),
+  freeze_by: z.number().int().nullable().optional(),
   anulated_at: z.coerce.date().nullable().optional(),
   anulated_bt: z.number().int().nullable().optional(),
   anulated_id: z.number().int().nullable().optional(),

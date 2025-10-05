@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { FilterDTO, ListResponse, SingleResponse } from '../../../interfaces';
+import { ListResponse, SingleResponse, WhereInput } from '../../../interfaces';
 import { SimpleTanstackTable } from './SimpleTanstackTable';
 import { FormAlert } from '../../elements';
 
@@ -14,21 +14,21 @@ interface Props<T> {
   columns: ColumnDef<T, any>[];
   data?: ListResponse<T>;
   alert: React.ReactNode;
-  filters?: FilterDTO[],
+  filters?: WhereInput | null;
   deleteFn: (model: string, ids: number[]) => Promise<SingleResponse<void>>;
   ui: any;
   fetchDataFn: <T>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
-    filters?: FilterDTO[],
+    filters?: WhereInput | null,
   ) => Promise<ListResponse<T>>;
   editMode: boolean;
   editingRowId: number | null;
   editingRows: boolean;
   setEditingRowId: (v: number | null) => void;
   setEditingRows: (v: boolean) => void;
-  saveRowFn: (model: string, data: unknown) => Promise<SingleResponse<unknown>>;
+  saveRowFn: (model: string, data: unknown, filters?: WhereInput | null) => Promise<SingleResponse<unknown>>;
   title: string;
 }
 

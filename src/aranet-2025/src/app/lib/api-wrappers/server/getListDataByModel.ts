@@ -1,8 +1,6 @@
 import { FilterDTO, ListResponse } from "@aranova/aranova-react-ui";
 import { logError } from "../../logger";
 
-type EnumModels = 'no-existe';
-
 export const getListDataByModel = async <T>(
   model: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

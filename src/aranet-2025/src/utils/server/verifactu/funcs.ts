@@ -156,7 +156,6 @@ export const verifactuCalcHuella = async (
 ): Promise<Error | string> => {
   // --- construye la cadena tal como especifique AEAT (ejemplo simplificado) ---
   const invoiceDate = toDateString(invoice.invoice_date);
-  console.log({d: invoice.invoice_date, invoiceDate})
   if (!invoiceDate) {
     return new Error("La factura debe que tener fecha de emisión");
   }
@@ -177,10 +176,12 @@ export const verifactuCalcHuella = async (
 
   let inputStr = '';
   if (type === 'alta') {
+    // IDEmisorFactura=B99078248&NumSerieFactura=F-25-0001&FechaExpedicionFactura=04-01-2025&TipoFactura=F1&CuotaTotal=55.13&ImporteTotal=317.63&Huella=&FechaHoraHusoGenRegistro=2025-01-02T10:06:42+01:00\n Huella calculada: 7227341FF5AB09ECCE1D73E8C04F6D70F03F15D8AC5E60AA32E350562879962F
+    // IDEmisorFactura=B99078248&NumSerieFactura=F-25-0001&FechaExpedicionFactura=04-01-2025&TipoFactura=F1&CuotaTotal=55.13&ImporteTotal=317.63&Huella=&FechaHoraHusoGenRegistro=2025-10-05T14:15:58.152Z
     const { taxAmount, totalAmount } = sumItems(invoice);
     const input: string[] = [
       'IDEmisorFactura=' + process.env.COMPANY_CIF,
-      'NumSerieFactura=' + `${prefix}|${invoice.invoice_number}`,
+      'NumSerieFactura=' + `${prefix}${invoice.invoice_number}`,
       'FechaExpedicionFactura=' + invoiceDate,
       'TipoFactura=' + toInvoiceType(invoice.invoice_kind_of_invoice_id),
       'CuotaTotal=' + taxAmount,
@@ -200,6 +201,7 @@ export const verifactuCalcHuella = async (
     ];
     inputStr = input.join('&');
   }
+  console.log({inputStr})
   const hash = crypto.createHash('sha256').update(inputStr, 'utf8').digest('hex').toUpperCase();
   return hash;
 }
@@ -244,6 +246,7 @@ export const verifactuValidateXmlAgainstXsd = async (
   // Escribir el XML en un archivo temporal
   fs.writeFileSync(tempXmlPath, bodyXml, { encoding: 'utf-8' });
 
+  console.log({tempXmlPath})
   return new Promise((resolve, reject) => {
     exec(`xmllint --noout --nonet --schema ${xsdPath} ${tempXmlPath}`, (err, stdout, stderr) => {
       // Borrar

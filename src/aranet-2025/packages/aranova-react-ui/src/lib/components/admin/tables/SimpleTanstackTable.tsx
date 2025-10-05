@@ -28,7 +28,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {
-  FilterDTO,
+  WhereInput,
   ListResponse,
   SingleResponse,
 } from '../../../interfaces';
@@ -52,13 +52,13 @@ interface Props<T> {
   sortDir?: 'desc' | 'asc';
   columns: ColumnDef<T, any>[];
   data?: ListResponse<T>;
-  filters?: FilterDTO[];
+  filters?: WhereInput | null;
   deleteFn: (model: string, ids: number[]) => Promise<SingleResponse<void>>;
   fetchDataFn: <T>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
-    filters?: FilterDTO[],
+    filters?: WhereInput | null,
   ) => Promise<ListResponse<T>>;
   ui: any;
   editMode: boolean;
@@ -66,7 +66,7 @@ interface Props<T> {
   setEditingRowId: (v: number | null) => void;
   editingRows: boolean;
   setEditingRows: (v: boolean) => void;
-  saveRowFn: (model: string, data: unknown) => Promise<SingleResponse<unknown>>;
+  saveRowFn: (model: string, data?: WhereInput | null) => Promise<SingleResponse<unknown>>;
   title: string;
 }
 
@@ -235,11 +235,11 @@ export const SimpleTanstackTable = <T,>({
 
   const mutationSave = useMutation<SingleResponse<unknown>, Error, unknown>({
      mutationFn: data => {
-      filters?.forEach(f => {
-        // TODO: Mejorar
-        (data as any)[f.field] = f.field.endsWith('_id') ? Number(f.value) : f.value;
-      });
-      return saveRowFn(model as any, data);
+      // filters?.forEach(f => {
+      //   // TODO: Mejorar
+      //   (data as any)[f.field] = f.field.endsWith('_id') ? Number(f.value) : f.value;
+      // });
+      return saveRowFn(model as any, filters);
      },
      onSuccess: data => {
       if (data.statusCode < 300) {

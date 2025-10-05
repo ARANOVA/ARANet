@@ -3,7 +3,7 @@ export const LIST_QUERIES = {
     query ListInvoiceItems(
       $sortField: String,
       $sortDir: String,
-      $filters: [WhereInput!],
+      $filters: WhereInput,
     ) {
       invoice_items(
         sortField: $sortField,
@@ -37,7 +37,7 @@ export const LIST_QUERIES = {
       $sortField: String,
       $sortDir: String,
       $search: [SearchInput!],
-      $filters: [WhereInput!]
+      $filters: WhereInput
     ) {
       budgets(
         page: $page,
@@ -92,7 +92,7 @@ export const LIST_QUERIES = {
       $sortField: String,
       $sortDir: String,
       $search: [SearchInput!],
-      $filters: [WhereInput!]
+      $filters: WhereInput
     ) {
       projects(
         page: $page,
@@ -142,7 +142,7 @@ export const LIST_QUERIES = {
       $sortField: String,
       $sortDir: String,
       $search: [SearchInput!],
-      $filters: [WhereInput!]
+      $filters: WhereInput
     ) {
       contacts(
         page: $page,
@@ -183,7 +183,7 @@ export const LIST_QUERIES = {
       $sortField: String,
       $sortDir: String,
       $search: [SearchInput!],
-      $filters: [WhereInput!]
+      $filters: WhereInput
     ) {
       vendors(
         page: $page,
@@ -235,7 +235,7 @@ export const LIST_QUERIES = {
       $sortField: String,
       $sortDir: String,
       $search: [SearchInput!],
-      $filters: [WhereInput!]
+      $filters: WhereInput
     ) {
       clients(
         page: $page,
@@ -287,7 +287,7 @@ export const LIST_QUERIES = {
       $sortField: String,
       $sortDir: String,
       $search: [SearchInput!],
-      $filters: [WhereInput!]
+      $filters: WhereInput
     ) {
       users(
         page: $page,
@@ -330,7 +330,7 @@ export const LIST_QUERIES = {
       $sortField: String,
       $sortDir: String,
       $search: [SearchInput!],
-      $filters: [WhereInput!]
+      $filters: WhereInput
     ) {
       invoices(
         page: $page,
@@ -383,7 +383,7 @@ export const LIST_QUERIES = {
       $sortField: String,
       $sortDir: String,
       $search: [SearchInput!],
-      $filters: [WhereInput!]
+      $filters: WhereInput
     ) {
       expenses(
         page: $page,
@@ -435,7 +435,7 @@ export const LIST_QUERIES = {
       $sortField: String,
       $sortDir: String,
       $search: [SearchInput!],
-      $filters: [WhereInput!]
+      $filters: WhereInput
     ) {
       incomes(
         page: $page,
@@ -483,7 +483,7 @@ export const LIST_QUERIES = {
       $sortField: String,
       $sortDir: String,
       $search: [SearchInput!],
-      $filters: [WhereInput!]
+      $filters: WhereInput
     ) {
       cashes(
         page: $page,
