@@ -110,4 +110,38 @@ export const ID_QUERIES = {
       }
     }
   `,
+  invoice_prev: `
+    query GetInvoicePrev(
+      $sent_at: DateTime!,
+    ) {
+      invoice_prev(
+        sent_at: $sent_at
+      ) {
+        statusCode
+        data {
+          id
+          invoice_prefix
+          invoice_number
+          invoice_date
+          invoice_title
+          invoice_client_id
+          invoice_payment_status_id
+          invoice_payment_date
+          invoice_total_amount
+          invoice_tax_rate
+          invoice_periodic
+          invoice_periodic_current
+          invoice_service_from
+          invoice_service_to
+          created_at
+          updated_at
+          deleted_at
+          freeze_at
+          signed_at
+          sent_at
+          sent_hash
+        }
+      }
+    }
+  `,
 }

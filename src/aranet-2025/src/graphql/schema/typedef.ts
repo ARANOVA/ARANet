@@ -537,6 +537,8 @@ input InvoiceUpdate {
   sent_at: DateTime
   sent_bt: Int
   sent_hash: String
+  updated_at: DateTime
+  updated_by: Int
 }
 
 input InvoiceItemUpdate {
@@ -572,12 +574,6 @@ input SearchInput {
   field: String
   value: String
   operator: String
-}
-
-input FilterInput {
-  type: String
-  field: String!
-  value: String
 }
 
 type Metadata {
@@ -730,7 +726,58 @@ type InvoiceItemSingleResponse {
   error: String
   data: InvoiceItem!
 }
-  
+
+input IntFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: Int
+}
+
+input FloatFilter {
+  equals: Float
+  in: [Float!]
+  notIn: [Float!]
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  not: Float
+}
+
+input DateTimeFilter {
+  equals: DateTime
+  not: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+}
+
+input StringFilter {
+  equals: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  in: [String!]
+  notIn: [String!]
+  not: String
+}
+
+input WhereInput {
+  AND: [WhereInput!]
+  OR: [WhereInput!]
+  NOT: [WhereInput!]
+  id: IntFilter
+  sent_at: DateTimeFilter
+}
+
 type Query {
   invoices(
     page: Int = 1,
@@ -738,7 +785,7 @@ type Query {
     sortField: String = "invoice_date",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [String!]
+    filters: [WhereInput!]
   ): InvoiceListResponse!
 
   users(
@@ -747,7 +794,7 @@ type Query {
     sortField: String = "id",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [String!]
+    filters: [WhereInput!]
   ): UserListResponse!
 
   clients(
@@ -756,7 +803,7 @@ type Query {
     sortField: String = "id",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [String!]
+    filters: [WhereInput!]
   ): ClientListResponse!
 
   vendors(
@@ -765,7 +812,7 @@ type Query {
     sortField: String = "id",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [String!]
+    filters: [WhereInput!]
   ): VendorListResponse!
 
   contacts(
@@ -774,7 +821,7 @@ type Query {
     sortField: String = "contact_first_name",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [String!]
+    filters: [WhereInput!]
   ): ContactListResponse!
 
   projects(
@@ -783,7 +830,7 @@ type Query {
     sortField: String = "created_at",
     sortDir: String = "dsc",
     search: [SearchInput!],
-    filters: [String!]
+    filters: [WhereInput!]
   ): ProjectListResponse!
 
   budgets(
@@ -792,7 +839,7 @@ type Query {
     sortField: String = "created_at",
     sortDir: String = "desc",
     search: [SearchInput!],
-    filters: [String!]
+    filters: [WhereInput!]
   ): BudgetListResponse!
 
   expenses(
@@ -801,7 +848,7 @@ type Query {
     sortField: String = "expense_purchase_date",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [String!]
+    filters: [WhereInput!]
   ): ExpenseListResponse!
 
   incomes(
@@ -810,7 +857,7 @@ type Query {
     sortField: String = "income_date",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [String!]
+    filters: [WhereInput!]
   ): IncomeListResponse!
 
   cashes(
@@ -819,13 +866,13 @@ type Query {
     sortField: String = "cash_item_date",
     sortDir: String = "asc",
     search: [SearchInput!],
-    filters: [String!]
+    filters: [WhereInput!]
   ): CashItemListResponse!
 
   invoice_items(
     sortField: String = "id",
     sortDir: String = "asc",
-    filters: [FilterInput!]
+    filters: [WhereInput!]
   ): InvoiceItemListResponse!
 
   expense(
@@ -834,6 +881,10 @@ type Query {
 
   invoice(
     id: Int!
+  ): InvoiceSingleResponse!
+
+  invoice_prev(
+    sent_at: DateTime!
   ): InvoiceSingleResponse!
 }
 
@@ -856,5 +907,7 @@ type Mutation {
   createInvoiceItem(data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
 
   updateInvoice(id: Int!, data: InvoiceUpdate!): InvoiceSingleResponse!
+
+  
 }
 `;

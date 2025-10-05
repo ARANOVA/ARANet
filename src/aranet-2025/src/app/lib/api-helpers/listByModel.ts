@@ -35,20 +35,31 @@ export const listByModel = async <T>(
 
   const noIncludeDelete = ['invoice_item'];
 
+  const where: any = noIncludeDelete.includes(model) ? {AND: []} : {
+    AND: [
+        { deleted_at: null },
+    ]
+  };
+
   const validFields = getValidFields(model);
   search = search.filter(filter => filterByValidFields(validFields, filter))
   logDebug(`POST /api/graphql - ${model} - Búsquedas encontradas: ${JSON.stringify(search)}`);
-  filters = filters.filter(filter => filterByValidFields(validFields, filter));
+  // Sistema "viejo" de filtros: con array de FilterDTO
+  try {
+    filters = filters.filter(filter => filterByValidFields(validFields, filter));
+    // Convertir a "where"
+    filterWhere(where, filters);
+  } catch (err) {
+    // Revisar qué pasa cuando llega como keys "AND", "OR", etc
+    for (const f of Object.entries(filters)) {
+      if (f[1] === undefined) continue;
+      where.AND.push({ [f[0]]: f[1] });
+    }
+  }
   logDebug(`POST /api/graphql - ${model} - Filtros encontrados: ${JSON.stringify(filters)}`);
 
   try {
-    const where: any = noIncludeDelete.includes(model) ? {AND: []} : {
-      AND: [
-         { deleted_at: null },
-      ]
-    };
     searchWhere(where, search, getTextFields(model));
-    filterWhere(where, filters);
     logDebug(`POST /api/graphql - ${model} - Where generado: ${JSON.stringify(where)}`);
 
     const orderBy: Record<string, string> = {};

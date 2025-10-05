@@ -28,6 +28,7 @@ export const getById = async <T>(
     income: prisma.aranet_income_item,
     kind_of_invoice: prisma.aranet_kind_of_invoice,
     payment_method: prisma.aranet_payment_method,
+    invoice_prev: prisma.aranet_invoice,
   };
 
   if (!id) return null;

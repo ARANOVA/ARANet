@@ -397,6 +397,13 @@ model aranet_invoice {
   sent_at                                                DateTime?                 @db.DateTime(0)
   sent_by                                                Int?
   sent_hash                                              String?                   @db.VarChar(128)
+  anulated_at                                            DateTime?                 @db.DateTime(0)
+  anulated_by                                            Int?
+  anulated_reason                                        String?                   @db.Text
+  anulated_id                                            Int?
+  sent_response_code                                     Int?
+  sent_response_data                                     String?                   @db.Text
+  sent_response_message                                  String?                   @db.Text
   invoice_periodic                                       Int?                      @default(0)
   invoice_periodic_current                               Int?                      @default(0)
   invoice_service_from                                   DateTime?                 @db.Date

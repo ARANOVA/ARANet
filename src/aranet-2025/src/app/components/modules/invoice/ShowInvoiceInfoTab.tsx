@@ -2,7 +2,7 @@
 
 import { sf_tag } from "@/generated/prisma";
 import { aranet_invoice_join_all } from "@/interfaces";
-import { toShortDate } from "@/utils";
+import { formatDate, formatDatetime, getModelState, toShortDate } from "@/utils";
 import { DescriptionDetails, DescriptionList, DescriptionTerm, Link } from "@aranova/aranova-react-ui";
 
 interface Props {
@@ -23,21 +23,44 @@ export const ShowInvoiceInfoTab = ({ invoice, tags }: Props) => {
     payment_condition,
     payment_method,
     payment_status,
-    invoice_payment_date,
-    invoice_date: invoice_date_raw,
     budget: budget,
   } = invoice;
 
-  const payment_date = invoice_payment_date ? toShortDate(invoice_payment_date) : '';
-  const invoice_date = invoice_date_raw ? toShortDate(invoice_date_raw) : '';
+  const payment_date = formatDate(invoice.invoice_payment_date);
+  const invoice_date = formatDate(invoice.invoice_date);
+  const freezeInfo = invoice.freeze_at ? (
+    <>
+      <br />
+      Fecha &quot;congelación&quot;: {formatDatetime(invoice.freeze_at)}
+    </>
+  ) : null;
+  const signedInfo = invoice.signed_at ? (
+    <>
+      <br />
+      Fecha firma: {formatDatetime(invoice.signed_at)}
+    </>
+  ) : null;
+  const sentInfo = invoice.sent_at ? (
+    <>
+      <br />
+      Fecha registro: {formatDatetime(invoice.sent_at)}
+    </>
+  ) : null;
+
+  const state = getModelState(invoice);
 
   return (
     <DescriptionList>
-      <DescriptionTerm className="!pt-0.5">Estado</DescriptionTerm>
+      <DescriptionTerm className="!pt-0.5">Estado<br /><span className="text.xm">{state?.title}</span></DescriptionTerm>
       <DescriptionDetails className="!pt-0.5 !pb-1">
-        Fecha factura: {invoice_date}<br/>
-        {payment_status?.payment_status_title}{payment_date ? `: ${payment_date}` : ''} <br />
+        Fecha factura: {invoice_date}
+        {freezeInfo}
+        {signedInfo}
+        {sentInfo}
       </DescriptionDetails>
+
+      <DescriptionTerm className="!pt-0.5">{payment_status?.payment_status_title}</DescriptionTerm>
+      <DescriptionDetails className="!pt-0.5 !pb-1">{payment_date}</DescriptionDetails>
 
       {(project || budget)&& (
         <>

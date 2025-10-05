@@ -6,6 +6,7 @@ const enumStates: string[] = ['draft', 'temp', 'request', 'approved', 'deleted',
 interface Props {
     state?: {
       value: string;
+      title: string;
       suffix?: string;
     }
   }
@@ -54,7 +55,7 @@ export const StatusBagde = ({ state }: Props) => {
     <>
       {badge && (
         <Badge color={badge.color}>
-          {badge.label}{state.suffix ? ` ${state.suffix}` : ''}
+          {state.title || badge.label}{state.suffix ? ` ${state.suffix}` : ''}
         </Badge>
       )}
     </>

@@ -1,16 +1,8 @@
 'use server';
 
-import path from 'path';
 import { aranet_invoice_verifactu } from '@/interfaces';
-import {
-  NSS,
-  sendToVerifactu,
-  verifactuBuildConsultaRegistrosXML,
-  verifactuBuildRegistroAltaXML,
-  verifactuCalcHuella,
-  verifactuValidateXmlAgainstXsd,
- } from './verifactu';
 import { signXmlString } from './verifactu/xmlSigner';
+import { sendToVerifactu, verifactuBuildConsultaRegistrosXML, verifactuBuildRegistroAltaXML, verifactuCalcHuella, verifactuValidateXmlAgainstXsd } from './verifactu';
 
 // ---- consulta --
 export const verifactuConsulta = async (year: number, month: number): Promise<Error | void> => {
@@ -25,8 +17,7 @@ export const verifactuConsulta = async (year: number, month: number): Promise<Er
   
   // 2. Validar
   try {
-    const xsdPath = path.join(__dirname, '..', '..', '..', 'verifactu-dev', 'xsd2', 'ConsultaLR.xsd').replace('/ROOT/', './');
-    const validation = await verifactuValidateXmlAgainstXsd(xml, xsdPath, NSS.consulta, 'sfLRC:ConsultaFactuSistemaFacturacion');
+    const validation = await verifactuValidateXmlAgainstXsd(xml, 'consulta');
     if (!validation.valid) {
       console.log('XML no válido:', validation.error);
       throw new Error(validation.error);
@@ -39,7 +30,7 @@ export const verifactuConsulta = async (year: number, month: number): Promise<Er
     }
 
     // 4. Enviar
-    const resp = await sendToVerifactu(signed, 'ConsultaFactuSistemaFacturacion');
+    const resp = await sendToVerifactu(signed, 'consulta');
     if (resp instanceof(Error)) {
       // TODO
       throw resp;
@@ -63,7 +54,7 @@ export const verifactuFlow = async(invoice: aranet_invoice_verifactu): Promise<E
   }
 
   // 2. Calcular huella y reemplazar placeholder
-  const huella = await verifactuCalcHuella(invoice, 'alta');
+  const huella = invoice.sent_hash || await verifactuCalcHuella(invoice, invoice.huellaPrev, 'alta');
   if (huella instanceof(Error)) {
     // TODO
     return huella;
@@ -73,8 +64,7 @@ export const verifactuFlow = async(invoice: aranet_invoice_verifactu): Promise<E
 
   // 3. Validar
   try {
-    const xsdPath = path.join(__dirname, '..', '..', '..', 'verifactu-dev', 'xsd', 'SuministroLR.xsd').replace('/ROOT/', './');
-    const validation = await verifactuValidateXmlAgainstXsd(xml, xsdPath, NSS.alta, 'sum:RegFactuSistemaFacturacion');
+    const validation = await verifactuValidateXmlAgainstXsd(xml, 'alta');
     if (!validation.valid) {
       console.log('XML no válido:', validation.error);
       throw new Error(validation.error);
@@ -87,7 +77,7 @@ export const verifactuFlow = async(invoice: aranet_invoice_verifactu): Promise<E
     }
     
     // 5. Enviar
-    const resp = await sendToVerifactu(signed, 'RegFactuSistemaFacturacion');
+    const resp = await sendToVerifactu(signed, 'alta');
     if (resp instanceof(Error)) {
       // TODO
       throw resp;

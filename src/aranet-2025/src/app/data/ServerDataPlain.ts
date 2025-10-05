@@ -1,10 +1,10 @@
 'use server';
 
 import { QueryClient } from "@tanstack/react-query";
-import { ListResponse, SingleResponse } from '@aranova/aranova-react-ui';
+import { FilterDTO, ListResponse, SearchDTO, SingleResponse } from '@aranova/aranova-react-ui';
 import { aranet_expense_item_join_all, aranet_invoice_join_all, User } from "@/interfaces";
-import { getUserById, getSingleDataByModel, getRelationsByObjectAndObjectId, getSingleDataByModelGraphql } from "@/app/lib/api-wrappers/server";
-import { aranet_address, aranet_client, aranet_contact, aranet_objectaddress, aranet_objectcontact } from "@/generated/prisma";
+import { getUserById, getSingleDataByModel, getRelationsByObjectAndObjectId, getSingleDataByModelGraphql, getListDataByModelGraphql } from "@/app/lib/api-wrappers/server";
+import { aranet_address, aranet_client, aranet_contact, aranet_invoice, aranet_objectaddress, aranet_objectcontact } from "@/generated/prisma";
 
 const empty = { statusCode: 200, data: { items: [], metadata: {
     page: 0,
@@ -51,6 +51,22 @@ class ServerDataPlain {
       staleTime: 1000 * 60 * 15, // 15 minutos
     });
   }
+
+  async useInvoices(
+    page = 1,
+    limit = 10,
+    sortField = 'invoice_date',
+    sortDir: 'asc' | 'desc' = 'asc',
+    searches: SearchDTO[] = [],
+    filters: FilterDTO[] = [],
+): Promise<ListResponse<aranet_invoice_join_all>> {
+    return this.queryClient.fetchQuery<ListResponse<aranet_invoice_join_all>>({
+      queryKey: ['invoice'],
+      queryFn: () => getListDataByModelGraphql<aranet_invoice_join_all>('invoice', '', '', page, limit, sortField, sortDir, searches, filters),
+      retry: 3,
+      staleTime: 0, //1000 * 60 * 5, // 5 minutos - no funciona la actualización
+    });
+  };
 
   async useInvoiceById(id: number): Promise<SingleResponse<aranet_invoice_join_all>> {
     return this.queryClient.fetchQuery<SingleResponse<aranet_invoice_join_all>>({

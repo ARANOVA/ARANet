@@ -30,6 +30,12 @@ export const resolvers = {
     expense: createGetQuery('expense'),
     invoice: createGetQuery('invoice'),
     invoice_items: createListQuery('invoice_item'),
+    invoice_prev: async (_: any, args: { sent_at: string }, context: GraphQLContext) => {
+      console.log({args});
+      // const  context.prisma.aranet_invoice.findUnique({
+      //   where: { id: args.id },
+      // });
+    }
   },
   Mutation: {
     deleteExpenses: async (_: any, args: { ids: number[] }, context: GraphQLContext) => {

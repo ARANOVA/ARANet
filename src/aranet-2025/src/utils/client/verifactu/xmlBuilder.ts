@@ -220,6 +220,7 @@ export const buildXmlRegistro = (
       .ele("sf:PrimerRegistro").txt(invoice.huellaPrev ? 'N' : 'S').up()
     .up();
   }
+
   // SistemaInformatico (required)
 
   body.ele("sf:SistemaInformatico")

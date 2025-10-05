@@ -1,4 +1,4 @@
-import { MenuItem, TopBreadcrumb } from "@aranova/aranova-react-ui";
+import { MenuItem, NotAuthorized, TopBreadcrumb } from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
 import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert, InvoiceInfo, InvoiceItems, SendInvoiceButton } from "@/app/components";
@@ -7,7 +7,6 @@ import { notFound, unauthorized } from "next/navigation";
 import { isValidId } from "@/utils";
 import { aranet_invoice_verifactu } from "@/interfaces";
 import { getModelState } from "@/utils";
-import { de } from "zod/v4/locales";
 
 export const dynamic = 'force-dynamic';
 
@@ -38,13 +37,18 @@ export default async function InvoiceShowPage({ params }: Props) {
     notFound();
   }
 
-  const cookie = await getSession();
-  if (!cookie) {
-    unauthorized();
+  const session = await getSession();
+  if (!session) {
+    return <NotAuthorized />;
+  }
+
+  const dataPlain = ServerDataPlain.getInstance();
+  const me = await dataPlain.useMe(session.id);
+  if (!me.data?.id) {
+    return <NotAuthorized />;
   }
 
   // Comprobar permisos/roles (en el middleware)
-  const dataPlain = ServerDataPlain.getInstance();
   const invoice = await dataPlain.useInvoiceById(parseInt(id, 10));
   if (!invoice?.data) {
     notFound();
@@ -62,6 +66,17 @@ export default async function InvoiceShowPage({ params }: Props) {
     huellaPrev: null,
     invoicePrev: null,
   };
+
+  // TODO: recuperar la anterior en la serie
+  const prevInvoices = await dataPlain.useInvoices(1, 1, 'invoice_date', 'desc', [], [
+    { field: 'sent_at', value: `<${data.invoice_date?.toString() || ''}` },
+  ]);
+  // TODO: Comprobar si es correcto
+  console.log('Prev invoices:', prevInvoices?.data?.items);
+  if ((prevInvoices?.data?.items || []).length > 0) {
+    data.huellaPrev = prevInvoices?.data?.items[0].sent_hash || null;
+    data.invoicePrev = prevInvoices?.data?.items[0] || null;
+  }
   
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
@@ -85,7 +100,7 @@ export default async function InvoiceShowPage({ params }: Props) {
       mainButton = null;
       break;
     default:
-      printButton = <SendInvoiceButton data={data} key="send-invoice-button" />;
+      printButton = <SendInvoiceButton data={data} me={me.data} key="send-invoice-button" />;
       mainButton = <DeleteModelButton model="invoice" id={Number(id)} />;
   }
 
@@ -99,6 +114,7 @@ export default async function InvoiceShowPage({ params }: Props) {
           model="invoice"
           state={state}
           data={data}
+          me={me.data}
           edit_button_href={`/invoice/edit/${id}`}
           edit_button_text="Editar"
           print_button={printButton}

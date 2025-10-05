@@ -6,7 +6,7 @@ export const AranetInvoiceBase = z.object({
 
   invoice_prefix: z.string().max(8).nullable().optional(),
   invoice_number: z.string().max(11).min(2),
-  invoice_date: z.date(),
+  invoice_date: z.coerce.date(),
 
   invoice_client_id: z.number().int().nullable().optional(),
   invoice_project_id: z.number().int().nullable().optional(),
@@ -23,23 +23,38 @@ export const AranetInvoiceBase = z.object({
   invoice_payment_condition_id: z.number().int().nullable().optional(),
   invoice_payment_method_id: z.number().int().nullable().optional(),
   invoice_payment_check: z.string().max(64).nullable().optional(),
-  invoice_payment_date: z.date().nullable().optional(),
+  invoice_payment_date: z.coerce.date().nullable().optional(),
   invoice_payment_status_id: z.number().int().nullable().optional(),
 
   invoice_late_fee_percent: z.number().default(0).optional(),
   invoice_total_amount: z.number().default(0).optional(),
 
-  created_at: z.date().nullable().optional(),
+  created_at: z.coerce.date().nullable().optional(),
   created_by: z.number().int().nullable().optional(),
-  updated_at: z.date().nullable().optional(),
+  updated_at: z.coerce.date().nullable().optional(),
   updated_by: z.number().int().nullable().optional(),
-  deleted_at: z.date().nullable().optional(),
+  deleted_at: z.coerce.date().nullable().optional(),
   deleted_by: z.number().int().nullable().optional(),
+
+  signed_at: z.coerce.date().nullable().optional(),
+  signed_by: z.number().int().nullable().optional(),
+  sent_at: z.coerce.date().nullable().optional(),
+  sent_by: z.number().int().nullable().optional(),
+  sent_hash: z.string().max(64).nullable().optional(),
+  freeze_at: z.coerce.date().nullable().optional(),
+  freeze_bt: z.number().int().nullable().optional(),
+  anulated_at: z.coerce.date().nullable().optional(),
+  anulated_bt: z.number().int().nullable().optional(),
+  anulated_id: z.number().int().nullable().optional(),
+  anulated_reason: z.string().max(255).nullable().optional(),
+  sent_response_code: z.string().max(16).nullable().optional(),
+  sent_response_message: z.string().nullable().optional(),
+  sent_response_data: z.string().nullable().optional(),
 
   invoice_periodic: z.number().int().default(0).optional(),
   invoice_periodic_current: z.number().int().default(0).optional(),
-  invoice_service_from: z.date().nullable().optional(),
-  invoice_service_to: z.date().nullable().optional(),
+  invoice_service_from: z.coerce.date().nullable().optional(),
+  invoice_service_to: z.coerce.date().nullable().optional(),
 });
 
 // ✅ DTOs específicos
@@ -60,6 +75,7 @@ export type CreateAranetInvoiceDtoType = z.infer<typeof CreateAranetInvoiceDto>;
 export const UpdateAranetInvoiceDto = AranetInvoiceBase.omit({
   // invoice_number: true, // 👈 no se puede modificar
 }).partial();
+
 export type UpdateAranetInvoiceDtoType = z.infer<typeof UpdateAranetInvoiceDto>;
 
 export const AranetInvoiceJoinClient = AranetInvoiceBase.extend({

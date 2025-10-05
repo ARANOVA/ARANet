@@ -228,6 +228,9 @@ export const SimpleTanstackTable = <T,>({
   // Save/Batch
   const [nbsaved, setNbsaved] = useState<number>(0);
 
+  // Error or zero
+  const [showEdit, setShowEdit] = useState<boolean>(editMode);
+
   const queryClient = useQueryClient();
 
   const mutationSave = useMutation<SingleResponse<unknown>, Error, unknown>({
@@ -321,12 +324,14 @@ export const SimpleTanstackTable = <T,>({
 
   const updateAlert = () => {
     if (dataQuery.isLoading) {
+      setShowEdit(false);
       setReturnAlert(
         <div className="flex items-center justify-center min-h-30">
           <SyncLoader color="#999" />
         </div>
       );
     } else if (dataQuery.error || dataQuery.data?.error) {
+      setShowEdit(false);
       setReturnAlert(
         <div className="my-8 w-full">
           <NotificationAlert
@@ -337,6 +342,7 @@ export const SimpleTanstackTable = <T,>({
         </div>
       );
     } else if (dataQuery.data?.data?.metadata?.total === 0) {
+      setShowEdit(false);
       setReturnAlert(
         <div className="mt-8 w-full">
           <NotificationAlert
@@ -347,6 +353,7 @@ export const SimpleTanstackTable = <T,>({
         </div>
       );
     } else {
+      setShowEdit(editMode);
       setReturnAlert(null);
     }
   }
@@ -354,10 +361,10 @@ export const SimpleTanstackTable = <T,>({
   useEffect(() => {
     // setIsMounted(true);
     updateAlert();
-  }, [dataQuery.isFetched, dataQuery.isLoading, dataQuery.error, dataQuery.data?.error, dataQuery.data?.data]);
+  }, [dataQuery.isFetched, dataQuery.isLoading, dataQuery.error, dataQuery.data?.error, dataQuery.data?.data?.metadata.total]);
 
   const tableCols = [...columns];
-  if (editMode) {
+  if (showEdit) {
     tableCols.push(actionsColumn);
   }
 
@@ -393,7 +400,7 @@ export const SimpleTanstackTable = <T,>({
               </h3>
             </div>
           </div>
-          {editMode && (
+          {showEdit && (
             <div className="flex justify-end grow sm:flex-none">
               <div className="flex gap-4">
                 {/* Edit/Save button */}

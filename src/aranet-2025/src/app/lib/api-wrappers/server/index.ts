@@ -1,6 +1,7 @@
 export * from './createSingleDataByModel';
 export * from './deleteDataByModel';
 export * from './getListDataByModel';
+export * from './getListDataByModelGraphql';
 export * from './getRelationsByObjectAndObjectId';
 export * from './getSingleDataByModel';
 export * from './getSingleDataByModelGraphql';

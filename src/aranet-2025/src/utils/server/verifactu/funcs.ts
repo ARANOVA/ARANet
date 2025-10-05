@@ -3,16 +3,18 @@ import fs from 'fs';
 import path from 'path';
 import { exec } from "child_process";
 import crypto from 'crypto';
-import { aranet_invoice_join_all, aranet_invoice_verifactu } from "@/interfaces";
-import { round2, toDateIso, toDateString, toInvoiceType } from "./utils";
+import { aranet_invoice_join_items, aranet_invoice_verifactu } from "@/interfaces";
 import { ClientSSLSecurityPFX, createClientAsync, IOptions } from "soap";
 import { buildXmlConsulta, buildXmlRegistro } from './xmlBuilder';
+import { toDateIso, toDateString } from '@/utils/date.utils';
+import { round2 } from '@/utils/number.utils';
+import { NSS, toInvoiceType } from '@/utils/verifactu.utils';
 
 // Utils
-const sumItems = (invoice: aranet_invoice_join_all): { taxAmount: number; totalAmount: number } => {
+const sumItems = (invoice: aranet_invoice_join_items): { taxAmount: number; totalAmount: number } => {
   let taxAmount = 0;
   let totalAmount = 0;
-  (invoice.invoice_item || []).forEach((d) => {
+  (invoice.invoice_items || []).forEach((d) => {
     if (d.item_cost === 0 || d.item_cost === null) return;
     const tax_amount = round2(((d.item_tax_rate || 0) / 100) * d.item_cost);
     taxAmount += tax_amount;
@@ -24,8 +26,9 @@ const sumItems = (invoice: aranet_invoice_join_all): { taxAmount: number; totalA
 // Pre
 export const sendToVerifactu = async (
   xml: string,
-  method: 'RegFactuSistemaFacturacion' | 'ConsultaFactuSistemaFacturacion'
+  type: 'alta' | 'consulta',
 ): Promise<Error | any> => {
+  const method = type === 'alta' ? 'RegFactuSistemaFacturacion' : 'ConsultaFactuSistemaFacturacion';
   const CERT_PATH = process.env.CERT_PATH || '';
   if (!CERT_PATH) {
     return new Error('Needed env variable CERT_PATH');
@@ -147,18 +150,20 @@ export const verifactuBuildRegistroAltaXML = (
 // exactamente el documento AEAT "Algoritmo de cálculo de la huella".
 // Aquí hay un ejemplo ilustrativo: concatena campos y la huella anterior si existe.
 export const verifactuCalcHuella = async (
-  invoice: aranet_invoice_verifactu,
+  invoice: aranet_invoice_join_items,
+  huellaPrev: string | null,
   type: 'alta' | 'cancelacion',
 ): Promise<Error | string> => {
   // --- construye la cadena tal como especifique AEAT (ejemplo simplificado) ---
   const invoiceDate = toDateString(invoice.invoice_date);
+  console.log({d: invoice.invoice_date, invoiceDate})
   if (!invoiceDate) {
     return new Error("La factura debe que tener fecha de emisión");
   }
 
-  const generationDate = toDateIso(invoice.updated_at);
+  const generationDate = toDateIso(invoice.freeze_at);
   if (!generationDate) {
-    return new Error("La factura debe que tener fecha de actualización");
+    return new Error("La factura debe que tener fecha de congelación");
   }
 
   if (!process.env.COMPANY_CIF || !process.env.COMPANY_FULLNAME) {
@@ -180,7 +185,7 @@ export const verifactuCalcHuella = async (
       'TipoFactura=' + toInvoiceType(invoice.invoice_kind_of_invoice_id),
       'CuotaTotal=' + taxAmount,
       'ImporteTotal=' + round2(totalAmount + taxAmount),
-      'Huella=' + (invoice.huellaPrev || ''),
+      'Huella=' + (huellaPrev || ''),
       'FechaHoraHusoGenRegistro=' + generationDate,
     ];
     inputStr = input.join('&');
@@ -190,7 +195,7 @@ export const verifactuCalcHuella = async (
       'IDEmisorFacturaAnulada=' + process.env.COMPANY_CIF,
       'NumSerieFacturaAnulada=' + `${prefix}|${invoice.invoice_number}`,
       'FechaExpedicionFacturaAnulada=' + invoiceDate,
-      'Huella=' + (invoice.huellaPrev || ''),
+      'Huella=' + (huellaPrev || ''),
       'FechaHoraHusoGenRegistro=' + generationDate,
     ];
     inputStr = input.join('&');
@@ -202,10 +207,17 @@ export const verifactuCalcHuella = async (
 // --- 3) validar contra XSD (descargado de AEAT) ---
 export const verifactuValidateXmlAgainstXsd = async (
   xmlString: string,
-  xsdPath: string,
-  xmlns: Record<string, string>,
-  rootTag: string,
+  type: 'alta' | 'consulta',
 ): Promise<{ valid: boolean; error?: string; }> => {
+  // Determinar XSD y xmlns según el tipo
+  const xds = type === 'alta' ? 'SuministroLR.xsd' : 'ConsultaLR.xsd';
+  const xmlns: Record<string, string> = type === 'alta' ? NSS.alta : NSS.consulta;  
+  const xsdPath = getXsdPath(xds);
+  if (!fs.existsSync(xsdPath)) {
+    return { valid: false, error: `XSD file not found at ${xsdPath}` }
+  }
+  const rootTag = type === 'alta' ? 'sfLR:RegFactuSistemaFacturacion' : 'sfLRC:ConsultaFactuSistemaFacturacion';
+
   // Crear ruta temporal
   const tempDir = os.tmpdir();
   const tempXmlPath = path.join(tempDir, `temp_${Date.now()}.xml`);
@@ -214,6 +226,7 @@ export const verifactuValidateXmlAgainstXsd = async (
   const regex = new RegExp(`<${rootTag}>([\\s\\S]*?)<\\/${rootTag}>`);
   const match = xmlString.match(regex);
   if (!match || !match[1]) {
+    console.log({xmlString})
     return { valid: false, error: 'Can\'t extract body'}
   }
   const bodyContent = match[1].trim();
@@ -227,7 +240,6 @@ export const verifactuValidateXmlAgainstXsd = async (
   const bodyXml = `<${rootTag} ${xmlnsString}>
     ${bodyContent}
   </${rootTag}>`;
-
   
   // Escribir el XML en un archivo temporal
   fs.writeFileSync(tempXmlPath, bodyXml, { encoding: 'utf-8' });
@@ -235,8 +247,8 @@ export const verifactuValidateXmlAgainstXsd = async (
   return new Promise((resolve, reject) => {
     exec(`xmllint --noout --nonet --schema ${xsdPath} ${tempXmlPath}`, (err, stdout, stderr) => {
       // Borrar
-      fs.unlinkSync(tempXmlPath);
-      if (err) reject({ valid: false, error: stderr });
+      // TEMP fs.unlinkSync(tempXmlPath);
+      if (err) reject({ valid: false, error: JSON.stringify(stderr) });
       else resolve({ valid: true });
     });
   });
@@ -260,3 +272,8 @@ export const verifactuValidateXmlAgainstXsd = async (
 //   const qrContent = `https://sede.agenciatributaria.gob.es/cotejo?NIF=${invoice.client?.client_cif}&S=${prefix}&N=${invoice.invoice_number}&F=${invoiceDate}&I=${invoice.invoice_total_amount.toFixed(2)}`;
 //   return QRCode.toDataURL(qrContent, { errorCorrectionLevel: 'M' });
 // }
+
+
+export const getXsdPath = (xsdFileName: string): string => {
+  return path.join(__dirname, '..', '..', '..', '..', 'verifactu-dev', 'xsd2', xsdFileName).replace('/ROOT/', './');
+}

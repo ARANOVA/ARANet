@@ -1,9 +1,9 @@
 'use client';
 
 import { refreshPage } from "@/app/actions";
-import { updateDataByModelGraphql } from "@/app/lib/api-wrappers/client";
+import { sendInvoice } from "@/app/lib/api-wrappers/client";
 import { logError } from "@/app/lib/logger";
-import { aranet_invoice_verifactu } from "@/interfaces";
+import { aranet_invoice_verifactu, User } from "@/interfaces";
 import { useFormUiStore } from "@/store";
 import { Alert, AlertActions, AlertTitle, Button, SingleResponse } from "@aranova/aranova-react-ui";
 import { ExclamationTriangleIcon } from "@heroicons/react/16/solid";
@@ -14,9 +14,10 @@ import { useState } from "react";
 
 interface Props {
   data: aranet_invoice_verifactu;
+  me: User;
 }
 
-export const SendInvoiceButton = ({ data }: Props) => {
+export const SendInvoiceButton = ({ data, me }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const model = 'invoice';
@@ -27,23 +28,130 @@ export const SendInvoiceButton = ({ data }: Props) => {
   const { setToastProps, showToast, closeAlert } = useFormUiStore();
 
   // Modal (delete row)
-  const sendVerifactuFn = (
-    id: number,
-  ): Promise<SingleResponse<void>> => {
+  const sendVerifactuFn = async (): Promise<SingleResponse<void>> => {
     closeAlert();
     setIsOpen(false);
-    const data = {
-      freeze_at: new Date().toISOString(),
-      signed_at: new Date().toISOString(),
-      sent_at: new Date().toISOString(),
-      sent_hash: 'xxxx-xxxx-xxxx-xxxx',
-    }
-    return updateDataByModelGraphql(model, id, data);
+    // Llamar a servidor para generar
+    return await sendInvoice(data);
+
+    // // 1. Congelar factura
+    // let updateData: Record<string, unknown> = {
+    //   freeze_at: new Date().toISOString(),
+    //   freeze_by: me.id,
+    //   updated_at: new Date().toISOString(),
+    //   updated_by: me.id,
+    // }
+    // const res = await updateDataByModelGraphql(model, id, updateData);
+    // if (res.statusCode >= 300) {
+    //   logError(`Error freezing ${model}/${id}: ${res.error}`)
+    //   return res;
+    // }
+    // // 2. Ya no se puede modificar, calcular huella digital
+    // const hash = await verifactuCalcHuella(data, 'alta');
+    // if (!hash || hash instanceof(Error)) {
+    //   logError(`Error calculating hash for ${model}/${id}`);
+    //   return {
+    //     statusCode: 500,
+    //     error: 'Error calculating hash',
+    //     data: null,
+    //   };
+    // };
+    // updateData = {
+    //   sent_hash: hash,
+    //   updated_at: new Date().toISOString(),
+    //   updated_by: me.id,
+    // }
+    // const res2 = await updateDataByModelGraphql(model, id, updateData);
+    // if (res2.statusCode >= 300) {
+    //   logError(`Error updating hash for ${model}/${id}: ${res2.error}`)
+    //   return res2;
+    // }
+    // // 3. Generar XML (cliente)
+    // const build = await verifactuBuildRegistroAltaXML(data);
+    // if (build instanceof(Error)) {
+    //   logError(`Error generating XML for ${model}/${id}: ${build.message}`);
+    //   return {
+    //     statusCode: 500,
+    //     error: `Error generating XML: ${build.message}`,
+    //     data: null,
+    //   };
+    // }
+    // // 4. Validar XML (Server)
+    // const xml = build.replace('HUELLA_PLACEHOLDER', hash);
+    // try {
+    //   const validation = await verifactuValidateXmlAgainstXsd(xml, 'alta')
+    //   if (!validation.valid) {
+    //     logError(`Error validating XML for ${model}/${id}`);
+    //     return {
+    //       statusCode: 500,
+    //       error: 'Error validating XML',
+    //       data: null,
+    //     };
+    //   }
+    // } catch (error) {
+    //   logError(`Error validating XML for ${model}/${id}: ${error}`);
+    //   return {
+    //     statusCode: 500,
+    //     error: 'Error validating XML',
+    //     data: null,
+    //   };
+    // }
+
+    // // 5. Firmar xml (Server)
+    // const xmlWithoutDeclaration = xml.replace('<?xml version="1.0" encoding="UTF-8"?>', '');
+    // const signed = signXmlString(xmlWithoutDeclaration);
+    // if (signed instanceof Error) {
+    //   logError(`Error signing XML for ${model}/${id}: ${signed.message}`);
+    //   return {
+    //     statusCode: 500,
+    //     error: 'Error signing XML',
+    //     data: null,
+    //   };
+    // }
+    // updateData = {
+    //   signed_at: new Date().toISOString(),
+    //   signed_by: me.id,
+    //   updated_at: new Date().toISOString(),
+    //   updated_by: me.id,
+    // }
+    // const res3 = await updateDataByModelGraphql(model, id, updateData);
+    // if (res3.statusCode >= 300) {
+    //   logError(`Error updating signed_at for ${model}/${id}: ${res3.error}`)
+    //   return res3;
+    // }
+
+    // // 6. Enviar a Verifactu (Server)
+    // const resp = await sendToVerifactu(signed, 'alta');
+    // if (resp instanceof(Error)) {
+    //   logError(`Error sending XML for ${model}/${id}: ${resp.message}`);
+    //   return {
+    //     statusCode: 500,
+    //     error: 'Error resp XML',
+    //     data: null,
+    //   };
+    // }
+
+    // // 7. Actualizar con el resultado
+    // updateData = {
+    //   sent_response_code: resp.code,
+    //   sent_response_message: resp.message,
+    //   sent_response_data: resp.data ? JSON.stringify(resp.data) : null,
+    //   send_at: new Date().toISOString(),
+    //   snet_by: me.id,
+    //   updated_at: new Date().toISOString(),
+    //   updated_by: me.id,
+    // }
+    // const res4 = await updateDataByModelGraphql(model, id, updateData);
+    // if (res4.statusCode >= 300) {
+    //   logError(`Error updating response for ${model}/${id}: ${res4.error}`)
+    //   return res4;
+    // }
+
   };
   
   const mutation = useMutation<SingleResponse<void>, Error, number>({
-    mutationFn: id => {
-      return sendVerifactuFn(id);
+    mutationFn: () => {
+      return sendVerifactuFn();
     },
     onSuccess: data => {
       if (data.statusCode < 300) {
@@ -82,8 +190,8 @@ export const SendInvoiceButton = ({ data }: Props) => {
     },
   });
   
-  const wrapperSendFn = (id: number): Promise<boolean> | boolean => {
-    mutation.mutate(id);
+  const wrapperSendFn = (): Promise<boolean> | boolean => {
+    mutation.mutate();
     return mutation.isSuccess;
   };
 
@@ -106,7 +214,7 @@ export const SendInvoiceButton = ({ data }: Props) => {
           </Button>
           <Button
             color="amber"
-            onClick={() => wrapperSendFn(id)}
+            onClick={() => wrapperSendFn()}
           >
             <ExclamationTriangleIcon />
             Aceptar

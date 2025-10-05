@@ -10,6 +10,7 @@ interface Props {
   title: string;
   state?: {
     value: string;
+    title: string;
     suffix?: string;
   },
   subtitle?: string;

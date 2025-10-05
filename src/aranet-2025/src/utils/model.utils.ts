@@ -17,18 +17,18 @@ const datePipe = (raw: Date | string, locale: string = navigator?.language || 'e
 
 export const getModelState = (
   data: { deleted_at: Date | null; freeze_at?: Date | null; signed_at?: Date | null; sent_at?: Date | null; },
-): { value: string; suffix?: string } | undefined => {
+): { value: string; title: string, suffix?: string } | undefined => {
   if (data.deleted_at) {
-    return { value: 'deleted', suffix: datePipe(data.deleted_at) };
+    return { value: 'deleted', title: 'Borrado', suffix: datePipe(data.deleted_at) };
   }
   if (data.sent_at) {
-    return { value: 'sent', suffix: datePipe(data.sent_at) };
+    return { value: 'sent', title: 'Registrado', suffix: datePipe(data.sent_at) };
   }
   if (data.signed_at) {
-    return { value: 'signed', suffix: datePipe(data.signed_at) };
+    return { value: 'signed', title: 'Firmado', suffix: datePipe(data.signed_at) };
   }
   if (data.freeze_at) {
-    return { value: 'frozen', suffix: datePipe(data.freeze_at) };
+    return { value: 'frozen', title: 'Congelado', suffix: datePipe(data.freeze_at) };
   }
   return undefined;
 }
