@@ -5,6 +5,7 @@ import {
   EditableTable,
   ListResponse,
   SingleResponse,
+  FilterField,
 } from '@aranova/aranova-react-ui';
 import { ColumnDef } from '@tanstack/react-table';
 import { useFormUiStore, useItemsStore, useFiltersStore, useSearchStore } from '@/store';
@@ -13,7 +14,7 @@ import {
   exportDataByModel,
   getListDataByModelGraphql,
 } from '@/app/lib/api-wrappers/client';
-import { ExportData, Filters } from '@/interfaces';
+import { ExportData } from '@/interfaces';
 import { ListFiltersForm, ToastStoreAlert, DownloadFile } from '@/app/components';
 
 
@@ -31,7 +32,7 @@ interface Props<T> {
   editModel?: 'modal' | 'page';
   showModel?: 'modal' | 'page';
   columns: ColumnDef<T, unknown>[];
-  filters: Filters[];
+  filters: FilterField[];
   data?: ListResponse<T>;
   children: React.ReactNode;
   pageDataSelection: React.ReactNode;
@@ -98,7 +99,7 @@ export const EditableStoreTable = <T extends { id?: number }>({
       <EditableTable<T>
         model={model}
         alert={<ToastStoreAlert />}
-        fetchDataFn={getListDataByModelGraphql}
+        fetchDataFn={getListDataByModelGraphql as any}
         ui={{
           ...formUi,
           items,

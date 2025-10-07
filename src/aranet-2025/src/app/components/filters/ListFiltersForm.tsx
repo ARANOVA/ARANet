@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from 'next/navigation';
 import { FilterField, FormFilters } from "@aranova/aranova-react-ui";
 import { useFormUiStore, useFiltersStore, useSearchStore } from "@/store";
-import { mapSearchModelToFilters } from "@/utils";
+import { mapSearchAndFilterValuesToFilters } from "@/utils";
 
 interface Props {
   model: string;
@@ -12,7 +12,6 @@ interface Props {
 }
 
 export const ListFiltersForm = (props: Props) => {
-
   const router = useRouter();
   const pathname = usePathname();
   const { dumpUrl, getSearchesForType } = useSearchStore();
@@ -34,8 +33,8 @@ export const ListFiltersForm = (props: Props) => {
   }
 
   const searchesModel = getSearchesForType(props.model);
-  const FilterFieldModel = getFiltersByModel(props.model);
-  const updateValueFilterField = mapSearchModelToFilters(searchesModel, FilterFieldModel, props.filters);
+  const filtersModel = getFiltersByModel(props.model);
+  const updateValueFilterField = mapSearchAndFilterValuesToFilters(props.filters, searchesModel, filtersModel);
 
   const [ filtersActive, setFiltersActive ] = useState<FilterField[]>(updateValueFilterField);
 
@@ -46,6 +45,7 @@ export const ListFiltersForm = (props: Props) => {
   //   }
   // }, [props.model, setFilterFieldByModel, updateValueFilterField]);
 
+  console.log({updateValueFilterField})
   return (
     <FormFilters
       model={props.model}
