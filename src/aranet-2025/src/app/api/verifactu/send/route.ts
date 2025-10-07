@@ -181,22 +181,15 @@ export async function POST(
         data: null,
       });
     }
-    if (resp?.EstadoEnvio === 'Incorrecto') {
-      const mainError = (resp?.RespuestaLinea || []).length > 0 ? resp?.RespuestaLinea[0].DescripcionErrorRegistro : 'Envio incorrecto';
-      logWarn(`Warn POST /api/verifactu/send: Sent incorrect for invoice ${id}. Error: ${JSON.stringify(resp?.RespuestaLinea || {})}`);
-      return NextResponse.json({
-        statusCode: 500,
-        error: `Envio incorrecto. ${mainError}`,
-      }, { status: 400 });
-    }
 
     // 7. Actualizar con el resultado
+    const mainError = (resp?.RespuestaLinea || []).length > 0 ? resp?.RespuestaLinea[0].DescripcionErrorRegistro : 'Envio incorrecto';
     updateData = {
       sent_at: new Date().toISOString(),
       sent_by: cookie.id,
-      sent_response_code: resp.code,
-      sent_response_message: resp.message,
-      sent_response_data: resp.data ? JSON.stringify(resp.data) : null,
+      sent_response_code: resp?.EstadoEnvio || 'Correcto',
+      sent_response_message: mainError,
+      sent_response_data: resp.RespuestaLinea ? JSON.stringify(resp.RespuestaLinea) : null,
       updated_at: new Date().toISOString(),
       updated_by: cookie.id,
     }
@@ -205,9 +198,19 @@ export async function POST(
       data: updateData,
     });
     data = { ...data, ...updateData };
+
     if (invoice) {
-      logInfo(`PATCH /api/verifactu/send: Invoice sended`);
+      logInfo(`POST /api/verifactu/send: Invoice sended`);
     }
+
+    if (resp?.EstadoEnvio === 'Incorrecto') {
+      logWarn(`Warn POST /api/verifactu/send: Sent incorrect for invoice ${id}. Error: ${JSON.stringify(resp?.RespuestaLinea || {})}`);
+      return NextResponse.json({
+        statusCode: 500,
+        error: `Envio incorrecto. ${mainError}`,
+      }, { status: 400 });
+    }
+
     return NextResponse.json({
       statusCode: 201,
       data: invoice,

@@ -5,8 +5,10 @@ import { PageStoreHeader, DeleteModelButton, RestoreModelButton, ToastStoreAlert
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isValidId } from "@/utils";
-import { aranet_invoice_verifactu } from "@/interfaces";
+import { aranet_invoice_join_all, aranet_invoice_verifactu } from "@/interfaces";
 import { getModelState } from "@/utils";
+import { logError, logWarn } from "@/app/lib/logger";
+import { aranet_invoice } from "@/generated/prisma";
 
 export const dynamic = 'force-dynamic';
 
@@ -69,15 +71,30 @@ export default async function InvoiceShowPage({ params }: Props) {
 
   // TODO: recuperar la anterior en la serie
   const prevFilter: WhereInput = {
-    // invoice_prefix: { equals: data.invoice_prefix || undefined},
+    invoice_prefix: { equals: data.invoice_prefix || undefined},
     sent_at: { not: null },
   }
   const prevInvoices = await dataPlain.useInvoices(1, 1, 'sent_at', 'desc', [], prevFilter);
-  // TODO: Comprobar si es correcto
   console.log('Prev invoices:', prevInvoices?.data?.items);
+  let prevInvoice: aranet_invoice_join_all | null = null;
+  let showSendButton = true;
   if ((prevInvoices?.data?.items || []).length > 0) {
-    data.huellaPrev = prevInvoices?.data?.items[0].sent_hash || null;
-    data.invoicePrev = prevInvoices?.data?.items[0] || null;
+    // TODO: Comprobar si es correcto
+    prevInvoice = prevInvoices?.data?.items[0] || null;
+    const nPrev = prevInvoice?.invoice_number ? parseInt(prevInvoice?.invoice_number) : null;
+    const nCurr = data.invoice_number ? parseInt(data.invoice_number) : null;
+    if (!nPrev || isNaN(nPrev) || !nCurr || isNaN(nCurr) || nCurr - 1 !== nPrev) {
+      logWarn('La factura previa no es la anterior en la serie');
+      showSendButton = false;
+      // return notFound();
+    }
+    if (!prevInvoice?.sent_hash) {
+      logWarn('La factura previa no tiene huella');
+      showSendButton = false;
+      // return notFound();
+    }
+    data.invoicePrev = prevInvoice;
+    data.huellaPrev = prevInvoice?.sent_hash || 'xxx';
   }
   
   const links: MenuItem[] = [
@@ -102,7 +119,7 @@ export default async function InvoiceShowPage({ params }: Props) {
       mainButton = null;
       break;
     default:
-      printButton = <SendInvoiceButton data={data} me={me.data} key="send-invoice-button" />;
+      printButton = showSendButton ? <SendInvoiceButton data={data} me={me.data} key="send-invoice-button" /> : null;
       mainButton = <DeleteModelButton model="invoice" id={Number(id)} />;
   }
 

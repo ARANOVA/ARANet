@@ -52,13 +52,13 @@ interface Props<T> {
   sortDir?: 'desc' | 'asc';
   columns: ColumnDef<T, any>[];
   data?: ListResponse<T>;
-  filters?: WhereInput | null;
+  FilterField?: WhereInput | null;
   deleteFn: (model: string, ids: number[]) => Promise<SingleResponse<void>>;
   fetchDataFn: <T>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
-    filters?: WhereInput | null,
+    FilterField?: WhereInput | null,
   ) => Promise<ListResponse<T>>;
   ui: any;
   editMode: boolean;
@@ -79,7 +79,7 @@ export const SimpleTanstackTable = <T,>({
   title,
   editMode,
   data,
-  filters,
+  FilterField,
   deleteFn,
   saveRowFn,
   fetchDataFn,
@@ -235,11 +235,11 @@ export const SimpleTanstackTable = <T,>({
 
   const mutationSave = useMutation<SingleResponse<unknown>, Error, unknown>({
      mutationFn: data => {
-      // filters?.forEach(f => {
+      // FilterField?.forEach(f => {
       //   // TODO: Mejorar
       //   (data as any)[f.field] = f.field.endsWith('_id') ? Number(f.value) : f.value;
       // });
-      return saveRowFn(model as any, filters);
+      return saveRowFn(model as any, FilterField);
      },
      onSuccess: data => {
       if (data.statusCode < 300) {
@@ -315,7 +315,7 @@ export const SimpleTanstackTable = <T,>({
         model,
         sorting?.[0]?.id,
         sorting?.[0]?.desc ? 'desc' : 'asc',
-        filters,
+        FilterField,
       );
     },
     initialData: data,

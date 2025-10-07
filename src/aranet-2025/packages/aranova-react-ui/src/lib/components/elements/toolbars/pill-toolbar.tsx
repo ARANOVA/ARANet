@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const PillToolbar = ({ pills, setActivePills }: Props) => {
-  const setFilters = (activePill: Pill) => {
+  const setFilterField = (activePill: Pill) => {
     const activePills = pills.filter(f => f.title !== activePill.title);
     setActivePills(activePills);
   };
@@ -26,7 +26,7 @@ export const PillToolbar = ({ pills, setActivePills }: Props) => {
           >
             <span>{activePill.title}</span>
             <button
-              onClick={() => setFilters(activePill)}
+              onClick={() => setFilterField(activePill)}
               type="button"
               className="ml-1 inline-flex size-4 shrink-0 rounded-full p-1 text-gray-700 hover:bg-gray-200 hover:text-gray-500"
             >
