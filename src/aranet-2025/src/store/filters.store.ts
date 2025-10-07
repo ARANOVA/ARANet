@@ -18,7 +18,7 @@ export const useFiltersStore = create<FiltersStore>()(
     (set, get) => ({
       filters: [],
 
-      addFilter: ({ type, title, value_title, value, field }: FilterDTO ) => {
+      addFilter: ({ type, title, value_title, value, field, operator }: FilterDTO ) => {
         const currentFilters = get().filters;
 
         const exists = currentFilters.find(
@@ -31,7 +31,8 @@ export const useFiltersStore = create<FiltersStore>()(
             title,
             value_title,
             field,
-            value
+            value,
+            operator,
           };
 
           set({ filters: [...currentFilters, newFilter] });

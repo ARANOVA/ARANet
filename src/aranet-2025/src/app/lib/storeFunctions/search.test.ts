@@ -1,83 +1,91 @@
-import { SearchDTO, SearchOperators } from '@aranova/aranova-react-ui';
+import { SearchDTO, FilterDTO, SearchOperators } from '@aranova/aranova-react-ui';
 import { addSearch, dumpUrl, getSearchInputValue, removeSearch, setSearchInputValues, setSearches } from './search';
 
 const PLANTILLA_NUMBER_AND_DATE_FIELDS = ['fechanacimiento', 'edad', 'codigoempleado'];
 
+const filter1: FilterDTO = {
+  type: "plantilla",
+  title: "Buscar por activo",
+  field: "activo",
+  operator: SearchOperators.equals,
+  value: true
+};
+
 const input1: SearchDTO = {
-  "type": "plantilla",
-  "title": "Buscar por Fecha Nacimiento",
-  "field": "fechanacimiento",
-  "operator": SearchOperators.gte,
-  "value": "2020-01-01"
+  type: "plantilla",
+  title: "Buscar por Fecha Nacimiento",
+  field: "fechanacimiento",
+  operator: SearchOperators.gte,
+  value: "2020-01-01"
 };
 
 
 const input1b: SearchDTO = {
-  "type": "plantilla",
-  "title": "Buscar por Fecha Nacimiento",
-  "field": "fechanacimiento",
-  "operator": SearchOperators['>='],
-  "value": "2020-01-01"
+  type: "plantilla",
+  title: "Buscar por Fecha Nacimiento",
+  field: "fechanacimiento",
+  operator: SearchOperators['>='],
+  value: "2020-01-01"
 };
 
 const input1c: SearchDTO = {
-  "type": "plantilla",
-  "title": "Buscar por nombre",
-  "field": "nombre",
-  "operator": SearchOperators.like,
-  "value": "pepe"
+  type: "plantilla",
+  title: "Buscar por nombre",
+  field: "nombre",
+  operator: SearchOperators.like,
+  value: "pepe"
 };
 
 const input2: SearchDTO = {
-  "type": "plantilla",
-  "title": "Buscar por Fecha Nacimiento",
-  "field": "fechanacimiento",
-  "operator": SearchOperators.lte,
-  "value": "2025-01-01"
+  type: "plantilla",
+  title: "Buscar por Fecha Nacimiento",
+  field: "fechanacimiento",
+  operator: SearchOperators.lte,
+  value: "2025-01-01"
 };
 
 const input3: SearchDTO = {
-  "type": "plantilla",
-  "title": "Buscar por Fecha Nacimiento",
-  "field": "fechanacimiento",
-  "operator": SearchOperators.lte,
-  "value": "2030-01-01"
+  type: "plantilla",
+  title: "Buscar por Fecha Nacimiento",
+  field: "fechanacimiento",
+  operator: SearchOperators.lte,
+  value: "2030-01-01"
 };
 const buscaLikePorNombre: SearchDTO = {
-  "type": "plantilla",
-  "title": "Buscar por Nombre",
-  "field": "Nombre",
-  "operator": SearchOperators.like,
-  "value": "pepe"
+  type: "plantilla",
+  title: "Buscar por Nombre",
+  field: "Nombre",
+  operator: SearchOperators.like,
+  value: "pepe"
 };
 const buscaEqEnTodos: SearchDTO = {
-  "type": "plantilla",
-  "title": "Buscar por Nombre",
-  "field": "all",
-  "operator": SearchOperators.equals,
-  "value": "pedro"
+  type: "plantilla",
+  title: "Buscar por Nombre",
+  field: "all",
+  operator: SearchOperators.equals,
+  value: "pedro"
 };
 const buscaLikePorApellidos: SearchDTO = {
-  "type": "plantilla",
-  "title": "Buscar por Apellidos",
-  "field": "Apellidos",
-  "operator": SearchOperators.like,
-  "value": "perez"
+  type: "plantilla",
+  title: "Buscar por Apellidos",
+  field: "Apellidos",
+  operator: SearchOperators.like,
+  value: "perez"
 };
 const buscaLikeEnTodos: SearchDTO = {
-  "type": "plantilla",
-  "title": "Buscar por Nombre",
-  "field": "all",
-  "operator": SearchOperators.like,
-  "value": "pedro"
+  type: "plantilla",
+  title: "Buscar por Nombre",
+  field: "all",
+  operator: SearchOperators.like,
+  value: "pedro"
 };
 
 const input8: SearchDTO = {
-  "type": "plantilla",
-  "title": "Buscar por Nombre",
-  "field": "Nombre",
-  "operator": SearchOperators.like,
-  "value": "carlos"
+  type: "plantilla",
+  title: "Buscar por Nombre",
+  field: "Nombre",
+  operator: SearchOperators.like,
+  value: "carlos"
 };
 
 
@@ -90,7 +98,8 @@ const input14: SearchDTO = {
   value: "Sánchez"
 };
 
-const toLowerFiltername = (inputs) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const toLowerFiltername = (inputs: any[]) => {
   return inputs.map(input => {
     const input1Lowercase = JSON.parse(JSON.stringify(input));
     input1Lowercase.field = input1Lowercase.field.toLowerCase();
@@ -99,8 +108,6 @@ const toLowerFiltername = (inputs) => {
 }
 
 describe('allSearchFunctions', () => {
-
-
 
   describe('addSearch', () => {
 
@@ -204,11 +211,11 @@ describe('allSearchFunctions', () => {
 
     test('Caso 1: CASOS INVÁLIDOS', () => {
       const input = {
-        "type": "plantilla",
-        "title": "Buscar por Nombre",
-        "field": "Nombre",
-        "operator": SearchOperators.like,
-        "value": ""
+        type: "plantilla",
+        title: "Buscar por Nombre",
+        field: "Nombre",
+        operator: SearchOperators.like,
+        value: ""
       };
 
       const expected = '';
@@ -257,18 +264,18 @@ describe('allSearchFunctions', () => {
 
     test('Caso 5: crear url con campo vacio + campo ', () => {
       const input8: SearchDTO = {
-        "type": "plantilla",
-        "title": "Buscar por Nombre",
-        "field": "Nombre",
-        "operator": SearchOperators.like,
-        "value": "carlos"
+        type: "plantilla",
+        title: "Buscar por Nombre",
+        field: "Nombre",
+        operator: SearchOperators.like,
+        value: "carlos"
       };
       const input9: SearchDTO = {
-        "type": "plantilla",
-        "title": "Buscar por Nombre",
-        "field": "Nombre",
-        "operator": SearchOperators.like,
-        "value": ""
+        type: "plantilla",
+        title: "Buscar por Nombre",
+        field: "Nombre",
+        operator: SearchOperators.like,
+        value: ""
       };
       const expected = 'search[]=Nombre:carlos';
       expect(dumpUrl([input8, input9], PLANTILLA_NUMBER_AND_DATE_FIELDS)).toEqual(expected);
@@ -276,11 +283,11 @@ describe('allSearchFunctions', () => {
 
     test('Caso 7: espacios ', () => {
       const input11: SearchDTO = {
-        "type": "plantilla",
-        "title": "Buscar por Nombre",
+        type: "plantilla",
+        title: "Buscar por Nombre",
         operator: "all" as SearchOperators,
-        "field": "   Nombre   ",
-        "value": "CARLOS "
+        field: "   Nombre   ",
+        value: "CARLOS "
       };
       const expected = '';
       expect(dumpUrl([input11], PLANTILLA_NUMBER_AND_DATE_FIELDS)).toEqual(expected);
@@ -318,11 +325,11 @@ describe('allSearchFunctions', () => {
 
     test('Caso 11: mezcla de búsquedas globales y campos específicos', () => {
       const input8: SearchDTO = {
-        "type": "plantilla",
-        "title": "Buscar por Nombre",
-        "field": "Nombre",
-        "operator": SearchOperators.like,
-        "value": "carlos"
+        type: "plantilla",
+        title: "Buscar por Nombre",
+        field: "Nombre",
+        operator: SearchOperators.like,
+        value: "carlos"
       };
       const input12: SearchDTO = {
         type: "plantilla",
@@ -352,11 +359,11 @@ describe('allSearchFunctions', () => {
   describe('getSearchInputValue', () => {
     test('Caso 1: CASOS INVÁLIDOS', () => {
       const input = {
-        "type": "plantilla",
-        "title": "Buscar por Nombre",
-        "field": "Nombre",
-        "operator": SearchOperators.like,
-        "value": ""
+        type: "plantilla",
+        title: "Buscar por Nombre",
+        field: "Nombre",
+        operator: SearchOperators.like,
+        value: ""
       };
 
       const expected = '';
@@ -380,11 +387,11 @@ describe('allSearchFunctions', () => {
 
     test('Caso 2: Búsqueda global', () => {
       const input1 = {
-        "type": "plantilla",
-        "title": "Buscar empleado...",
-        "field": "all",
-        "operator": SearchOperators.like,
-        "value": "pablo"
+        type: "plantilla",
+        title: "Buscar empleado...",
+        field: "all",
+        operator: SearchOperators.like,
+        value: "pablo"
       };
 
       const expected = 'pablo';
@@ -392,11 +399,11 @@ describe('allSearchFunctions', () => {
 
 
       const input2 = {
-        "type": "plantilla",
-        "title": "Buscar empleado...",
-        "field": "all",
-        "operator": SearchOperators.like,
-        "value": "juan"
+        type: "plantilla",
+        title: "Buscar empleado...",
+        field: "all",
+        operator: SearchOperators.like,
+        value: "juan"
       };
 
       const expected1 = 'pablo,juan';
@@ -405,11 +412,11 @@ describe('allSearchFunctions', () => {
 
     test('Caso 3: Búsqueda por varios criterios', () => {
       const input1 = {
-        "type": "plantilla",
-        "title": "Buscar empleado...",
-        "field": "nombre",
-        "operator": SearchOperators.like,
-        "value": "pablo"
+        type: "plantilla",
+        title: "Buscar empleado...",
+        field: "nombre",
+        operator: SearchOperators.like,
+        value: "pablo"
       };
 
       const expected = 'nombre:pablo';
@@ -417,11 +424,11 @@ describe('allSearchFunctions', () => {
 
 
       const input2 = {
-        "type": "plantilla",
-        "title": "Buscar empleado...",
-        "field": "Apellidos",
-        "operator": SearchOperators.like,
-        "value": "juan"
+        type: "plantilla",
+        title: "Buscar empleado...",
+        field: "Apellidos",
+        operator: SearchOperators.like,
+        value: "juan"
       };
 
       const expected1 = 'nombre:pablo; Apellidos:juan';
@@ -437,17 +444,17 @@ describe('allSearchFunctions', () => {
       const expected = [
         {
 
-          "field": 'nombre',
-          "operator": 'like',
-          "type": 'plantilla',
-          "value": 'ainara',
+          field: 'nombre',
+          operator: 'like',
+          type: 'plantilla',
+          value: 'ainara',
         },
         {
 
-          "field": 'apellidos',
-          "operator": 'like',
-          "type": 'plantilla',
-          "value": 'rodilla',
+          field: 'apellidos',
+          operator: 'like',
+          type: 'plantilla',
+          value: 'rodilla',
         }
       ];
       expect(setSearchInputValues('plantilla', 'nombre:ainara; apellidos:rodilla')).toEqual(expected);
@@ -460,17 +467,17 @@ describe('allSearchFunctions', () => {
       const expected = [
         {
 
-          "field": 'nombre',
-          "operator": 'like',
-          "type": 'plantilla',
-          "value": 'ainara',
+          field: 'nombre',
+          operator: 'like',
+          type: 'plantilla',
+          value: 'ainara',
         },
         {
 
-          "field": 'apellidos',
-          "operator": 'like',
-          "type": 'plantilla',
-          "value": 'rodilla',
+          field: 'apellidos',
+          operator: 'like',
+          type: 'plantilla',
+          value: 'rodilla',
         }
       ];
       expect(setSearchInputValues('plantilla', 'NOmbre:ainara; Apellidos:rodilla')).toEqual(expected);
@@ -482,17 +489,17 @@ describe('allSearchFunctions', () => {
       const expected = [
         {
 
-          "field": 'nombre',
-          "operator": 'like',
-          "type": 'plantilla',
-          "value": 'ainara',
+          field: 'nombre',
+          operator: 'like',
+          type: 'plantilla',
+          value: 'ainara',
         },
         {
 
-          "field": 'apellidos',
-          "operator": 'like',
-          "type": 'plantilla',
-          "value": 'rodilla',
+          field: 'apellidos',
+          operator: 'like',
+          type: 'plantilla',
+          value: 'rodilla',
         }
       ];
       expect(setSearchInputValues('plantilla', 'nombre:ainara,pepe; apellidos:rodilla,alvarez')).toEqual(expected);
@@ -504,10 +511,10 @@ describe('allSearchFunctions', () => {
       const expected = [
         {
 
-          "field": 'apellidos',
-          "operator": 'like',
-          "type": 'plantilla',
-          "value": 'rodilla',
+          field: 'apellidos',
+          operator: 'like',
+          type: 'plantilla',
+          value: 'rodilla',
         }
       ];
       expect(setSearchInputValues('plantilla', 'nombre: ; apellidos:rodilla,alvarez')).toEqual(expected);
@@ -519,10 +526,10 @@ describe('allSearchFunctions', () => {
       const expected = [
         {
 
-          "field": 'all',
-          "operator": 'like',
-          "type": 'plantilla',
-          "value": 'rodilla',
+          field: 'all',
+          operator: 'like',
+          type: 'plantilla',
+          value: 'rodilla',
         }
       ];
       expect(setSearchInputValues('plantilla', 'rodilla')).toEqual(expected);

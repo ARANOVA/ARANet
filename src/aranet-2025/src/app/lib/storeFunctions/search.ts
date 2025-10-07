@@ -1,5 +1,5 @@
 
-import { SearchDTO, SearchOperators } from '@aranova/aranova-react-ui';
+import { FilterDTO, SearchDTO, SearchOperators } from '@aranova/aranova-react-ui';
 import { fieldOperators } from '../createQueryFunctions';
 
 
@@ -112,10 +112,11 @@ export const setSearches = (currentSearches: SearchDTO[], searches: SearchDTO[])
 };
 
 // Crear URL
-export const dumpUrl = (searches: SearchDTO[], andFields: string[] = []): string => {
-  if (!Array.isArray(searches) || searches.length === 0) return '';
+export const dumpUrl = (searches: SearchDTO[], andFields: string[] = [], filters: FilterDTO[] = []): string => {
+  const cSearches = !Array.isArray(searches) || searches.length === 0 ? [] : searches;
+  const cFilters = !Array.isArray(filters) || filters.length === 0 ? [] : filters;
 
-  const grouped = groupSearches(searches);
+  const grouped = groupSearches(cSearches);
   const parts: string[] = [];
 
   Object.entries(grouped).forEach(([field, values]) => {

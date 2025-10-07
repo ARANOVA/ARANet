@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { FilterField, FormFilters } from "@aranova/aranova-react-ui";
 import { useFormUiStore, useFiltersStore, useSearchStore } from "@/store";
 import { mapSearchAndFilterValuesToFilters } from "@/utils";
+import { dumpUrl } from "@/app/lib/storeFunctions";
 
 interface Props {
   model: string;
@@ -14,27 +15,29 @@ interface Props {
 export const ListFiltersForm = (props: Props) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { dumpUrl, getSearchesForType } = useSearchStore();
+  const { dumpUrl: dumpUrlStore, getSearchesForType, addSearch, removeSearch, setSearches } = useSearchStore();
   const { setSearchTerm } = useFormUiStore();
   const formUi = useFormUiStore();
   const { filters, setFilters, setFiltersByModel, getFiltersByModel } = useFiltersStore();
-  const { addSearch, removeSearch, setSearches } = useSearchStore();
 
-  //Funcion que se ejecuta al hacer click en buscar
+  // Funcion que se ejecuta al hacer click en buscar
   const handleSearch = () => {
     const params = new URLSearchParams(window.location.search);
-    console.log({params, d: props.model})
+    const searches = getSearchesForType(props.model);
+    const filters = getFiltersByModel(props.model);
     params.delete('search[]');
-    const searches = dumpUrl(props.model);
+
+    const query = dumpUrl(searches, [], filters);
+    console.log({query})
     const paramsStr = params ? `?${params}` : '';
     const searchesStr = searches ? (paramsStr ? `&${searches}` : `?${searches}`) : '';
     router.replace(`${pathname}${paramsStr}${searchesStr}`);
-    setSearchTerm(searches);
+    setSearchTerm(query);
   }
 
   const searchesModel = getSearchesForType(props.model);
   const filtersModel = getFiltersByModel(props.model);
-  const updateValueFilterField = mapSearchAndFilterValuesToFilters(props.filters, searchesModel, filtersModel);
+  const updateValueFilterField = mapSearchAndFilterValuesToFilters(props.filters, props.model, searchesModel, filtersModel);
 
   const [ filtersActive, setFiltersActive ] = useState<FilterField[]>(updateValueFilterField);
 
@@ -45,7 +48,7 @@ export const ListFiltersForm = (props: Props) => {
   //   }
   // }, [props.model, setFilterFieldByModel, updateValueFilterField]);
 
-  console.log({updateValueFilterField})
+  console.log({updateValueFilterField, filters: props.filters})
   return (
     <FormFilters
       model={props.model}

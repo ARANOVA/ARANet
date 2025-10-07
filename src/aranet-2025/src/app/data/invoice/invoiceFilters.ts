@@ -16,6 +16,21 @@ export const invoiceFilters: FilterField[] = [
     type: 'search',
     operator: SearchOperators.like,
   },
+  {
+    fieldName: 'invoice_date',
+    fieldTitle: 'Fecha',
+    label: 'Buscar por fecha',
+    operator: SearchOperators.like,
+    children: [{
+      label: 'Fecha desde',
+      type: 'date',
+      operator: SearchOperators.gte
+    },{
+      label: 'Fecha hasta',
+      type: 'date',
+      operator: SearchOperators.lte
+    }],
+  },
 ];
 
 

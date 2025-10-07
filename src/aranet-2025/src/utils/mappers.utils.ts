@@ -2,15 +2,28 @@ import { FilterDTO, FilterField, SearchDTO, SearchOperators } from "@aranova/ara
 
 export const mapSearchAndFilterValuesToFilters = (
   defFilters: FilterField[],
+  model: string,
   searches: SearchDTO[],
   filters: FilterDTO[],
 ): FilterField[] => {
   defFilters.forEach((defFilter) => {
     // Rellenar primer nivel
-    const search = searches.find(s => s.field.toLowerCase() === defFilter.fieldName.toLowerCase() && s.type === defFilter.type && s.operator.toLowerCase() !== defFilter.operator.toLowerCase());
-    console.log({filters})
-    const filter = filters.find(s => s.field.toLowerCase() === defFilter.fieldName.toLowerCase() && s.type === defFilter.type && s.operator.toLowerCase() !== defFilter.operator.toLowerCase());
-    console.log({search, filter, df: defFilter})
+    let search = searches.find(s => (
+      s.field.toLowerCase() === defFilter.fieldName.toLowerCase() &&
+      s.type === model &&
+      s.operator.toLowerCase() === defFilter.operator.toLowerCase()
+    ));
+    if (!search) {
+      search = filters.find(s => (
+        s.field.toLowerCase() === defFilter.fieldName.toLowerCase() &&
+        s.type === model &&
+        s.operator.toLowerCase() === defFilter.operator.toLowerCase()
+      ));
+    }
+    console.log({search});
+    if (search) {
+      defFilter.value = search.value;
+    }
 
     // if (filter.children && filter.children.length > 0) {
     //   const child = filter.children.find((child) => {
@@ -36,5 +49,6 @@ export const mapSearchAndFilterValuesToFilters = (
     //   }
     // }
   });
+  console.log({defFilters});
   return defFilters;
 };
