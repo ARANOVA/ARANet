@@ -9,6 +9,7 @@ export type FiltersStore = {
   removeFilter: (filter: FilterDTO) => void;
   setFilters: (filters: FilterDTO[]) => void;
   getFilters: () => FilterDTO[];
+  setFiltersByModel: (model: string, filters: FilterDTO[]) => void;
   getFiltersByModel: (model: string) => FilterDTO[];
 }
 
@@ -52,6 +53,12 @@ export const useFiltersStore = create<FiltersStore>()(
       },
 
       getFilters: () => get().filters,
+
+      setFiltersByModel: (model: string, filters: FilterDTO[]) => {
+        const currentFilters = get().filters;
+        const filtered = currentFilters.filter(f => f.type !== model);
+        set({ filters: [...filtered, ...filters] });
+      },
 
       getFiltersByModel: (model: string) => get().filters.filter(f => f.type === model),
     }),

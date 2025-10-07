@@ -1,9 +1,8 @@
-import { Filters } from "@/interfaces";
-import { SearchDTO, SearchOperators } from "@aranova/aranova-react-ui";
+import { FilterDTO, FilterField, SearchDTO, SearchOperators } from "@aranova/aranova-react-ui";
 
-export const mapSearchModelToFilters = (searches: SearchDTO[], filters: Filters[]): Filters[] => {
+export const mapSearchModelToFilters = (searches: SearchDTO[], filters: FilterDTO[], defFilters: FilterField[]): FilterField[] => {
   searches.forEach((search) => {
-    filters.forEach((filter) => {
+    defFilters.forEach((filter) => {
       let childFound = false;
 
       if (filter.children && filter.children.length > 0) {
