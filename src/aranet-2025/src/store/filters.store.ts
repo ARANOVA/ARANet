@@ -2,6 +2,15 @@ import { FilterDTO } from '@aranova/aranova-react-ui';
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
+const noopStorage: Storage = {
+  getItem: (_name: string) => null,
+  setItem: (_name: string, _value: string) => {},
+  removeItem: (_name: string) => {},
+  clear: () => {},
+  key: (_index: number) => null,
+  length: 0,
+};
+
 
 export type FiltersStore = {
   filters: FilterDTO[];
@@ -65,7 +74,8 @@ export const useFiltersStore = create<FiltersStore>()(
     }),
     {
       name: 'filters-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : noopStorage)),
+      // storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : undefined)),
     }
   )
 );

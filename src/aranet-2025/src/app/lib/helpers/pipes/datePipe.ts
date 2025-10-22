@@ -22,6 +22,8 @@ export function dateColumn<T>(
         date = new Date(parseInt(raw, 10));
       } else if (typeof raw === 'string') {
         date = new Date(raw);
+      } else {
+        date = raw as Date;
       }
       return date
         ? date.toLocaleDateString(locale, {

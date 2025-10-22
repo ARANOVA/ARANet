@@ -4,9 +4,9 @@ import { SimpleTable } from "@/app/components";
 import { getInvoiceItemColumns } from "@/app/data/invoice_item/invoiceItemColumns";
 import { createSingleDataByModel, updateSingleDataByModel } from "@/app/lib/api-wrappers/server";
 import { aranet_invoice_item } from "@/generated/prisma";
-import { aranet_invoice_join_all, IntFilter } from "@/interfaces";
+import { aranet_invoice_join_all } from "@/interfaces";
 import { deepClone, getModelState } from "@/utils";
-import { FilterDTO, SingleResponse, WhereInput } from "@aranova/aranova-react-ui";
+import { SingleResponse, WhereInput } from "@aranova/aranova-react-ui";
 import clsx from "clsx";
 import { useState } from "react";
 
@@ -28,8 +28,7 @@ export const InvoiceItems = ({ invoice, className }: Props) => {
   const handleSave = async (
     model: string,
     data: unknown,
-    filters
-    : WhereInput | null = null,
+    filters: WhereInput | null = null,
   ): Promise<SingleResponse<unknown>> => {
     const aux = deepClone(data) as Partial<aranet_invoice_item>;
     const id = aux.id;

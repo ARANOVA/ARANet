@@ -7,10 +7,10 @@ import { Metadata } from "next";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Model 347 - Fiscal',
+  title: 'Modelo 347 - Fiscal',
 };
 
-export default async function InvoiceListPage() {
+export default async function Model347Page() {
   const session = await getSession();
   if (!session) {
     return <NotAuthorized />;
@@ -25,7 +25,7 @@ export default async function InvoiceListPage() {
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },
     { name: 'Fiscal', href: null },
-    { name: 'Model 347', href: '' },
+    { name: 'Modelo 347', href: '' },
   ];
 
   return (

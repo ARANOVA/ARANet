@@ -1,10 +1,11 @@
 'use client';
 
+import { dumpUrl } from '@/app/lib/storeFunctions';
 import { aranet_invoice_verifactu } from '@/interfaces';
-import { useFormUiStore, useSearchStore } from '@/store';
+import { useFiltersStore, useFormUiStore, useSearchStore } from '@/store';
 import { PageHeader } from '@aranova/aranova-react-ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface Props {
   title: string;
@@ -40,8 +41,13 @@ export const PageStoreHeader = ({
   state,
   ...props
 }: Props) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  
   const { setSearchTerm, openDrawer } = useFormUiStore();
-  const { getSearchInputValue, setSearchInputValue, dumpUrl } = useSearchStore();
+  const { filters, setFiltersByModel, getFiltersByModel } = useFiltersStore();  
+  const { getSearchInputValue, setSearchInputValue, dumpUrl: dumpUrlStore, getSearchesForType } = useSearchStore();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -65,26 +71,37 @@ export const PageStoreHeader = ({
   // Funcion que se ejecuta al hacer click en buscar
   const handleSearch = useCallback(
     (term: string) => {
-      const searchTerm = setSearchInputValue(props.model, term);
-      const params = new URLSearchParams(window.location.search);
-      params.delete('search[]');
-      const searches = dumpUrl(props.model);
-      const paramsStr = params.toString() ? `?${params.toString()}` : '';
-      const searchesStr = searches ? (paramsStr ? `&${searches}` : `?${searches}`) : '';
-      router.replace(`${pathname}${paramsStr}${searchesStr}`);
-      setSearchTerm(searchTerm);
+      console.log({term})
+      // const searchTerm = setSearchInputValue(props.model, term);
+      // const params = new URLSearchParams(window.location.search);
+      // params.delete('search[]');
+      // const searches = dumpUrl(props.model);
+      // const paramsStr = params.toString() ? `?${params.toString()}` : '';
+      // const searchesStr = searches ? (paramsStr ? `&${searches}` : `?${searches}`) : '';
+      // router.replace(`${pathname}${paramsStr}${searchesStr}`);
+      // setSearchTerm(searchTerm);
     },
-    [dumpUrl, pathname, props.model, router, setSearchInputValue, setSearchTerm]
+    [pathname, props.model, router, setSearchInputValue, setSearchTerm]
   );
 
+  // const filtersFromStore = useFiltersStore(state => state.getFiltersByModel(props.model));
+  const filtersFromStore = getFiltersByModel(props.model);
+  // const searchesFromStore = useSearchStore(state => state.getSearchesForType(props.model));
+  const searchesFromStore = getSearchesForType(props.model);
+  
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     params.delete('search[]');
-    const searches = dumpUrl(props.model);
-    const paramsStr = params.toString() ? `?${params.toString()}` : '';
-    const searchesStr = searches ? (paramsStr ? `&${searches}` : `?${searches}`) : '';
-    router.replace(`${pathname}${paramsStr}${searchesStr}`);
-  }, [searchParams, dumpUrl, getSearchInputValue, pathname, props.model, router, handleSearch]);
+    const query = dumpUrl(searchesFromStore, [], filtersFromStore);
+    const paramsStr = params.values.length > 0 ? `?${params}` : '';
+    const searchesStr = query ? (paramsStr ? `&${query}` : `?${query}`) : '';
+    console.log({searchesStr})
+    // router.replace(`${pathname}${paramsStr}${searchesStr}`);
+    // setSearchTerm(query);
+    return () => {
+      console.log("END");
+    };
+  }, []);
 
   return (
     <>

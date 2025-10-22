@@ -7,8 +7,7 @@ import { notFound } from "next/navigation";
 import { isValidId } from "@/utils";
 import { aranet_invoice_join_all, aranet_invoice_verifactu } from "@/interfaces";
 import { getModelState } from "@/utils";
-import { logError, logWarn } from "@/app/lib/logger";
-import { aranet_invoice } from "@/generated/prisma";
+import { logWarn } from "@/app/lib/logger";
 
 export const dynamic = 'force-dynamic';
 

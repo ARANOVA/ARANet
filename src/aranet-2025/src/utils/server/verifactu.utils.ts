@@ -1,11 +1,11 @@
 'use server';
 
-import { aranet_invoice_verifactu } from '@/interfaces';
+import { aranet_invoice_verifactu, VerifactuQuery } from '@/interfaces';
 import { signXmlString } from './verifactu/xmlSigner';
 import { sendToVerifactu, verifactuBuildConsultaRegistrosXML, verifactuBuildRegistroAltaXML, verifactuCalcHuella, verifactuValidateXmlAgainstXsd } from './verifactu';
 
 // ---- consulta --
-export const verifactuConsulta = async (year: number, month: number): Promise<Error | void> => {
+export const verifactuConsulta = async (year: number, month: number): Promise<Error | VerifactuQuery> => {
   // 1. Generar XML
   const xml = await verifactuBuildConsultaRegistrosXML(year, month);
   if (xml instanceof(Error)) {
@@ -37,6 +37,7 @@ export const verifactuConsulta = async (year: number, month: number): Promise<Er
     }
     // 5. Hacer algo con esto
     console.log({resp})
+    return resp;
   } catch (err) {
     console.log('Error al validar XML:', err);
     throw err;

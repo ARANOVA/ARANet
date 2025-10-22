@@ -1,4 +1,4 @@
-import { FilterDTO, FilterField, SearchDTO, SearchOperators } from "@aranova/aranova-react-ui";
+import { FilterDTO, FilterField, SearchDTO } from "@aranova/aranova-react-ui";
 
 export const mapSearchAndFilterValuesToFilters = (
   defFilters: FilterField[],
@@ -8,22 +8,33 @@ export const mapSearchAndFilterValuesToFilters = (
 ): FilterField[] => {
   defFilters.forEach((defFilter) => {
     // Rellenar primer nivel
-    let search = searches.find(s => (
+    const search = searches.find(s => (
       s.field.toLowerCase() === defFilter.fieldName.toLowerCase() &&
       s.type === model &&
       s.operator.toLowerCase() === defFilter.operator.toLowerCase()
     ));
-    if (!search) {
-      search = filters.find(s => (
-        s.field.toLowerCase() === defFilter.fieldName.toLowerCase() &&
-        s.type === model &&
-        s.operator.toLowerCase() === defFilter.operator.toLowerCase()
-      ));
-    }
-    console.log({search});
     if (search) {
       defFilter.value = search.value;
+      return;
     }
+    const foundFilters = filters.filter(s => (
+      s.field.toLowerCase() === defFilter.fieldName.toLowerCase() &&
+      s.type === model
+    ));
+    if (foundFilters.length > 0) {
+      foundFilters.forEach(f => {
+        if (defFilter.children) {
+          const child = defFilter.children?.find(c => c.operator.toLowerCase() === f.operator.toLowerCase());
+          if (child) {
+            child.value = f.value;
+          }
+        } else {
+          defFilter.value = f.value;
+        }
+      });
+    }
+    console.log({foundFilters, defFilter});
+    
 
     // if (filter.children && filter.children.length > 0) {
     //   const child = filter.children.find((child) => {

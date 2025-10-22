@@ -16,23 +16,26 @@ import { ToastStoreAlert } from '@/app/components';
 
 
 interface Props<T> {
-  model: string;
-  idField: string;
+  model?: string;
+  idField?: string;
+  sortField?: string;
+  sortDir?: 'desc' | 'asc';
   columns: ColumnDef<T, unknown>[];
   data?: ListResponse<T>;
   filters?: WhereInput,
   children?: React.ReactNode;
-  saveRowFn: (model: string, data: unknown, filters: WhereInput | null) => Promise<SingleResponse<unknown>>;
-  editingRowId: number | null;
-  setEditingRowId: (v: number | null) => void;
-  editingRows: boolean;
-  setEditingRows: (v: boolean) => void;
-  title: string;
+  saveRowFn?: (model: string, data: unknown, filters: WhereInput | null) => Promise<SingleResponse<unknown>>;
+  editingRowId?: number | null;
+  setEditingRowId?: (v: number | null) => void;
+  editingRows?: boolean;
+  setEditingRows?: (v: boolean) => void;
+  title?: string;
   editMode: boolean;
 }
 
 export const SimpleTable = <T extends { id: number }>({
   model,
+  data,
   setEditingRowId,
   saveRowFn,
   ...props
@@ -53,7 +56,7 @@ export const SimpleTable = <T extends { id: number }>({
     sortDir: 'asc' | 'desc',
     filters?: WhereInput | null,
   ): Promise<ListResponse<T>> => {
-    console.log({filters})
+    if (!model && data) return data as any;
     return getListDataByModelGraphql<T>(model, '', '', 1, -1, sortField, sortDir, undefined, filters || null);
   }
 
@@ -64,6 +67,7 @@ export const SimpleTable = <T extends { id: number }>({
         model={model}
         alert={<ToastStoreAlert />}
         fetchDataFn={wrapGetListDataByModelGraphql}
+        data={data}
         {...props}
         setEditingRowId={setEditingRowId}
         deleteFn={handleDelete}

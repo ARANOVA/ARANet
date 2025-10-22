@@ -133,3 +133,13 @@ export const toUTCTimeString = (raw: Date | string): string => {
   }
   return '';
 }
+
+export const toDateFromShort = (dateString: string): Date | null => {
+  const parts = dateString.split('-');
+  if (parts.length !== 3) return null;
+  const day = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10) - 1; // Los meses en JS van de 0 a 11
+  const year = parseInt(parts[2], 10);
+  const date = new Date(year, month, day);
+  return isNaN(date.getTime()) ? null : date;
+}

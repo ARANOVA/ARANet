@@ -16,10 +16,12 @@ const groupSearches = (searches: SearchDTO[]): Record<string, string[]> => {
     const operator = search.operator?.trim();
     const rawValue = search.value?.toString().trim();
 
+    // console.log({field: !field, rawValue: !rawValue, safe: rawValue ? !isSafeValue(rawValue) : ''})
     if (!field || !rawValue || !isSafeValue(rawValue)) continue;
-
-    const printableOperator = SearchOperators[operator as keyof typeof SearchOperators || 'like'];
-    if (printableOperator === undefined) continue;
+        
+    const printableOperator = operator || 'like';
+    const isInEnum = Object.values(SearchOperators).includes(printableOperator as SearchOperators);
+    if (printableOperator === undefined || !isInEnum) continue;
 
     if (!grouped[field]) grouped[field] = [];
 
@@ -117,9 +119,10 @@ export const dumpUrl = (searches: SearchDTO[], andFields: string[] = [], filters
   const cFilters = !Array.isArray(filters) || filters.length === 0 ? [] : filters;
 
   const grouped = groupSearches(cSearches);
+  const groupedFilters = groupSearches(cFilters);
   const parts: string[] = [];
 
-  Object.entries(grouped).forEach(([field, values]) => {
+  Object.entries({...grouped, ...groupedFilters}).forEach(([field, values]) => {
     if (values.length === 0) return;
 
     if (andFields.includes(field)) {

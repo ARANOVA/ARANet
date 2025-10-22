@@ -15,10 +15,10 @@ interface Props {
 export const ListFiltersForm = (props: Props) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { dumpUrl: dumpUrlStore, getSearchesForType, addSearch, removeSearch, setSearches } = useSearchStore();
+  const { getSearchesForType } = useSearchStore();
   const { setSearchTerm } = useFormUiStore();
   const formUi = useFormUiStore();
-  const { filters, setFilters, setFiltersByModel, getFiltersByModel } = useFiltersStore();
+  const { filters, setFiltersByModel, getFiltersByModel } = useFiltersStore();
 
   // Funcion que se ejecuta al hacer click en buscar
   const handleSearch = () => {
@@ -26,13 +26,11 @@ export const ListFiltersForm = (props: Props) => {
     const searches = getSearchesForType(props.model);
     const filters = getFiltersByModel(props.model);
     params.delete('search[]');
-
     const query = dumpUrl(searches, [], filters);
-    console.log({query})
-    const paramsStr = params ? `?${params}` : '';
-    const searchesStr = searches ? (paramsStr ? `&${searches}` : `?${searches}`) : '';
-    router.replace(`${pathname}${paramsStr}${searchesStr}`);
-    setSearchTerm(query);
+    const paramsStr = params.values.length > 0 ? `?${params}` : '';
+    const searchesStr = query ? (paramsStr ? `&${query}` : `?${query}`) : '';
+    // router.replace(`${pathname}${paramsStr}${searchesStr}`);
+    // setSearchTerm(query);
   }
 
   const searchesModel = getSearchesForType(props.model);
@@ -53,7 +51,7 @@ export const ListFiltersForm = (props: Props) => {
     <FormFilters
       model={props.model}
       filters={filtersActive}
-      ui={{ ...formUi, filters, setFilters, addSearch, removeSearch, setSearches, setFiltersByModel }}
+      ui={{ ...formUi, filters, setFiltersByModel }}
       searchFn={handleSearch}
     />
   );

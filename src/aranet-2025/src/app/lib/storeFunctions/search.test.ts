@@ -51,6 +51,7 @@ const input3: SearchDTO = {
   operator: SearchOperators.lte,
   value: "2030-01-01"
 };
+
 const buscaLikePorNombre: SearchDTO = {
   type: "plantilla",
   title: "Buscar por Nombre",
@@ -58,6 +59,7 @@ const buscaLikePorNombre: SearchDTO = {
   operator: SearchOperators.like,
   value: "pepe"
 };
+
 const buscaEqEnTodos: SearchDTO = {
   type: "plantilla",
   title: "Buscar por Nombre",
@@ -65,6 +67,7 @@ const buscaEqEnTodos: SearchDTO = {
   operator: SearchOperators.equals,
   value: "pedro"
 };
+
 const buscaLikePorApellidos: SearchDTO = {
   type: "plantilla",
   title: "Buscar por Apellidos",
@@ -72,6 +75,7 @@ const buscaLikePorApellidos: SearchDTO = {
   operator: SearchOperators.like,
   value: "perez"
 };
+
 const buscaLikeEnTodos: SearchDTO = {
   type: "plantilla",
   title: "Buscar por Nombre",
@@ -210,7 +214,7 @@ describe('allSearchFunctions', () => {
   describe('dumpUrl', () => {
 
     test('Caso 1: CASOS INVÁLIDOS', () => {
-      const input = {
+      const input: SearchDTO = {
         type: "plantilla",
         title: "Buscar por Nombre",
         field: "Nombre",
@@ -281,7 +285,7 @@ describe('allSearchFunctions', () => {
       expect(dumpUrl([input8, input9], PLANTILLA_NUMBER_AND_DATE_FIELDS)).toEqual(expected);
     });
 
-    test('Caso 7: espacios ', () => {
+    test('Caso 7: operador inválido', () => {
       const input11: SearchDTO = {
         type: "plantilla",
         title: "Buscar por Nombre",
@@ -354,6 +358,36 @@ describe('allSearchFunctions', () => {
       result = dumpUrl([input8, input12, input13,], PLANTILLA_NUMBER_AND_DATE_FIELDS);
       expect(result).toBe('search[]=Nombre:carlos&search[]=libro,documento');
     });
+
+    test('Caso 12: incluir SearchDTO y FilterDTO', () => {
+      const input8: SearchDTO = {
+        type: "plantilla",
+        title: "Buscar por Nombre",
+        field: "Nombre",
+        operator: SearchOperators.like,
+        value: "carlos"
+      };
+      const filter1: FilterDTO = {
+        type: "plantilla",
+        title: "Buscar por activo",
+        field: "activo",
+        operator: SearchOperators.equals,
+        value: true
+      };
+      const input12: SearchDTO = {
+        type: "plantilla",
+        title: "Buscar en todo",
+        field: "all",
+        operator: SearchOperators.like,
+        value: "libro"
+      };
+      let result = dumpUrl([input8], [], [filter1]);
+      expect(result).toBe('search[]=Nombre:carlos&search[]=activo:=true');
+
+      result = dumpUrl([input8, input12], [], [filter1]);
+      expect(result).toBe('search[]=Nombre:carlos&search[]=libro&search[]=activo:=true');
+    });
+
   });
 
   describe('getSearchInputValue', () => {

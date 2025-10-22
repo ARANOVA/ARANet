@@ -91,10 +91,11 @@ export default async function RootLayout({
     navItems.push({
       header: 'Fiscal',
       items: [
-        { name: 'Modelo 347', href: '/legal/347', icon: <UsersIcon />, children: []},
-      ]
+        { name: 'Modelo 347', href: '/legal/347', icon: <UsersIcon />, children: [
+          { name: 'Comprobar verifactu', href: '/legal/verifactu',  icon: <UsersIcon /> },
+      ]},
+      ],
     });
-  }
 
   if (hasAdminRights(me.data)) {
     navItems.push({
