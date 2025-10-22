@@ -53,7 +53,7 @@ export const InvoiceItems = ({ invoice, className }: Props) => {
           model="invoice_item"
           idField="id"
           filters={filters}
-          editMode={!!(state?.value && ['sent', 'deleted'].indexOf(state?.value) === -1)}
+          editMode={(!!state?.value && ['sent', 'deleted', 'payed', 'pending-payment'].indexOf(state?.value) === -1)}
           editingRows={editingRows}
           title="Items de la factura"
           setEditingRows={setEditingRows}

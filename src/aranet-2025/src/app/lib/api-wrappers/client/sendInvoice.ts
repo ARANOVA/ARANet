@@ -22,7 +22,7 @@ export const sendInvoice = async (
     return json.data[keys[0]] as SingleResponse<void>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    logError(`POST (UPDATE) /api/graphql ${model}: ${err}`);
+    logError(`POST (UPDATE) /api/verifactu/send: ${err}`);
     return {
       statusCode: 500,
       error: `${err}`,

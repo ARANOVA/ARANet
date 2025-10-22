@@ -152,7 +152,7 @@ export const verifactuBuildRegistroAltaXML = (
 export const verifactuCalcHuella = async (
   invoice: aranet_invoice_join_items,
   huellaPrev: string | null,
-  type: 'alta' | 'cancelacion',
+  type: 'alta' | 'cancelacion' | 'evento',
 ): Promise<Error | string> => {
   // --- construye la cadena tal como especifique AEAT (ejemplo simplificado) ---
   const invoiceDate = toDateString(invoice.invoice_date);
@@ -190,7 +190,7 @@ export const verifactuCalcHuella = async (
       'FechaHoraHusoGenRegistro=' + generationDate,
     ];
     inputStr = input.join('&');
-  } else {
+  } else if (type === 'cancelacion') {
     // Cancelación
     const input: string[] = [
       'IDEmisorFacturaAnulada=' + process.env.COMPANY_CIF,
@@ -198,6 +198,20 @@ export const verifactuCalcHuella = async (
       'FechaExpedicionFacturaAnulada=' + invoiceDate,
       'Huella=' + (huellaPrev || ''),
       'FechaHoraHusoGenRegistro=' + generationDate,
+    ];
+    inputStr = input.join('&');
+  } else {
+    // Evento
+    const input: string[] = [
+      'NIF=' + process.env.DEV_COMPANY_CIF,
+      'ID=' + '',
+      'IdSistemaInformatico=' + process.env.DEV_APP_ID,
+      'Version=' + process.env.DEV_APP_VERSION,
+      'NumeroInstalacion=' + process.env.DEV_APP_LOCALID,
+      'NIF=' + process.env.COMPANY_CIF,
+      'TipoEvento=' + 'E1',
+      'HuellaEvento=' + (huellaPrev || ''),
+      'FechaHoraHusoGenEvento=' + generationDate,
     ];
     inputStr = input.join('&');
   }

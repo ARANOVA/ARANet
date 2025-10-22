@@ -64,7 +64,6 @@ export default async function CheckVerifactuPage() {
     } else {
       try {
         if (result.ResultadoConsulta !== 'SinDatos') {
-          console.log(`Procesando resultados de Verifactu para ${currentYear}-${month}...`);
           result.RegistroRespuestaConsultaFactuSistemaFacturacion.forEach((inv) => {
             const aux = (inv.IDFactura.NumSerieFactura || '').split(`F-${currentYear}-`);
             const d = toDateFromShort(inv.IDFactura.FechaExpedicionFactura);
@@ -93,10 +92,7 @@ export default async function CheckVerifactuPage() {
               invoice_tax_rate: tax_rate,
               invoice_total_amount: base,
             });
-            console.log(list.data!.items);
           });
-        } else {
-          console.log(`No hay datos de Verifactu para ${currentYear}-${month}.`);
         }
       } catch (e) {
         console.log(`Error procesando resultados de Verifactu para ${currentYear}-${month}:`, e);
@@ -110,14 +106,11 @@ export default async function CheckVerifactuPage() {
   list.data!.items.sort((a, b) => {
     const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
     const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
-
-    // Si quieres los null al final:
+    // null al final
     if (!a.created_at) return 1;
     if (!b.created_at) return -1;
-
     return dateA - dateB;
   });
-
 
   return (
     <>
@@ -131,11 +124,12 @@ export default async function CheckVerifactuPage() {
         />
         <ToastStoreAlert />
         <SimpleTable<VerifactuInvoice>
-          editMode={false}
+          editMode={true}
           sortField="created_at"
           sortDir='asc'
           columns={invoiceVerifactuColumns as ColumnDef<VerifactuInvoice, any>[]}
           data={list}
+          includeAddRow={false}
         >
         </SimpleTable>
       </div>

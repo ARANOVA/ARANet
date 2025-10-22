@@ -31,6 +31,7 @@ interface Props<T> {
   setEditingRows?: (v: boolean) => void;
   title?: string;
   editMode: boolean;
+  includeAddRow?: boolean;
 }
 
 export const SimpleTable = <T extends { id: number }>({
@@ -38,6 +39,7 @@ export const SimpleTable = <T extends { id: number }>({
   data,
   setEditingRowId,
   saveRowFn,
+  setEditingRows,
   ...props
 }: Props<T>) => {
   const formUi = useFormUiStore();

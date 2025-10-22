@@ -5,6 +5,7 @@ import { aranet_invoice_join_client } from '@/interfaces';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Link from "next/link";
 import { amountMeta110, amountMeta130, amountMeta60, checkCenterMeta60, dateCenterMeta130, tableLinkClassname, textLeftMeta130, textLeftMeta170 } from '../consts.utils';
+import { getErrorMessage } from '@/utils/client/verifactu';
 
 const columnHelper = createColumnHelper<aranet_invoice_join_client>()
 
@@ -132,6 +133,21 @@ const total = columnHelper.accessor(
   }
 );
 
+const verifactu_error = columnHelper.accessor(
+  row => `${row.sent_response_code}`,
+  {
+    id: "sent_response_code",
+    header: "Estado",
+    size: 130,
+    enableSorting: false,
+    meta: dateCenterMeta130,
+    cell: info => {
+      const value = info.getValue();
+      return value ? <span title={getErrorMessage(value)}>{value}</span> : null;
+    }
+  }
+);
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const invoiceColumns: ColumnDef<any, any>[] = [
   // columnHelper.accessor("id", {
@@ -180,13 +196,7 @@ export const invoiceVerifactuColumns: ColumnDef<any, any>[] = [
   client,
   date,
   created_at,
-  columnHelper.accessor("sent_response_code", {
-    header: "Estado",
-    size: 60,
-    enableHiding: false,
-    enableSorting: false,
-    meta: checkCenterMeta60,
-  }),
+  verifactu_error,
   base,
   rate,
   total,

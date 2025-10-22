@@ -16,7 +16,14 @@ const datePipe = (raw: Date | string, locale: string = navigator?.language || 'e
 }
 
 export const getModelState = (
-  data: { deleted_at: Date | null; freeze_at?: Date | null; signed_at?: Date | null; sent_at?: Date | null; },
+  data: {
+    deleted_at: Date | null;
+    freeze_at?: Date | null;
+    signed_at?: Date | null;
+    sent_at?: Date | null;
+    invoice_payment_status_id?: number | null;
+    invoice_payment_date?: Date | null;
+  },
 ): { value: string; title: string, suffix?: string } | undefined => {
   if (data.deleted_at) {
     return { value: 'deleted', title: 'Borrado', suffix: datePipe(data.deleted_at) };
@@ -29,6 +36,12 @@ export const getModelState = (
   }
   if (data.freeze_at) {
     return { value: 'frozen', title: 'Congelado', suffix: datePipe(data.freeze_at) };
+  }
+  if (data.invoice_payment_status_id === 3 && data.invoice_payment_date) {
+    return { value: 'payed', title: 'Pagada', suffix: datePipe(data.invoice_payment_date) };
+  }
+  if (data.invoice_payment_status_id === 1) {
+    return { value: 'pending-payment', title: 'Pendiente de pago' };
   }
   return undefined;
 }

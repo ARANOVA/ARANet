@@ -36,7 +36,6 @@ export const verifactuConsulta = async (year: number, month: number): Promise<Er
       throw resp;
     }
     // 5. Hacer algo con esto
-    console.log({resp})
     return resp;
   } catch (err) {
     console.log('Error al validar XML:', err);
