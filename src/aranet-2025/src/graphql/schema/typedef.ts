@@ -777,6 +777,7 @@ input WhereInput {
   id: IntFilter
   sent_at: DateTimeFilter
   item_invoice_id: IntFilter
+  invoice_prefix: StringFilter
 }
 
 type Query {

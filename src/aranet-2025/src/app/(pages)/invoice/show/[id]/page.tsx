@@ -74,7 +74,6 @@ export default async function InvoiceShowPage({ params }: Props) {
     sent_at: { not: null },
   }
   const prevInvoices = await dataPlain.useInvoices(1, 1, 'sent_at', 'desc', [], prevFilter);
-  console.log('Prev invoices:', prevInvoices?.data?.items);
   let prevInvoice: aranet_invoice_join_all | null = null;
   let showSendButton = true;
   if ((prevInvoices?.data?.items || []).length > 0) {

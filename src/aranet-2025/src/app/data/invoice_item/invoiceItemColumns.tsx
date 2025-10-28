@@ -143,6 +143,7 @@ export const getInvoiceItemColumns = (
           : '';
         },
         cell: info => {
+          // TODO (pablo.sanchezg): ver cómo actualizar después de guardar/modificar
           const value = info.getValue();
           return value !== null
           ? new Intl.NumberFormat(locale, {

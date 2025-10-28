@@ -5,6 +5,7 @@ import {
   WhereInput,
   ListResponse,
   SingleResponse,
+  RowAction,
 } from '@aranova/aranova-react-ui';
 import { ColumnDef } from '@tanstack/react-table';
 import { useFormUiStore } from '@/store';
@@ -22,6 +23,7 @@ interface Props<T> {
   sortDir?: 'desc' | 'asc';
   columns: ColumnDef<T, unknown>[];
   data?: ListResponse<T>;
+  actions?: RowAction<T>[];
   filters?: WhereInput,
   children?: React.ReactNode;
   saveRowFn?: (model: string, data: unknown, filters: WhereInput | null) => Promise<SingleResponse<unknown>>;
@@ -38,10 +40,16 @@ export const SimpleTable = <T extends { id: number }>({
   model,
   data,
   setEditingRowId,
-  saveRowFn,
-  setEditingRows,
   ...props
 }: Props<T>) => {
+  // [
+          //   {
+          //     label: "Eliminar",
+          //     onClick: (data) => console.log("Eliminar", data[idField as keyof typeof data] as number),
+          //     className: "btn btn-danger",
+          //   },
+          // ]
+
   const formUi = useFormUiStore();
   // // Modal (delete row)
   const handleDelete = (
@@ -73,7 +81,6 @@ export const SimpleTable = <T extends { id: number }>({
         {...props}
         setEditingRowId={setEditingRowId}
         deleteFn={handleDelete}
-        saveRowFn={saveRowFn}
       />
     </>
   );
