@@ -87,4 +87,4 @@ npx prisma migrate deploy
 2. Modificar / Crear fichero de variables de entorno ```cp env.template .env```
 3. Instalar paquetes NPM ```pnpm i```
 4. Crear la base de datos ```npx prisma migrate deploy```
-5. 
+5. Cargar datos de ejemplo 
