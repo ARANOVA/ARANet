@@ -62,6 +62,7 @@ export const LIST_QUERIES = {
             budget_total_amount
             created_at
             updated_at
+            deleted_at
             client {
               client_company_name
               client_unique_name

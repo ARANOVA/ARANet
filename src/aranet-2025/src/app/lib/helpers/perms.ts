@@ -14,7 +14,7 @@ export const isAdmin = (user?: UserWithRoles | UserWithroles): boolean => {
 
 export const isEmployee = (user?: UserWithRoles | UserWithroles): boolean => {
   const roles: string | string[] = user?.Roles ?? user?.roles ?? [];
-  return user?.is_super_admin || roles.indexOf('employee') >= 0;
+  return user?.is_super_admin || roles.indexOf('admin') >= 0 || roles.indexOf('employee') >= 0;
 }
 
 export const isRole = (role: string, user?: UserWithRoles | UserWithroles): boolean => {
