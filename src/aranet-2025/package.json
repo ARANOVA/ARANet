@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "seed": "npx ts-node prisma/seed.ts",
+    "seed": "npx tsx prisma/seed.ts",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test:bdd": "npx cucumber-js",
@@ -58,6 +58,7 @@
   "devDependencies": {
     "@cucumber/cucumber": "^12.2.0",
     "@eslint/eslintrc": "^3",
+    "@faker-js/faker": "^10.1.0",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/jest": "^30.0.0",
     "@types/luxon": "^3.7.1",

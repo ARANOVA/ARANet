@@ -139,3 +139,4 @@ export default async function RootLayout({
     </ServerQueryProvider>
   );
 }
+}
