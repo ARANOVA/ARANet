@@ -79,3 +79,12 @@ npx prisma migrate deploy
 | R3 | Créditos incobrables (Art. 80. Cuatro de la LIVA). | Se utiliza cuando la modificación de la base imponible se debe a que los créditos se consideran total o parcialmente incobrables (por haber pasado el tiempo legalmente establecido y haber cumplido los requisitos formales de reclamación). |
 | R4 | Otras causas previstas en el artículo 80 de la LIVA. | Es la categoría residual que se aplica para la mayoría de los casos de ajuste o modificación no cubiertos por las anteriores, como: - Descuentos, rebajas o bonificaciones posteriores a la operación. - Devolución de bienes, envases o embalajes (si no se realizan al mismo tiempo que un suministro posterior). - Corrección de precios provisionales. |
 | R5 | Factura rectificativa de una factura simplificada. | Se usa específicamente para corregir o rectificar una factura que originalmente se emitió como una factura simplificada (el antiguo "ticket"). |
+
+
+## Instalación desde '0'
+
+1. Levantar docker ```docker compose up```
+2. Modificar / Crear fichero de variables de entorno ```cp env.template .env```
+3. Instalar paquetes NPM ```pnpm i```
+4. Crear la base de datos ```npx prisma migrate deploy```
+5. 

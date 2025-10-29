@@ -7,6 +7,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
+    "seed": "npx ts-node prisma/seed.ts",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test:bdd": "npx cucumber-js",
@@ -22,6 +23,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.16",
     "@headlessui/react": "^2.2.8",
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.16.3",
@@ -34,7 +36,6 @@
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
-    "crypto": "^1.0.1",
     "graphql": "^16.11.0",
     "graphql-scalars": "^1.24.2",
     "graphql-yoga": "^5.15.2",
@@ -73,6 +74,7 @@
     "tailwindcss": "^4",
     "ts-jest": "^29.4.4",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.2"
   }
 }

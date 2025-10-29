@@ -2,7 +2,6 @@ import os from 'os';
 import fs from 'fs';
 import path from 'path';
 import { exec } from "child_process";
-import crypto from 'crypto';
 import { aranet_invoice_join_items, aranet_invoice_verifactu } from "@/interfaces";
 import { ClientSSLSecurityPFX, createClientAsync, IOptions } from "soap";
 import { buildXmlConsulta, buildXmlRegistro } from './xmlBuilder';
