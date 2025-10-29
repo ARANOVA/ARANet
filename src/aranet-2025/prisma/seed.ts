@@ -19,6 +19,238 @@ async function main() {
     },
   });
 
+  // aranet_budget_status
+  const aranet_budget_status_titles = [
+    'Aceptado, no facturable', 
+    'Abierto/Sin enviar',
+    'Cerrado/Enviado',
+    'Aceptado',
+    'Rechazado',
+    'Caducado',
+  ];
+
+  for (const title of aranet_budget_status_titles) {
+    const id = aranet_budget_status_titles.indexOf(title) + 1;
+    await prisma.aranet_budget_status.upsert({
+      where: { id },
+      update: {},
+      create: { id, budget_status_title: title },
+    });
+  }
+
+  // aranet_expense_category
+  const aranet_expense_category_titles_and_concept = [
+    ['Alquiler de coches', 'Viajes'],
+    ['Alquiler oficina', 'Oficina'],
+    ['Comidas', 'Viajes'],
+    ['Compra pequeño material', 'Materiales'],
+    ['Comunicaciones', 'Comunic.'],
+    ['Equipamiento informático', 'Informat.'],
+    ['Gasolina', 'Viajes'],
+    ['Gastos bancarios', 'Impuestos'],
+    ['Gastos de constitución', 'Impuestos'],
+    ['Gastos de personal', 'Personal'],
+    ['Gastos fiscales', 'Impuestos'],
+    ['Gastos generales', 'Oficina'],
+    ['Gastos postales/envíos', 'Oficina'],
+    ['Hoteles', 'Viajes'],
+    ['I+D', 'I+D'],
+    ['Impuestos', 'Impuestos'],
+    ['Marketing & Publicidad', 'Marketing'],
+    ['Materiales/Equipos para proyecto', 'Materiales'],
+    ['Nóminas', 'Personal'],
+    ['Papelería', 'Marketing'],
+    ['Parking/Peaje', 'Viajes'],
+    ['Servicios de Internet', 'Comunic.'],
+    ['Servicios externos', 'Externos'],
+    ['Suscripciones a medios', 'Oficina'],
+    ['Varios', 'Varios'],
+    ['Vuelo/Transporte público', 'Viajes'],
+    ['I.V.A.', 'IVA'],
+    ['Electricidad', 'Electricidad'],
+    ['Agua', 'Agua'],
+    ['Formación', 'Formación'],
+    ['Donaciones', 'Donaciones'],
+  ];
+
+  // TODO
+
+  // aranet_income_category
+  const aranet_income_category_titles = [
+    'Ingresos financieros',
+    'Subvenciones',
+  ];
+
+  // TODO
+
+  // aranet_invoice_category
+  const aranet_invoice_category_titles = [
+    'Horas',
+    'Días',
+    'Servicio',
+    'Producto',
+    'Mixto',
+    'Intervención',
+  ];
+  
+  // TODO
+
+  // aranet_kind_of_company
+  const aranet_kind_of_company_title_and_description = [
+    ['Desarrollo de software', 'Empresas de desarrollo de software'],
+    ['Telecomunicaciones', 'Empresas de telecomunicaciones'],
+    ['Distribuidor/Importador', 'Empresas de distribución/importación'],
+    ['Integrador-Servicios', 'Empresas de integración y servicios'],
+    ['Servicios', 'Empresas de servicios'],
+    ['Particular', ''],
+    ['Otros', ''],
+    ['Organismo oficial', ''],
+    ['Comercio', 'Comercios, grandes almacenes, tiendas online'],
+    ['Fabricante', 'Fabricantes, Multinacionales'],
+    ['Publicaciones', 'Periódicos, revistas, etc.'],
+    ['Cajas y bancos', ''],
+    ['Restaurante', ''],
+  ];
+
+  // TODO
+
+  // aranet_kind_of_invoice
+  const aranet_kind_of_invoice_titles = [
+    'Factura',
+    'Factura proforma',
+    'Abono',
+    'Factura rectificativa',
+  ];
+
+  // TODO
+
+  // aranet_payment_condition
+  const aranet_payment_condition_titles_and_conditions = [
+    [-1, -1, 'Sin especificar'],
+    [0, -1, 'Transferencia por adelantado'],
+    [15, -1, '15 Días'],
+    [30, -1, '30 Días'],
+    [60, -1, '60 Días'],
+    [90, -1, '90 Días'],
+    [120, -1, '120 Días'],
+    [0, 15, 'Inmediato, pago el día 15 del mes'],
+    [15, 15, '15 Días, pago el día 15 del mes'],
+    [15, 15, '30 Días, pago el día 15 del mes'],
+    [60, 15, '60 Días, pago el día 15 del mes'],
+    [90, 15, '90 Días, pago el día 15 del mes'],
+    [120, 15, '120 Días, pago el día 15 del mes'],
+    [0, 30, 'Inmediato, pago el día 30 del mes'],
+    [15, 30, '15 Días, pago el día 30 del mes'],
+    [30, 30, '30 Días, pago el día 30 del mes'],
+    [60, 30, '60 Días, pago el día 30 del mes'],
+    [90, 30, '90 Días, pago el día 30 del mes'],
+    [120, 30, '120 Días, pago el día 30 del mes'],
+    [0, -1, 'Transferencia'],
+    [-1, -1, '30% a la aceptación, 30% el 15/04/10, 40% restante el 15/06/10'],
+    [-1, -1, '30% a la aceptación, 30% el 28/06/10 (PGM 100), 40% restante el 19/07/10. <br/>Pago en 60 días máximo.'],
+    [-1, -1, '40% con transferencia por adelantado a la aceptación, resto 30 días desde la entrega'],
+    [30, -1, 'Giro a 30 días'],
+    [-1, -1, '50% a la aceptación, 50% a mitad de ejecución'],
+    [90, -1, ' 50% a la aceptación, 50% a final de ejecución'],
+    [15, 21, '15 Días, pago el día 21 del mes'],
+    [30, 21, '30 Días, pago el día 21 del mes'],
+    [60, 21, '60 Días, pago el día 21 del mes'],
+    [90, 21, '90 Días, pago el día 21 del mes'],
+    [30, 0, '50% a la aceptación, 50% a final de ejecución'],
+  ];
+
+  // TODO
+
+  // aranet_payment_method
+  const aranet_payment_method_titles = [
+    'Cargo en cuenta',
+    'Cheque',
+    'Domiciliación',
+    'Efectivo',
+    'Tarjeta de crédito',
+    'Transferencia',
+    'Pendiente de pagar',
+    'Reposición de fondos',
+  ];
+
+  // TODO
+
+  // aranet_payment_status
+  const aranet_payment_status_title = [
+    'Pendiente de pago',
+    'Cumplido/Sin pagar',
+    'Cumplido/Pagado',
+    'Pendiente de enviar',
+  ];
+
+  // TODO
+
+  // aranet_project_category
+  const aranet_project_category_titles = [
+    'Sin determinar',
+  ];
+
+  // TODO
+
+  // aranet_project_status
+  const aranet_project_status_titles = [
+    'Sin empezar',
+    'En progreso',
+    'Completado',
+    'En espera',
+  ];
+
+  // TODO
+
+  // aranet_type_of_hour
+  const aranet_type_of_hour_title_and_props = [
+    ['Gestor de Proyecto', 'Gestión técnica de proyectos', 25.0],
+    ['Requisitos', 'Toma de requisitos, reuniones previas, etc', 23.0],
+    ['Analista', 'Analista', 23.0],
+    ['Programador', 'Programación', 19.0],
+    ['Diseñador', 'Diseño de interfaces, gráficos, etc.', 23.0],
+    ['Soporte de cliente', 'Soporte de clientes', 25.0],
+  ];
+
+  // TODO
+
+  // aranet_type_of_invoice_item
+  const aranet_type_of_invoice_item_titles = [
+    'Días',
+    'Horas',
+    'Mixto',
+    'Producto',
+    'Servicio',
+  ];
+
+  // TODO
+
+  // sf_setting
+  const sf_setting_vars = [
+    ['all', 'VERSION', '2.0.0', 'Project version'],
+    ['all', 'TEMP_PATH', '/tmp', 'Temporary path'],
+    ['all', 'COMPANY', 'ARANOVA', 'Company'],
+    ['all', 'COMPANY_LOGO', 'aranova_logo.gif', 'Company logo'],
+    ['all', 'COMPANY_SITE', 'https://www.aranova.es', 'Company URL'],
+    ['all', 'TITLE', 'ARANet Backoffice Web Management', 'Full title application'],
+    ['all', 'ICON', 'aranova.ico', 'Application icon'],
+    ['all', 'HOME_URL', 'https://aranet.aranova.es', 'Application site url'],
+    ['all', 'CHARSET', 'utf-8', 'Charset'],
+    ['all', 'DESCRIPTION', 'Aplicación web de gestión, control y organización de ARANOVA', 'Application description'],
+    ['all', 'MARGIN_MODEL', 'sales', 'Modelo de márgenes, puede ser sales o costs'],
+    ['all', 'SMTP_MAIL_HOST', 'mail.aranova.es', 'SMTP Mail host for sending email messages'],
+    ['all', 'SMTP_MAIL_USER', 'info@aranova.es', 'Mail user'],
+    ['all', 'SMTP_MAIL_PASSWORD', 'xxxxx', 'Mail password'],
+    ['all', 'MAIL_FROM', 'ARANOVA <info@aranova.es>', 'Mail direction used for "from" field'],
+    ['all', 'MAIL_SENDER', 'ARANOVA <info@aranova.es>', 'Mail direction used for "sender" field'],
+    ['all', 'MAIL_REPLY_TO', 'ARANOVA <info@aranova.es>', 'Mail direction used for "reply_to" field'],
+    ['all', 'INVOICE_NUMBER_FORMAT', '%04s', 'For more information see http://es.php.net/manual/es/function.sprintf.php'],
+    ['all', 'INVOICE_FIRST_NUMBER', '1', 'First number used for invoice secuence'],
+    ['all', 'DEMO_MODE', '0', 'Para demo, muestra datos de acceso'],
+  ];
+
+  // TODO
+
   const addresses = [
     {
       address_line1: "123 Main St",
