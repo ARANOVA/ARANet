@@ -88,3 +88,8 @@ npx prisma migrate deploy
 3. Instalar paquetes NPM ```pnpm i```
 4. Crear la base de datos ```npx prisma migrate deploy```
 5. Cargar datos de ejemplo ```npm run seed```
+
+# Para vaciar la base de datos:
+```
+npx prisma migrate reset
+```

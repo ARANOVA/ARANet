@@ -3,6 +3,10 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
+generator custom_generator {
+    provider = "prisma-generator-fake-data"
+}
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
