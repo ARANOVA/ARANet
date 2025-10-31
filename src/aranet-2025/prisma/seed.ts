@@ -1,5 +1,6 @@
 import { PrismaClient } from "@/generated/prisma";
-import {fakearanet_invoiceComplete} from "./fake-data";
+import * as fake from "./fake-data";
+import { object } from "zod";
 const prisma = new PrismaClient();
 
 export async function upsertData<T>(
@@ -478,17 +479,31 @@ async function main() {
     ["member", "Application member permission"],
   ];
 
-  await upsertData("sf_guard_group", groups, undefined, [
+  await upsertData("sf_guard_group_permission", groups, undefined, [
     { field: "name", value: 0 },
     { field: "description", value: 1 },
   ]);
 
 
   ///AHORA FAKE DATA ----------------------------------------------------
-  await prisma.aranet_invoice.upsert({
-    where: { id: 1 },
-    update: fakearanet_invoiceComplete(),
-    create: fakearanet_invoiceComplete()
+  // await prisma.aranet_invoice.upsert({
+  //   where: { id: 1 },
+  //   update: fakearanet_invoiceComplete(),
+  //   create: fakearanet_invoiceComplete()
+  // });
+
+  Object.entries(fake).forEach(async ([key, func]) => {
+    if (key.startsWith("fake") && key.endsWith("Complete")) {
+      const modelName = key.replace("Complete", "").replace("fake", "");
+      console.log(`Inserting fake data for ${modelName}...`);
+      // const data = func();
+      // //@ts-ignore
+      // await prisma[modelName].upsert({
+      //   where: { id: 1 },
+      //   update: data,
+      //   create: data,
+      // });
+    }
   });
 
 
