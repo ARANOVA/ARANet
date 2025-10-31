@@ -474,15 +474,7 @@ async function main() {
     { field: "name" },
     { field: "description" },
   ]);
-  const groups = [
-    ["admin", "Administrator permission"],
-    ["member", "Application member permission"],
-  ];
 
-  await upsertData("sf_guard_group_permission", groups, undefined, [
-    { field: "name", value: 0 },
-    { field: "description", value: 1 },
-  ]);
 
 
   ///AHORA FAKE DATA ----------------------------------------------------
@@ -496,13 +488,13 @@ async function main() {
     if (key.startsWith("fake") && key.endsWith("Complete")) {
       const modelName = key.replace("Complete", "").replace("fake", "");
       console.log(`Inserting fake data for ${modelName}...`);
-      // const data = func();
-      // //@ts-ignore
-      // await prisma[modelName].upsert({
-      //   where: { id: 1 },
-      //   update: data,
-      //   create: data,
-      // });
+      const data = func();
+      //@ts-ignore
+      await prisma[modelName].upsert({
+        where: { id: 1 },
+        update: await data,
+        create: await data,
+      });
     }
   });
 

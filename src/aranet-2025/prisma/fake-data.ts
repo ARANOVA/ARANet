@@ -1,223 +1,236 @@
 import {} from "../src/generated/prisma/client";
 import { faker } from "@faker-js/faker";
 
-export function fakearanet_addressComplete() {
+export async function fakearanet_addressComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    address_line1: undefined,
-    address_line2: undefined,
-    address_location: undefined,
-    address_state: undefined,
-    address_postal_code: undefined,
-    address_country: undefined,
-    address_distance: undefined,
+    id: 1,
+    address_line1: faker.location.streetAddress(),
+    address_line2: faker.location.secondaryAddress(),
+    address_location: faker.location.city(),
+    address_state: faker.location.state(),
+    address_postal_code: faker.location.zipCode(),
+    address_country: "eu",
+    address_distance: faker.number.float({ min: 0, max: 100 }),
   };
 }
-
-export function fakearanet_budgetComplete() {
+export async function fakearanet_budgetComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    budget_prefix: undefined,
-    budget_number: faker.lorem.words(5),
-    budget_revision: 0,
-    budget_date: faker.date.anytime(),
-    budget_valid_date: faker.date.anytime(),
-    budget_approved_date: undefined,
-    budget_client_id: undefined,
-    budget_project_id: undefined,
-    budget_category_id: undefined,
-    budget_title: undefined,
-    budget_comments: undefined,
-    budget_print_comments: 0,
-    budget_tax_rate: 0,
-    budget_freight_charge: 0,
-    budget_total_cost: 0,
-    budget_total_amount: 0,
-    budget_payment_condition_id: undefined,
-    budget_status_id: 0,
+    id: 1,
+    budget_prefix: faker.string.alpha({ length: 3 }).toUpperCase(),
+    budget_number: faker.string.numeric(6),
+    budget_revision: faker.number.int({ min: 0, max: 5 }),
+    budget_date: faker.date.recent({ days: 365 }),
+    budget_valid_date: faker.date.soon({ days: 90 }),
+    budget_approved_date: faker.date.recent({ days: 180 }),
+    budget_client_id: 1, // mantenemos relación
+    budget_project_id: 1, // mantenemos relación
+    budget_category_id: faker.number.int({ min: 1, max: 5 }),
+    budget_title: faker.commerce.productName(),
+    budget_comments: faker.lorem.sentence(),
+    budget_print_comments: faker.number.int({ min: 0, max: 1 }),
+    budget_tax_rate: faker.number.int({ min: 5, max: 21 }),
+    budget_freight_charge: faker.number.float({ min: 0, max: 100 }),
+    budget_total_cost: faker.number.float({ min: 100, max: 10000 }),
+    budget_total_amount: faker.number.float({ min: 100, max: 12000 }),
+    budget_payment_condition_id: faker.number.int({ min: 1, max: 3 }),
+    budget_status_id: faker.number.int({ min: 1, max: 5 }),
     budget_is_last: 1,
-    created_at: undefined,
-    created_by: undefined,
-    updated_at: undefined,
-    updated_by: undefined,
+    created_at: faker.date.past(),
+    created_by: 1,
+    updated_at: faker.date.recent(),
+    updated_by: 1,
     deleted_at: undefined,
     deleted_by: undefined,
   };
 }
 
-export function fakearanet_budget_itemComplete() {
+export async function fakearanet_budget_itemComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    item_order: 0,
-    item_type_id: undefined,
-    item_is_optional: 0,
-    item_description: undefined,
-    item_quantity: 0,
-    milestone_task_id: undefined,
-    item_task_id: undefined,
-    item_cost: 0,
-    item_margin: 0,
-    item_retail_price: 0,
-    item_tax_rate: 0,
-    item_budget_id: undefined,
-    item_budget_type_id: undefined,
+    id: 1,
+    item_order: faker.number.int({ min: 1, max: 10 }),
+    item_type_id: faker.number.int({ min: 1, max: 5 }),
+    item_is_optional: faker.number.int({ min: 0, max: 1 }),
+    item_description: faker.commerce.productDescription(),
+    item_quantity: faker.number.int({ min: 1, max: 20 }),
+    milestone_task_id: faker.number.int({ min: 1, max: 10 }),
+    item_task_id: faker.number.int({ min: 1, max: 10 }),
+    item_cost: faker.number.float({ min: 10, max: 1000 }),
+    item_margin: faker.number.float({ min: 5, max: 50 }),
+    item_retail_price: faker.number.float({ min: 20, max: 1500 }),
+    item_tax_rate: faker.number.int({ min: 5, max: 21 }),
+    item_budget_id: 1, // mantenemos relación con budget
+    item_budget_type_id: faker.number.int({ min: 1, max: 3 }),
   };
 }
-
-export function fakearanet_cash_itemComplete() {
+export async function fakearanet_cash_itemComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    cash_item_name: faker.lorem.words(5),
-    cash_item_comments: undefined,
-    cash_item_date: faker.date.anytime(),
-    cash_item_amount: 0,
-    created_at: undefined,
-    created_by: undefined,
-    updated_at: undefined,
-    updated_by: undefined,
+    id: 1,
+    cash_item_name: faker.commerce.productName(),
+    cash_item_comments: faker.lorem.sentence(),
+    cash_item_date: faker.date.recent({ days: 180 }),
+    cash_item_amount: faker.number.float({ min: 10, max: 1000 }),
+    created_at: faker.date.past(),
+    created_by: 1,
+    updated_at: faker.date.recent(),
+    updated_by: 1,
     deleted_at: undefined,
     deleted_by: undefined,
   };
 }
 
-export function fakearanet_clientComplete() {
+export async function fakearanet_clientComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    client_unique_name: faker.lorem.words(5),
-    client_company_name: faker.lorem.words(5),
-    client_cif: undefined,
-    client_kind_of_company_id: undefined,
-    client_since: undefined,
-    client_website: undefined,
-    client_comments: undefined,
-    client_has_tags: 0,
-    created_at: undefined,
-    created_by: undefined,
-    updated_at: undefined,
-    updated_by: undefined,
+    id: 1,
+    client_unique_name: faker.internet.username(),
+    client_company_name: faker.company.name(),
+    client_cif: faker.string.alphanumeric({ length: 9 }).toUpperCase(),
+    client_kind_of_company_id: faker.number.int({ min: 1, max: 5 }),
+    client_since: faker.date.past({ years: 10 }),
+    client_website: faker.internet.url(),
+    client_comments: faker.lorem.sentence(),
+    client_has_tags: faker.number.int({ min: 0, max: 1 }),
+    created_at: faker.date.past(),
+    created_by: 1,
+    updated_at: faker.date.recent(),
+    updated_by: 1,
     deleted_at: undefined,
     deleted_by: undefined,
   };
 }
 
-export function fakearanet_contactComplete() {
+export async function fakearanet_contactComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    contact_salutation: undefined,
-    contact_first_name: undefined,
-    contact_last_name: undefined,
-    contact_email: undefined,
-    contact_phone: undefined,
-    contact_fax: undefined,
-    contact_mobile: undefined,
-    contact_birthday: undefined,
-    contact_org_unit: undefined,
-    created_at: undefined,
-    created_by: undefined,
-    updated_at: undefined,
-    updated_by: undefined,
+    id: 1,
+    contact_salutation: faker.person.prefix(),
+    contact_first_name: faker.person.firstName(),
+    contact_last_name: faker.person.lastName(),
+    contact_email: faker.internet.email(),
+    contact_phone: "65235986",
+    contact_fax: "65235986",
+    contact_mobile: "65235986",
+    contact_birthday: faker.date.birthdate({ min: 18, max: 65, mode: "age" }),
+    contact_org_unit: faker.commerce.department(),
+    created_at: faker.date.past(),
+    created_by: 1,
+    updated_at: faker.date.recent(),
+    updated_by: 1,
     deleted_at: undefined,
     deleted_by: undefined,
   };
 }
 
-export function fakearanet_expense_itemComplete() {
+export async function fakearanet_expense_itemComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    expense_item_name: faker.lorem.words(5),
-    expense_item_comments: undefined,
-    expense_purchase_date: faker.date.anytime(),
-    expense_purchase_by: faker.number.int(),
-    expense_item_category_id: undefined,
-    expense_item_payment_method_id: undefined,
-    expense_item_payment_check: undefined,
-    expense_item_reimbursement_id: undefined,
-    expense_item_project_id: undefined,
-    expense_item_budget_id: undefined,
-    expense_item_amount: 0,
-    expense_item_base: 0,
-    expense_item_tax_rate: 0,
-    expense_item_irpf: 0,
-    expense_item_invoice_number: undefined,
-    expense_item_vendor_id: undefined,
-    expense_validate_date: undefined,
-    expense_validate_by: undefined,
-    created_at: undefined,
-    created_by: undefined,
-    updated_at: undefined,
-    updated_by: undefined,
+    id: 1,
+    expense_item_name: faker.commerce.productName(),
+    expense_item_comments: faker.lorem.sentence(),
+    expense_purchase_date: faker.date.recent({ days: 365 }),
+    expense_purchase_by: 1,
+    expense_item_category_id: faker.number.int({ min: 1, max: 5 }),
+    expense_item_payment_method_id: faker.number.int({ min: 1, max: 3 }),
+    expense_item_payment_check: faker.finance.accountName(),
+    expense_item_reimbursement_id: 1,
+    expense_item_project_id: 1,
+    expense_item_budget_id: 1,
+    expense_item_amount: faker.number.float({ min: 10, max: 2000 }),
+    expense_item_base: faker.number.float({ min: 5, max: 1800 }),
+    expense_item_tax_rate: faker.number.int({ min: 5, max: 21 }),
+    expense_item_irpf: faker.number.int({ min: 0, max: 15 }),
+    expense_item_invoice_number: faker.string.alphanumeric({ length: 8 }),
+    expense_item_vendor_id: 1,
+    expense_validate_date: faker.date.recent({ days: 30 }),
+    expense_validate_by: 1,
+    created_at: faker.date.past(),
+    created_by: 1,
+    updated_at: faker.date.recent(),
+    updated_by: 1,
     deleted_at: undefined,
     deleted_by: undefined,
-    expense_item_periodic: 0,
+    expense_item_periodic: faker.number.int({ min: 0, max: 1 }),
+  };
+}
+// ------------------- Graphic -------------------
+export async function fakearanet_graphicComplete() {
+  return {
+    id: 1,
+    graphic_name: faker.lorem.words(2),
+    data_points: faker.number.int({ min: 1, max: 5 }),
+    start_date: faker.date.past({ years: 2 }),
+    end_date: faker.date.recent(),
+    is_default: faker.number.int({ min: 0, max: 1 }),
+    created_at: faker.date.past(),
+    created_by: 1,
+    updated_at: faker.date.recent(),
+    updated_by: 1,
   };
 }
 
-export function fakearanet_graphicComplete() {
+// ------------------- Graphic Plot -------------------
+export async function fakearanet_graphic_plotComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    graphic_name: undefined,
-    data_points: undefined,
-    start_date: undefined,
-    end_date: undefined,
-    is_default: 0,
-    created_at: undefined,
-    created_by: undefined,
-    updated_at: undefined,
-    updated_by: undefined,
-  };
-}
-export function fakearanet_graphic_plotComplete() {
-  return {
-    id: faker.number.int({ max: 2147483647 }),
-    graphic_id: undefined,
-    plot_id: undefined,
+    id: 1,
+    graphic_id: 1, // suponer que hay varios gráficos
+    plot_id: 1, // IDs de plots asociados
   };
 }
 
-export function fakearanet_income_itemComplete() {
+// ------------------- Income Item -------------------
+export async function fakearanet_income_itemComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    income_item_name: faker.lorem.words(5),
-    income_item_comments: undefined,
-    income_date: faker.date.anytime(),
-    income_item_category_id: undefined,
-    income_item_payment_method_id: undefined,
-    income_item_payment_check: undefined,
-    income_item_reimbursement_id: undefined,
-    income_item_project_id: undefined,
-    income_item_budget_id: undefined,
-    income_item_amount: 0,
-    income_item_base: 0,
-    income_item_tax_rate: 0,
-    income_item_irpf: 0,
-    income_item_invoice_number: undefined,
-    income_item_vendor_id: undefined,
-    created_at: undefined,
-    created_by: undefined,
-    updated_at: undefined,
-    updated_by: undefined,
+    id: 1,
+    income_item_name: faker.commerce.productName(),
+    income_item_comments: faker.lorem.sentence(),
+    income_date: faker.date.recent({ days: 180 }),
+    income_item_category_id: 1,
+    income_item_payment_method_id: faker.number.int({ min: 1, max: 3 }),
+    income_item_payment_check: faker.finance.accountName(),
+    income_item_reimbursement_id: 1,
+    income_item_project_id: 1,
+    income_item_budget_id: 1,
+    income_item_amount: faker.number.float({ min: 50, max: 5000 }),
+    income_item_base: faker.number.float({ min: 40, max: 4800 }),
+    income_item_tax_rate: faker.number.int({ min: 5, max: 21 }),
+    income_item_irpf: faker.number.int({ min: 0, max: 15 }),
+    income_item_invoice_number: '1',
+    income_item_vendor_id: 1,
+    created_at: faker.date.past(),
+    created_by: 1,
+    updated_at: faker.date.recent(),
+    updated_by: 1,
     deleted_at: undefined,
     deleted_by: undefined,
   };
 }
 
-export function fakearanet_indicatorComplete() {
+// ------------------- Indicator -------------------
+export async function fakearanet_indicatorComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    indicator_id: faker.number.int(),
-    indicator_value: undefined,
-    indicator_beautifier: undefined,
-    indicator_unit: undefined,
-    indicator_object_id: faker.number.int(),
-    indicator_object_class: undefined,
+    id: 1,
+    indicator_id: 1,
+    indicator_value: faker.number.float({ min: 0, max: 100 }),
+    indicator_beautifier: faker.helpers.arrayElement(["%", "$", "€", "k", ""]),
+    indicator_unit: faker.helpers.arrayElement([
+      "units",
+      "kg",
+      "m",
+      "items",
+      "",
+    ]),
+    indicator_object_id: faker.number.int({ min: 1, max: 20 }),
+    indicator_object_class: faker.helpers.arrayElement([
+      "Budget",
+      "Project",
+      "Client",
+      "Income",
+      "Expense",
+    ]),
   };
 }
-
-export function fakearanet_invoiceComplete() {
+export async function fakearanet_invoiceComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     invoice_prefix: undefined,
-    invoice_number: faker.lorem.words(5),
+    invoice_number: faker.lorem.words(1),
     invoice_date: faker.date.anytime(),
     invoice_client_id: undefined,
     invoice_project_id: undefined,
@@ -263,9 +276,9 @@ export function fakearanet_invoiceComplete() {
   };
 }
 
-export function fakearanet_invoice_itemComplete() {
+export async function fakearanet_invoice_itemComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     item_type_id: undefined,
     item_description: undefined,
     item_quantity: 0,
@@ -275,9 +288,9 @@ export function fakearanet_invoice_itemComplete() {
   };
 }
 
-export function fakearanet_notificationComplete() {
+export async function fakearanet_notificationComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     notification_type: undefined,
     notification_application: undefined,
     notification_module: undefined,
@@ -298,22 +311,22 @@ export function fakearanet_notificationComplete() {
   };
 }
 
-export function fakearanet_objectaddressComplete() {
+export async function fakearanet_objectaddressComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     objectaddress_name: undefined,
-    objectaddress_address_id: faker.number.int(),
-    objectaddress_object_id: faker.number.int(),
+    objectaddress_address_id: 1,
+    objectaddress_object_id: 1,
     objectaddress_object_class: undefined,
     objectaddress_type: undefined,
     objectaddress_is_default: 0,
   };
 }
-export function fakearanet_objectcontactComplete() {
+export async function fakearanet_objectcontactComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    objectcontact_contact_id: faker.number.int(),
-    objectcontact_object_id: faker.number.int(),
+    id: 1,
+    objectcontact_contact_id: 1,
+    objectcontact_object_id: 1,
     objectcontact_object_class: undefined,
     objectcontact_rol: undefined,
     objectcontact_is_default: 0,
@@ -324,9 +337,9 @@ export function fakearanet_objectcontactComplete() {
   };
 }
 
-export function fakearanet_plotComplete() {
+export async function fakearanet_plotComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     plot_name: undefined,
     plot_color: undefined,
     plot_type: undefined,
@@ -339,12 +352,12 @@ export function fakearanet_plotComplete() {
   };
 }
 
-export function fakearanet_projectComplete() {
+export async function fakearanet_projectComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     project_prefix: undefined,
     project_number: undefined,
-    project_name: faker.lorem.words(5),
+    project_name: faker.lorem.words(1),
     project_url: undefined,
     project_client_id: undefined,
     project_comments: undefined,
@@ -361,10 +374,10 @@ export function fakearanet_projectComplete() {
   };
 }
 
-export function fakearanet_project_frequently_taskComplete() {
+export async function fakearanet_project_frequently_taskComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    task_title: faker.lorem.words(5),
+    id: 1,
+    task_title: faker.lorem.words(1),
     task_description: undefined,
     task_priority_id: undefined,
     created_at: undefined,
@@ -376,10 +389,10 @@ export function fakearanet_project_frequently_taskComplete() {
   };
 }
 
-export function fakearanet_project_milestoneComplete() {
+export async function fakearanet_project_milestoneComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    milestone_title: faker.lorem.words(5),
+    id: 1,
+    milestone_title: faker.lorem.words(1),
     milestone_description: undefined,
     milestone_start_date: faker.date.anytime(),
     milestone_finish_date: faker.date.anytime(),
@@ -397,10 +410,10 @@ export function fakearanet_project_milestoneComplete() {
   };
 }
 
-export function fakearanet_project_taskComplete() {
+export async function fakearanet_project_taskComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    task_title: faker.lorem.words(5),
+    id: 1,
+    task_title: faker.lorem.words(1),
     task_description: undefined,
     task_start_date: undefined,
     task_finish_date: undefined,
@@ -421,16 +434,16 @@ export function fakearanet_project_taskComplete() {
   };
 }
 
-export function fakearanet_reimbursementComplete() {
+export async function fakearanet_reimbursementComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     reimbursement_title: undefined,
   };
 }
 
-export function fakearanet_reportComplete() {
+export async function fakearanet_reportComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     report_name: undefined,
     report_model: undefined,
     created_at: undefined,
@@ -440,28 +453,28 @@ export function fakearanet_reportComplete() {
   };
 }
 
-export function fakearanet_report_columnComplete() {
+export async function fakearanet_report_columnComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     report_id: undefined,
     column_php_name: undefined,
     column_name: undefined,
     column_order: undefined,
     column_width: 0,
-    column_eval_script: faker.lorem.words(5),
+    column_eval_script: faker.lorem.words(1),
   };
 }
 
-export function fakearanet_task_priorityComplete() {
+export async function fakearanet_task_priorityComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     task_priority_title: undefined,
   };
 }
 
-export function fakearanet_timesheetComplete() {
+export async function fakearanet_timesheetComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     timesheet_description: undefined,
     timesheet_hours: 0,
     timesheet_user_id: undefined,
@@ -475,11 +488,11 @@ export function fakearanet_timesheetComplete() {
   };
 }
 
-export function fakearanet_vendorComplete() {
+export async function fakearanet_vendorComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    vendor_unique_name: faker.lorem.words(5),
-    vendor_company_name: faker.lorem.words(5),
+    id: 1,
+    vendor_unique_name: faker.lorem.words(1),
+    vendor_company_name: faker.lorem.words(1),
     vendor_cif: undefined,
     vendor_kind_of_company_id: undefined,
     vendor_since: undefined,
@@ -496,41 +509,31 @@ export function fakearanet_vendorComplete() {
   };
 }
 
-export function fakefos_userComplete() {
+export async function fakefos_userComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     username: faker.internet.username(),
-    username_canonical: faker.lorem.words(5),
+    username_canonical: faker.lorem.words(1),
     email: faker.internet.email(),
-    email_canonical: faker.lorem.words(5),
+    email_canonical: faker.lorem.words(1),
     enabled: faker.datatype.boolean(),
-    salt: faker.lorem.words(5),
-    password: faker.lorem.words(5),
+    salt: faker.lorem.words(1),
+    password: faker.lorem.words(1),
     last_login: undefined,
     locked: faker.datatype.boolean(),
     expired: faker.datatype.boolean(),
     expires_at: undefined,
     confirmation_token: undefined,
     password_requested_at: undefined,
-    roles: faker.lorem.words(5),
+    roles: faker.lorem.words(1),
     credentials_expired: faker.datatype.boolean(),
     credentials_expire_at: undefined,
   };
 }
-export function fakemigration_versionsComplete() {
-  return {
-    version: faker.string.uuid(),
-  };
-}
-export function fakeschema_infoComplete() {
-  return {
-    version: faker.number.int({ max: 2147483647 }),
-  };
-}
 
-export function fakesf_auditComplete() {
+export async function fakesf_auditComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     remote_ip_address: undefined,
     object: undefined,
     object_key: undefined,
@@ -542,97 +545,33 @@ export function fakesf_auditComplete() {
   };
 }
 
-export function fakesf_file_dataComplete() {
+export async function fakesf_guard_permissionComplete() {
   return {
-    file_data_id: faker.number.int({ max: 2147483647 }),
-    file_binary_data: undefined,
-    file_info_id: undefined,
-  };
-}
-
-export function fakesf_file_infoComplete() {
-  return {
-    file_id: faker.number.int({ max: 2147483647 }),
-    file_name: undefined,
-    file_title: undefined,
-    file_size: undefined,
-    file_mime_type: undefined,
-    file_width: undefined,
-    file_height: undefined,
-    file_is_cached: undefined,
-    created_at: undefined,
-    created_by: undefined,
-    updated_at: undefined,
-    updated_by: undefined,
-    deleted_at: undefined,
-    deleted_by: undefined,
-  };
-}
-
-export function fakesf_file_objectComplete() {
-  return {
-    id: faker.number.int({ max: 2147483647 }),
-    file_object_id: undefined,
-    file_object_class: undefined,
-    file_info_id: undefined,
-    created_at: undefined,
-    created_by: undefined,
-    updated_at: undefined,
-    updated_by: undefined,
-    deleted_at: undefined,
-    deleted_by: undefined,
-  };
-}
-
-export function fakesf_guard_permissionComplete() {
-  return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     name: faker.person.fullName(),
     description: undefined,
   };
 }
 
-export function fakesf_guard_remember_keyComplete() {
-  return {
-    user_id: faker.number.int(),
-    remember_key: undefined,
-    ip_address: faker.lorem.words(5),
-    created_at: undefined,
-  };
-}
+// export async function fakesf_guard_user_groupComplete() {
+//   return {
+//     id:1,
+//     user_id: 1,
+//     group_id: 1,
+//   };
+// }
+// export async function fakesf_guard_user_permissionComplete() {
+//   return {
+//     id:1,
+//     user_id: 1,
+//     permission_id: 1,
+//   };
+// }
 
-export function fakesf_guard_userComplete() {
+export async function fakesf_guard_user_profileComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    username: faker.internet.username(),
-    algorithm: "sha1",
-    salt: faker.lorem.words(5),
-    password: faker.lorem.words(5),
-    created_at: undefined,
-    last_login: undefined,
-    is_active: 1,
-    is_super_admin: 0,
-    deleted_at: undefined,
-    deleted_by: undefined,
-  };
-}
-export function fakesf_guard_user_groupComplete() {
-  return {
-    user_id: faker.number.int(),
-    group_id: faker.number.int(),
-  };
-}
-export function fakesf_guard_user_permissionComplete() {
-  return {
-    user_id: faker.number.int(),
-    permission_id: faker.number.int(),
-  };
-}
-
-export function fakesf_guard_user_profileComplete() {
-  return {
-    id: faker.number.int({ max: 2147483647 }),
-    user_id: faker.number.int(),
+    id: 1,
+    user_id: 1,
     title: undefined,
     public_title: 1,
     first_name: undefined,
@@ -658,7 +597,7 @@ export function fakesf_guard_user_profileComplete() {
     public_country: 0,
     timezone: undefined,
     public_timezone: 0,
-    birthday: undefined,
+    birthday: new Date(),
     public_birthday: 0,
     company: undefined,
     public_company: 0,
@@ -686,9 +625,9 @@ export function fakesf_guard_user_profileComplete() {
   };
 }
 
-export function fakesf_tagComplete() {
+export async function fakesf_tagComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
+    id: 1,
     name: undefined,
     is_triple: undefined,
     triple_namespace: undefined,
@@ -697,10 +636,10 @@ export function fakesf_tagComplete() {
   };
 }
 
-export function fakesf_taggingComplete() {
+export async function fakesf_taggingComplete() {
   return {
-    id: faker.number.int({ max: 2147483647 }),
-    tag_id: faker.number.int(),
+    id: 1,
+    tag_id: 1,
     taggable_model: undefined,
     taggable_id: undefined,
   };
