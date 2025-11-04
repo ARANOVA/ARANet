@@ -15,6 +15,7 @@ export async function upsertData<T>(
     value?: number;
   }[]
 ) {
+  await prisma.$connect();
   let id = 0;
 
   for (const item of data) {
@@ -484,19 +485,19 @@ async function main() {
   //   create: fakearanet_invoiceComplete()
   // });
 
-  Object.entries(fake).forEach(async ([key, func]) => {
+  for (const [key, func] of Object.entries(fake)) {
     if (key.startsWith("fake") && key.endsWith("Complete")) {
       const modelName = key.replace("Complete", "").replace("fake", "");
-      console.log(`Inserting fake data for ${modelName}...`);
-      const data = func();
+      console.log(`Insertando datos de: ${modelName}...`);
+      const data = await func();
       //@ts-ignore
       await prisma[modelName].upsert({
         where: { id: 1 },
-        update: await data,
-        create: await data,
+        update: data,
+        create: data,
       });
     }
-  });
+  }
 
 
 }
