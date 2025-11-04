@@ -13,6 +13,7 @@ export const getById = async <T>(
     vendor: prisma.aranet_vendor,
     project_status: prisma.aranet_project_status,
     profile: prisma.sf_guard_user_profile,
+    user: prisma.sf_guard_user,
     kind_of_company: prisma.aranet_kind_of_company,
     budget_status: prisma.aranet_budget_status,
     invoice_category: prisma.aranet_invoice_category,

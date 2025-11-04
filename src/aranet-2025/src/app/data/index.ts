@@ -12,7 +12,9 @@ import { VENDOR_TEXT_FIELDS, VENDOR_VALID_FIELDS } from "./vendor";
 
 export type enumUpdateModel = 
 'invoice_item' |
-'invoice'
+'invoice' |
+'user' |
+'user_profile'
 ;
 
 export type enumCreateModel = 
@@ -40,6 +42,9 @@ export type enumSimpleListModel =
 
 export type enumGetModel =
   'client' |
+  'user'|
+  'contact'|
+  'invoice_prev'|
   'vendor' |
   'contact' |
   'project_status' |

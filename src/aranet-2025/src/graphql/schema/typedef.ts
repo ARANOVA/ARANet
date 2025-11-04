@@ -274,10 +274,13 @@ type User {
   algorithm: String!
   salt: String!
   password: String!
-  created_at: DateTime
   last_login: String
   is_active: Boolean!
   is_super_admin: Boolean!
+  updated_at: DateTime
+  updated_by: Int
+  created_by: Int
+  created_at: DateTime
   deleted_at: DateTime
   deleted_by: Int
 
@@ -514,6 +517,16 @@ type PaymentStatus {
   payment_status_title: String!
 }
 
+input UpdateProfile {
+  first_name: String
+}
+
+input UserUpdate {
+  username: String
+  password: String
+  profile: UpdateProfile
+}
+
 type InvoiceItem {
   id: Int!
   item_type_id: Int
@@ -592,6 +605,12 @@ type ExpenseSingleResponse {
   statusCode: Int!
   error: String
   data: Expense!
+}
+
+type UserSingleResponse {
+  statusCode: Int!
+  error: String
+  data: User
 }
 
 type InvoiceSingleResponse {
@@ -888,6 +907,10 @@ type Query {
   invoice_prev(
     sent_at: DateTime!
   ): InvoiceSingleResponse!
+
+  user(
+    id: Int!
+  ): UserSingleResponse!
 }
 
 type Mutation {
@@ -909,6 +932,8 @@ type Mutation {
   createInvoiceItem(data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
 
   updateInvoice(id: Int!, data: InvoiceUpdate!): InvoiceSingleResponse!
+
+  updateUser(id: Int!, data: UserUpdate!): UserSingleResponse!
 
   
 }

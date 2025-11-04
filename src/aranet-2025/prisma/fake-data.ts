@@ -627,7 +627,7 @@ export async function fakesf_guard_user_profileComplete() {
 
 export async function fakearanet_timesheetComplete() {
   return {
-    id:1,
+    id: 1,
     timesheet_description: faker.hacker.phrase(),
     timesheet_hours: faker.number.float({
       min: 0.5,

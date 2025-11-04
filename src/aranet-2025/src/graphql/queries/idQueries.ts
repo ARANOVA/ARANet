@@ -1,7 +1,7 @@
 export const ID_QUERIES = {
   expense: `
     query GetExpense(
-      $id: Int!,
+      $id!,
     ) {
       expense(
         id: $id
@@ -35,7 +35,7 @@ export const ID_QUERIES = {
   `,
   invoice: `
     query GetInvoice(
-      $id: Int!,
+      $id!,
     ) {
       invoice(
         id: $id
@@ -144,4 +144,69 @@ export const ID_QUERIES = {
       }
     }
   `,
-}
+  user: `
+  query GetUser($id: Int!) {
+    user(id: $id) {
+        statusCode
+        data {
+          id
+          username
+          algorithm
+          salt
+          password
+          last_login
+          is_active
+          is_super_admin
+          profile {
+            id
+            user_id
+            title
+            public_title
+            first_name
+            public_first_name
+            last_name
+            public_last_name
+            gender
+            public_gender
+            email
+            public_email
+            url
+            public_url
+            openid_url
+            street
+            public_street
+            city
+            public_city
+            state
+            public_state
+            code
+            public_code
+            country
+            public_country
+            timezone
+            public_timezone
+            birthday
+            public_birthday
+            company
+            public_company
+            cif
+            public_cif
+            phone1
+            public_phone1
+            phone2
+            public_phone2
+            fax
+            public_fax
+            notes
+            gravatar
+            avatar
+            avatar_filetype
+            owner_user_id
+            user_newsletter
+            preferred_language
+          }
+        }
+      }
+    }
+  `,
+};

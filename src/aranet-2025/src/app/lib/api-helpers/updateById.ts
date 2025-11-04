@@ -14,6 +14,8 @@ export const updateById = async (
   const modelMap: Record<enumUpdateModel, any> = {
     invoice_item: prisma.aranet_invoice_item,
     invoice: prisma.aranet_invoice,
+    user: prisma.sf_guard_user,
+    user_profile: prisma.sf_guard_user_profile,
   };
 
   if (!id) {

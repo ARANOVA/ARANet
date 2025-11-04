@@ -5,8 +5,9 @@ import { cookies } from "next/headers";
 import { logError } from "../../logger";
 
 export const getUserById = async <T>(id?: number): Promise<SingleResponse<T>> => {
-  const endpoint = id ? `/api/users/${id}` : '/api/me';
+  const endpoint = id ? `/api/user/${id}` : '/api/me';
   try {
+    console.log('get user by id: ', id)
     let res;
     if (typeof process !== 'undefined') {
       // Server

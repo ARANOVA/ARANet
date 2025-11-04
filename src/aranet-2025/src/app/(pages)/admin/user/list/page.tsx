@@ -4,6 +4,7 @@ import { getSession } from "@/app/lib/session";
 import { EditableStoreTable, PageStoreHeader, PaginationStore, ToastStoreAlert } from "@/app/components";
 import { Metadata } from "next";
 import { userColumns, userFilters } from "@/app/data/user";
+import { ListFormUser } from "@/app/components/forms/ListFormUser";
 
 export const dynamic = 'force-dynamic';
 
@@ -71,15 +72,15 @@ export default async function AdminUserListPage({ searchParams }: Props) {
           viewTitle="Ver usuario"
           subtitle="Por favor, completa todos los campos obligatorios"
           model="user"
-          editModel="page"
-          showModel="page"
+          editModel="modal"
+          showModel="modal"
           columns={userColumns}
           filters={userFilters}
           idField="id"
           sortField={sortField || 'id'}
           sortDir={typedSortDir}
         >
-          <span>Hola</span>
+          <ListFormUser/>
         </EditableStoreTable>
       </div>
     </>
