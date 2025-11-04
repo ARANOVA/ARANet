@@ -13,55 +13,7 @@ export async function fakearanet_addressComplete() {
     address_distance: faker.number.float({ min: 0, max: 100 }),
   };
 }
-export async function fakearanet_budgetComplete() {
-  return {
-    id: 1,
-    budget_prefix: faker.string.alpha({ length: 3 }).toUpperCase(),
-    budget_number: faker.string.numeric(6),
-    budget_revision: faker.number.int({ min: 0, max: 5 }),
-    budget_date: faker.date.recent({ days: 365 }),
-    budget_valid_date: faker.date.soon({ days: 90 }),
-    budget_approved_date: faker.date.recent({ days: 180 }),
-    budget_client_id: 1, // mantenemos relación
-    budget_project_id: 1, // mantenemos relación
-    budget_category_id: faker.number.int({ min: 1, max: 5 }),
-    budget_title: faker.commerce.productName(),
-    budget_comments: faker.lorem.sentence(),
-    budget_print_comments: faker.number.int({ min: 0, max: 1 }),
-    budget_tax_rate: faker.number.int({ min: 5, max: 21 }),
-    budget_freight_charge: faker.number.float({ min: 0, max: 100 }),
-    budget_total_cost: faker.number.float({ min: 100, max: 10000 }),
-    budget_total_amount: faker.number.float({ min: 100, max: 12000 }),
-    budget_payment_condition_id: faker.number.int({ min: 1, max: 3 }),
-    budget_status_id: faker.number.int({ min: 1, max: 5 }),
-    budget_is_last: 1,
-    created_at: faker.date.past(),
-    created_by: 1,
-    updated_at: faker.date.recent(),
-    updated_by: 1,
-    deleted_at: undefined,
-    deleted_by: undefined,
-  };
-}
 
-export async function fakearanet_budget_itemComplete() {
-  return {
-    id: 1,
-    item_order: faker.number.int({ min: 1, max: 10 }),
-    item_type_id: faker.number.int({ min: 1, max: 5 }),
-    item_is_optional: faker.number.int({ min: 0, max: 1 }),
-    item_description: faker.commerce.productDescription(),
-    item_quantity: faker.number.int({ min: 1, max: 20 }),
-    milestone_task_id: faker.number.int({ min: 1, max: 10 }),
-    item_task_id: faker.number.int({ min: 1, max: 10 }),
-    item_cost: faker.number.float({ min: 10, max: 1000 }),
-    item_margin: faker.number.float({ min: 5, max: 50 }),
-    item_retail_price: faker.number.float({ min: 20, max: 1500 }),
-    item_tax_rate: faker.number.int({ min: 5, max: 21 }),
-    item_budget_id: 1, // mantenemos relación con budget
-    item_budget_type_id: faker.number.int({ min: 1, max: 3 }),
-  };
-}
 export async function fakearanet_cash_itemComplete() {
   return {
     id: 1,
@@ -720,6 +672,55 @@ export async function fakesf_auditComplete() {
       "LOGOUT",
     ]),
     created_at: faker.date.recent({ days: 30 }),
+  };
+}
+export async function fakearanet_budgetComplete() {
+  return {
+    id: 1,
+    budget_prefix: faker.string.alpha({ length: 3 }).toUpperCase(),
+    budget_number: faker.string.numeric(6),
+    budget_revision: faker.number.int({ min: 0, max: 5 }),
+    budget_date: faker.date.recent({ days: 365 }),
+    budget_valid_date: faker.date.soon({ days: 90 }),
+    budget_approved_date: faker.date.recent({ days: 180 }),
+    budget_client_id: 1,
+    budget_project_id: 1,
+    budget_category_id: faker.number.int({ min: 1, max: 5 }),
+    budget_title: faker.commerce.productName(),
+    budget_comments: faker.lorem.sentence(),
+    budget_print_comments: faker.number.int({ min: 0, max: 1 }),
+    budget_tax_rate: faker.number.int({ min: 5, max: 21 }),
+    budget_freight_charge: faker.number.float({ min: 0, max: 100 }),
+    budget_total_cost: faker.number.float({ min: 100, max: 10000 }),
+    budget_total_amount: faker.number.float({ min: 100, max: 12000 }),
+    budget_payment_condition_id: faker.number.int({ min: 1, max: 3 }),
+    budget_status_id: faker.number.int({ min: 1, max: 5 }),
+    budget_is_last: 1,
+    created_at: faker.date.past(),
+    created_by: 1,
+    updated_at: faker.date.recent(),
+    updated_by: 1,
+    deleted_at: undefined,
+    deleted_by: undefined,
+  };
+}
+
+export async function fakearanet_budget_itemComplete() {
+  return {
+    id: 1,
+    item_order: faker.number.int({ min: 1, max: 10 }),
+    item_type_id: faker.number.int({ min: 1, max: 5 }),
+    item_is_optional: faker.number.int({ min: 0, max: 1 }),
+    item_description: faker.commerce.productDescription(),
+    item_quantity: faker.number.int({ min: 1, max: 20 }),
+    milestone_task_id: faker.number.int({ min: 1, max: 10 }),
+    item_task_id: faker.number.int({ min: 1, max: 10 }),
+    item_cost: faker.number.float({ min: 10, max: 1000 }),
+    item_margin: faker.number.float({ min: 5, max: 50 }),
+    item_retail_price: faker.number.float({ min: 20, max: 1500 }),
+    item_tax_rate: faker.number.int({ min: 5, max: 21 }),
+    item_budget_id: 1, // mantenemos relación con budget
+    item_budget_type_id: faker.number.int({ min: 1, max: 3 }),
   };
 }
 

@@ -1,6 +1,5 @@
 import { PrismaClient } from "@/generated/prisma";
 import * as fake from "./fake-data";
-import { object } from "zod";
 const prisma = new PrismaClient();
 
 export async function upsertData<T>(
@@ -49,7 +48,7 @@ export async function upsertData<T>(
 }
 
 async function main() {
-  console.log('Introduciendo datos...')
+  console.log("Introduciendo datos...");
   const admin = await prisma.sf_guard_user.upsert({
     where: {
       username: "admin",
@@ -279,7 +278,7 @@ async function main() {
   await upsertData(
     "aranet_payment_status",
     aranet_payment_status_title,
-    [{ field: "payment_status_title", value:1 }],
+    [{ field: "payment_status_title", value: 1 }],
     [{ field: "id" }, { field: "payment_status_title", value: 1 }]
   );
 
@@ -304,7 +303,7 @@ async function main() {
   await upsertData(
     "aranet_project_status",
     aranet_project_status_titles,
-    [{ field: "project_status_title", value:1 }],
+    [{ field: "project_status_title", value: 1 }],
     [{ field: "id" }, { field: "project_status_title", value: 1 }]
   );
 
@@ -476,8 +475,6 @@ async function main() {
     { field: "description" },
   ]);
 
-
-
   ///AHORA FAKE DATA ----------------------------------------------------
   // await prisma.aranet_invoice.upsert({
   //   where: { id: 1 },
@@ -485,21 +482,62 @@ async function main() {
   //   create: fakearanet_invoiceComplete()
   // });
 
-  for (const [key, func] of Object.entries(fake)) {
-    if (key.startsWith("fake") && key.endsWith("Complete")) {
-      const modelName = key.replace("Complete", "").replace("fake", "");
-      console.log(`Insertando datos de: ${modelName}...`);
-      const data = await func();
-      //@ts-ignore
-      await prisma[modelName].upsert({
-        where: { id: 1 },
-        update: data,
-        create: data,
-      });
-    }
+  const fakeFunctions = [
+    "fakearanet_addressComplete",
+    "fakearanet_cash_itemComplete",
+    "fakearanet_clientComplete",
+    "fakearanet_contactComplete",
+    "fakearanet_graphicComplete",
+    "fakearanet_indicatorComplete",
+    "fakearanet_objectaddressComplete",
+    "fakearanet_objectcontactComplete",
+    "fakearanet_plotComplete",
+    "fakearanet_graphic_plotComplete",
+    "fakearanet_projectComplete",
+    "fakearanet_vendorComplete",
+    "fakearanet_project_frequently_taskComplete",
+    "fakearanet_task_priorityComplete",
+    "fakearanet_reimbursementComplete",
+    "fakearanet_reportComplete",
+    "fakearanet_report_columnComplete",
+    "fakefos_userComplete",
+    "fakesf_guard_user_profileComplete",
+    "fakesf_auditComplete",
+    "fakearanet_budgetComplete",
+    "fakearanet_budget_itemComplete",
+    "fakearanet_timesheetComplete",
+    "fakesf_guard_permissionComplete",
+    "fakesf_tagComplete",
+    "fakearanet_project_taskComplete",
+    "fakearanet_notificationComplete",
+    "fakearanet_invoiceComplete",
+    "fakearanet_invoice_itemComplete",
+    "fakearanet_expense_itemComplete",
+    "fakearanet_project_milestoneComplete",
+    "fakearanet_income_itemComplete",
+    "fakesf_taggingComplete",
+  ];
+
+  for (const funcName of fakeFunctions) {
+    type FakeFunctions = {
+      [key: string]: () => Promise<any>;
+    };
+
+    const func = (fake as FakeFunctions)[funcName];
+    if (typeof func !== "function") continue;
+
+    const modelName = funcName.replace("Complete", "").replace("fake", "");
+    console.log(`Insertando datos de: ${modelName}...`);
+
+    const data = await func();
+
+    //@ts-ignore
+    await prisma[modelName].upsert({
+      where: { id: 1 },
+      update: data,
+      create: data,
+    });
   }
-
-
 }
 main()
   .then(async () => {
@@ -510,8 +548,3 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
-
-
-
-
-
