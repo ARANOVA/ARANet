@@ -17,6 +17,7 @@ export const updateDataByModelGraphql = async (
   const query = (UPDATE_QUERIES as Record<any, string>)[model];
   if (!query) return { statusCode: 404, error: 'Query not found' };
   try {
+    console.log({query, id, data})
     const res = await fetch('/api/graphql', {
       method: "POST",
       headers: { "Content-Type": "application/json" },

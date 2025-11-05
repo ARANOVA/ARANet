@@ -1,4 +1,4 @@
-import { UserCircleIcon } from '@heroicons/react/20/solid';
+import { UserCircleIcon } from "@heroicons/react/20/solid";
 export type UserWithRoles = {
   Roles: string | string[];
   roles?: string | string[];
@@ -15,7 +15,9 @@ export type User = {
   salt: string;
   password: string;
   profile?: UserProfile;
-
+  is_active?: number;
+  is_super_admin?: number;
+  last_login?: Date;
 } & UserWithRoles;
 
 export interface UserProfile {
@@ -46,7 +48,7 @@ export interface UserProfile {
   public_country?: number;
   timezone?: number;
   public_timezone?: number;
-  birthday?: Date;
+  birthday?: String;
   public_birthday?: number;
   company?: string;
   public_company?: number;
@@ -71,9 +73,4 @@ export interface UserProfile {
   updated_by?: number;
   deleted_at?: Date;
   deleted_by?: number;
-}
-
-export interface userComplete{
-   user: User;
-   profile: userProfile | null;
 }

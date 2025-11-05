@@ -249,9 +249,12 @@ export const resolvers = {
       args: { id: number; data: unknown },
       context: GraphQLContext
     ) => {
+      console.log("*******************", args.data)
       const profile = (args.data as any).profile;
       if (profile) {
         // Update profile first
+        console.log({profile})
+        delete profile.id; // Remove id to avoid conflicts
         await updateById(
           context.prisma,
           context.session,

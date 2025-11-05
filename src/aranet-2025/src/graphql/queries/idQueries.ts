@@ -1,7 +1,7 @@
 export const ID_QUERIES = {
   expense: `
     query GetExpense(
-      $id!,
+      $id : Int!,
     ) {
       expense(
         id: $id
@@ -35,7 +35,7 @@ export const ID_QUERIES = {
   `,
   invoice: `
     query GetInvoice(
-      $id!,
+      $id: Int!,
     ) {
       invoice(
         id: $id
@@ -151,10 +151,6 @@ export const ID_QUERIES = {
         data {
           id
           username
-          algorithm
-          salt
-          password
-          last_login
           is_active
           is_super_admin
           profile {

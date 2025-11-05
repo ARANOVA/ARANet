@@ -20,6 +20,7 @@ import { useFormUiStore } from "@/store";
 
 import { useMemo } from "react";
 import { User } from "@/interfaces";
+import { useUpdateUser } from "@/app/data/ClientDataPlain";
 
 interface Props {
   defaultValues?: User;
@@ -32,6 +33,7 @@ export default function UserEditForm({ defaultValues }: Props) {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<User>({
     defaultValues,
@@ -48,8 +50,21 @@ export default function UserEditForm({ defaultValues }: Props) {
   const tabClassName =
     "rounded-lg cursor-pointer px-3 py-2 text-sm font-semibold text-white data-selected:bg-white/10";
 
+  const { mutateAsync: updateUser } = useUpdateUser();
+
+  const submitForm = (formData: User) => {
+    console.log("Form data recibida:", formData);
+  
+    try {
+       updateUser({ id: formData!.id, data: formData });
+      console.log("Usuario actualizado correctamente");
+    } catch (err: any) {
+      console.error("Error al actualizar usuario:", err);
+    }
+  };
+
   return (
-    <form className="space-y-6 mt-5">
+    <form onSubmit={handleSubmit(submitForm)} className="space-y-6 mt-5" >
       <TabGroup>
         <TabList className="flex gap-4 overflow-x-auto pb-4">
           {tabs.map(({ key, label }) => (
@@ -137,7 +152,7 @@ export default function UserEditForm({ defaultValues }: Props) {
                         title="Usuario activo"
                         checked={!!field.value}
                         className="ml-2"
-                        onChange={field.onChange}
+                        onChange={(v) => field.onChange(v ? 1 : 0)}
                         disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
@@ -160,7 +175,7 @@ export default function UserEditForm({ defaultValues }: Props) {
                         title="Usuario administrador"
                         checked={!!field.value}
                         className="ml-2"
-                        onChange={field.onChange}
+                        onChange={(v) => field.onChange(v ? 1 : 0)}
                         disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
@@ -172,19 +187,20 @@ export default function UserEditForm({ defaultValues }: Props) {
 
           {/* 👤 PERFIL */}
           <TabPanel key="Perfil">
-          <div className="w-full flex justify-center p-5">
-              <h1 className="text-lg font-semibold text-center">DATOS PERSONALES</h1>
+            <div className="w-full flex justify-center p-5">
+              <h1 className="text-lg font-semibold text-center">
+                DATOS PERSONALES
+              </h1>
             </div>
             <Fieldset className="grid grid-cols-1 md:grid-cols-8 gap-6">
               {/* Nombre */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="first_name">Nombre</Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="first_name"
                     {...register("profile.first_name")}
                     disabled={isSubmitting || modeForm === "show"}
-                    className="pr-8"
                   />
                   <Controller
                     name="profile.public_first_name"
@@ -194,7 +210,8 @@ export default function UserEditForm({ defaultValues }: Props) {
                         title="Hacer público"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -204,12 +221,11 @@ export default function UserEditForm({ defaultValues }: Props) {
               {/* Apellidos */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="last_name">Apellidos</Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="last_name"
                     {...register("profile.last_name")}
                     disabled={isSubmitting || modeForm === "show"}
-                    className="pr-8"
                   />
                   <Controller
                     name="profile.public_last_name"
@@ -219,7 +235,8 @@ export default function UserEditForm({ defaultValues }: Props) {
                         title="Hacer público"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -261,25 +278,26 @@ export default function UserEditForm({ defaultValues }: Props) {
                 <Label htmlFor="email" data-obligatorio>
                   Correo electrónico
                 </Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="email"
-                    className="pr-8"
                     type="email"
                     {...register("profile.email", {
                       required: "Campo obligatorio",
                     })}
                     disabled={isSubmitting || modeForm === "show"}
                   />
+
                   <Controller
                     name="profile.email"
                     control={control}
                     render={({ field }) => (
                       <Checkbox
+                        className=" items-center ml-2"
                         title="Hacer público"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -294,10 +312,9 @@ export default function UserEditForm({ defaultValues }: Props) {
               {/* CIF */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="cif">CIF</Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="cif"
-                    className="pr-8"
                     {...register("profile.cif")}
                     disabled={isSubmitting || modeForm === "show"}
                   />
@@ -309,7 +326,8 @@ export default function UserEditForm({ defaultValues }: Props) {
                         title="Hacer público"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -320,11 +338,10 @@ export default function UserEditForm({ defaultValues }: Props) {
               <Field className="col-span-4 relative">
                 <Label htmlFor="birthday">Fecha de nacimiento</Label>
 
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="birthday"
                     type="date"
-                    className="pr-8"
                     {...register("profile.birthday")}
                     disabled={isSubmitting || modeForm === "show"}
                   />
@@ -334,9 +351,10 @@ export default function UserEditForm({ defaultValues }: Props) {
                     render={({ field }) => (
                       <Checkbox
                         title="Hacer público"
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -346,12 +364,11 @@ export default function UserEditForm({ defaultValues }: Props) {
               {/* Teléfono 1 */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="phone1">Teléfono 1</Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="phone1"
                     {...register("profile.phone1")}
                     disabled={isSubmitting || modeForm === "show"}
-                    className="pr-8"
                   />
                   <Controller
                     name="profile.public_phone1"
@@ -361,7 +378,8 @@ export default function UserEditForm({ defaultValues }: Props) {
                         title="Hacer público"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -371,12 +389,11 @@ export default function UserEditForm({ defaultValues }: Props) {
               {/* Teléfono 2 */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="phone1">Teléfono 2</Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="phone2"
                     {...register("profile.phone2")}
                     disabled={isSubmitting || modeForm === "show"}
-                    className="pr-8"
                   />
                   <Controller
                     name="profile.public_phone2"
@@ -386,7 +403,8 @@ export default function UserEditForm({ defaultValues }: Props) {
                         title="Hacer público"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -401,12 +419,11 @@ export default function UserEditForm({ defaultValues }: Props) {
               {/* Calle */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="street">Calle</Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="street"
                     {...register("profile.street")}
                     disabled={isSubmitting || modeForm === "show"}
-                    className="pr-8"
                   />
                   <Controller
                     name="profile.public_street"
@@ -414,9 +431,10 @@ export default function UserEditForm({ defaultValues }: Props) {
                     render={({ field }) => (
                       <Checkbox
                         title="Hacer público"
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -426,12 +444,11 @@ export default function UserEditForm({ defaultValues }: Props) {
               {/* Estado */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="state">Estado</Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="state"
                     {...register("profile.state")}
                     disabled={isSubmitting || modeForm === "show"}
-                    className="pr-8"
                   />
                   <Controller
                     name="profile.public_state"
@@ -439,9 +456,10 @@ export default function UserEditForm({ defaultValues }: Props) {
                     render={({ field }) => (
                       <Checkbox
                         title="Hacer público"
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -451,12 +469,11 @@ export default function UserEditForm({ defaultValues }: Props) {
               {/* País */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="country">País</Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="country"
                     {...register("profile.country")}
                     disabled={isSubmitting || modeForm === "show"}
-                    className="pr-8"
                   />
                   <Controller
                     name="profile.public_country"
@@ -464,9 +481,10 @@ export default function UserEditForm({ defaultValues }: Props) {
                     render={({ field }) => (
                       <Checkbox
                         title="Hacer público"
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -476,12 +494,11 @@ export default function UserEditForm({ defaultValues }: Props) {
               {/* Ciudad */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="city">Ciudad</Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="city"
                     {...register("profile.city")}
                     disabled={isSubmitting || modeForm === "show"}
-                    className="pr-8"
                   />
                   <Controller
                     name="profile.public_city"
@@ -489,9 +506,10 @@ export default function UserEditForm({ defaultValues }: Props) {
                     render={({ field }) => (
                       <Checkbox
                         title="Hacer público"
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />
@@ -501,12 +519,11 @@ export default function UserEditForm({ defaultValues }: Props) {
               {/* Empresa */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="company">Empresa</Label>
-                <div className="relative">
+                <div className="flex">
                   <Input
                     id="company"
                     {...register("profile.company")}
                     disabled={isSubmitting || modeForm === "show"}
-                    className="pr-8"
                   />
                   <Controller
                     name="profile.public_company"
@@ -514,9 +531,10 @@ export default function UserEditForm({ defaultValues }: Props) {
                     render={({ field }) => (
                       <Checkbox
                         title="Hacer público"
-                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        className=" items-center ml-2"
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
+                        disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
                   />

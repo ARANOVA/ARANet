@@ -49,7 +49,7 @@ export async function upsertData<T>(
 
 async function main() {
   console.log("Introduciendo datos...");
-  const admin = await prisma.sf_guard_user.upsert({
+   await prisma.sf_guard_user.upsert({
     where: {
       username: "admin",
     },
@@ -454,7 +454,7 @@ async function main() {
     expires_at: null,
     confirmation_token: null,
     password_requested_at: null,
-    roles: JSON.stringify(["ROLE_ADMIN"]),
+    roles: "admin",
     credentials_expired: false,
     credentials_expire_at: null,
   };

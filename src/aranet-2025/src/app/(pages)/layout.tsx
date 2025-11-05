@@ -121,8 +121,8 @@ export default async function RootLayout({
     <ServerQueryProvider dehydratedState={dehydratedState}>
       <StackedAplicationLayout
         logo={{
-          light: process.env.APP_LOGO_LIGHT || '',
-          dark: process.env.APP_LOGO_DARK || '',
+          light: process.env.APP_LOGO_LIGHT || 'https://placehold.co/100x100',
+          dark: process.env.APP_LOGO_DARK || 'https://placehold.co/100x100',
         }}
         title={process.env.APP_TITLE || 'ARANet'}
         subtitle={process.env.APP_CLIENT || 'ARANOVA'}

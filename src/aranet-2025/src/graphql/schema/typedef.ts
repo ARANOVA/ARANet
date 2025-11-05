@@ -232,7 +232,7 @@ type Profile {
   timezone: Int
   public_timezone: Int
 
-  birthday: String
+  birthday: DateTime
   public_birthday: Int
 
   company: String
@@ -275,8 +275,8 @@ type User {
   salt: String!
   password: String!
   last_login: String
-  is_active: Boolean!
-  is_super_admin: Boolean!
+  is_active: Int!
+  is_super_admin: Int!
   updated_at: DateTime
   updated_by: Int
   created_by: Int
@@ -518,13 +518,66 @@ type PaymentStatus {
 }
 
 input UpdateProfile {
-  first_name: String
+    title: String
+    public_title: Int
+    first_name: String
+    public_first_name: Int
+    last_name: String
+    public_last_name: Int
+    gender: Int
+    public_gender: Int
+    email: String
+    public_email: Int
+    url: String
+    public_url: Int
+    openid_url: String
+    street: String
+    public_street: Int
+    city: String
+    public_city: Int
+    state: String
+    public_state: Int
+    code: Int
+    public_code: Int
+    country: String
+    public_country: Int
+    timezone: Int
+    public_timezone: Int
+    birthday: DateTime
+    public_birthday: Int
+    company: String
+    public_company: Int
+    cif: String
+    public_cif: Int
+    phone1: String
+    public_phone1: Int
+    phone2: String
+    public_phone2: Int
+    fax: String
+    public_fax: Int
+    notes: String
+    avatar: String
+    gravatar: Int
+    avatar_filetype: String
+    owner_user_id: Int
+    user_newsletter: Int
+    preferred_language: String
+    created_at: DateTime
+    created_by: Int
+    updated_at: DateTime
+    updated_by: Int
+    deleted_at: DateTime
+    deleted_by: Int
 }
 
 input UserUpdate {
   username: String
   password: String
   profile: UpdateProfile
+  last_login: DateTime
+  is_active: Int
+  is_super_admin: Int
+  roles: [String!]
 }
 
 type InvoiceItem {
@@ -937,4 +990,4 @@ type Mutation {
 
   
 }
-`;
+`

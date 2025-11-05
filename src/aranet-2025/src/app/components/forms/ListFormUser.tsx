@@ -2,16 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useFormUiStore } from '@/store';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import NewUserForm from './NewUserForm';
-import { getUserById } from '@/app/lib/api-wrappers/server';
 import UserEditForm from './UserEditForm';
-import { getSingleDataByModelGraphql } from '@/app/lib/api-wrappers/client';
 import { useUser } from '@/app/data/ClientDataPlain';
 
 
 export const ListFormUser = () => {
-  const model = 'plantilla';
+  const model = 'user';
   const { closeDrawer, selectedItem, pageDataSelectedForm, setToastProps, showToast } =
     useFormUiStore();
   const queryClient = useQueryClient();
@@ -38,8 +36,7 @@ export const ListFormUser = () => {
 
   useEffect(() => {
     if (data) {
-      setCurrentUser(data.data ?? null);
-  
+      setCurrentUser(data ?? null);
     }
   }, [data]);
     console.log({currentUser})
