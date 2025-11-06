@@ -7,8 +7,6 @@ import {
   Fieldset,
   Input,
   Label,
-  Listbox,
-  ListboxOption,
   Checkbox,
   RadioGroup,
   Radio,
@@ -17,16 +15,21 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useFormUiStore } from "@/store";
-
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
-import { User } from "@/interfaces";
-import { useUpdateUser } from "@/app/data/ClientDataPlain";
+
+import {
+  UserFormDataDTO,
+  UserInsertFormDataDTO,
+  userSchemaInsert,
+} from "@/app/data/user/zodDataUser";
 
 interface Props {
-  defaultValues?: User;
+  defaultValues: UserFormDataDTO;
+  onSubmit: (data: UserInsertFormDataDTO) => void;
 }
 
-export default function UserEditForm({ defaultValues }: Props) {
+export default function UserEditForm({ defaultValues, onSubmit }: Props) {
   const { modeForm } = useFormUiStore();
 
   const {
@@ -35,8 +38,9 @@ export default function UserEditForm({ defaultValues }: Props) {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<User>({
+  } = useForm<UserFormDataDTO>({
     defaultValues,
+    resolver: zodResolver(userSchemaInsert as any),
   });
 
   const tabs = useMemo(
@@ -50,21 +54,16 @@ export default function UserEditForm({ defaultValues }: Props) {
   const tabClassName =
     "rounded-lg cursor-pointer px-3 py-2 text-sm font-semibold text-white data-selected:bg-white/10";
 
-  const { mutateAsync: updateUser } = useUpdateUser();
-
-  const submitForm = (formData: User) => {
-    console.log("Form data recibida:", formData);
-  
-    try {
-       updateUser({ id: formData!.id, data: formData });
-      console.log("Usuario actualizado correctamente");
-    } catch (err: any) {
-      console.error("Error al actualizar usuario:", err);
-    }
+  const submitForm = (data: UserFormDataDTO) => {
+    delete (data as any).id;
+    delete (data as any).profile.id;
+    delete (data as any).profile.user_id;
+    const formData: UserInsertFormDataDTO = userSchemaInsert.parse(data);
+    onSubmit(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit(submitForm)} className="space-y-6 mt-5" >
+    <form onSubmit={handleSubmit(submitForm)} className="space-y-6 mt-5">
       <TabGroup>
         <TabList className="flex gap-4 overflow-x-auto pb-4">
           {tabs.map(({ key, label }) => (
@@ -97,7 +96,7 @@ export default function UserEditForm({ defaultValues }: Props) {
                 )}
               </Field>
 
-              {/* Password */}
+              {/* Password
               <Field className="col-span-4">
                 <Label htmlFor="password" data-obligatorio>
                   Contraseña
@@ -109,10 +108,10 @@ export default function UserEditForm({ defaultValues }: Props) {
                   {...register("password", { required: "Campo obligatorio" })}
                   disabled={isSubmitting || modeForm === "show"}
                 />
-              </Field>
+              </Field> */}
 
               {/* Roles */}
-              <Field className="col-span-4">
+              {/* <Field className="col-span-4">
                 <Label htmlFor="roles" data-obligatorio>
                   Roles
                 </Label>
@@ -138,7 +137,7 @@ export default function UserEditForm({ defaultValues }: Props) {
                     </Listbox>
                   )}
                 />
-              </Field>
+              </Field> */}
               <Field className="col-span-full md:col-span-2 flex items-center gap-2">
                 <div>
                   <Label htmlFor="is_active" className="text-sm font-medium">
@@ -252,7 +251,7 @@ export default function UserEditForm({ defaultValues }: Props) {
                   render={({ field }) => (
                     <RadioGroup
                       value={field.value?.toString() || ""}
-                      onChange={field.onChange}
+                      onChange={(v) => field.onChange(parseInt(v))}
                       className="flex gap-4"
                       disabled={isSubmitting || modeForm === "show"}
                     >
@@ -289,7 +288,7 @@ export default function UserEditForm({ defaultValues }: Props) {
                   />
 
                   <Controller
-                    name="profile.email"
+                    name="profile.public_email"
                     control={control}
                     render={({ field }) => (
                       <Checkbox
@@ -301,12 +300,12 @@ export default function UserEditForm({ defaultValues }: Props) {
                       />
                     )}
                   />
-                  {errors.email && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.email.message}
-                    </p>
-                  )}
                 </div>
+                {errors.profile?.email && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.profile.email.message}
+                  </p>
+                )}
               </Field>
 
               {/* CIF */}
@@ -489,6 +488,11 @@ export default function UserEditForm({ defaultValues }: Props) {
                     )}
                   />
                 </div>
+                {errors.profile?.country && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.profile?.country.message}
+                  </p>
+                )}
               </Field>
 
               {/* Ciudad */}

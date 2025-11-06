@@ -27,6 +27,7 @@
     "@graphql-tools/schema": "^10.0.25",
     "@headlessui/react": "^2.2.8",
     "@heroicons/react": "^2.2.0",
+    "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.16.3",
     "@react-pdf/renderer": "^4.3.1",
     "@tanstack/query-async-storage-persister": "^5.89.0",

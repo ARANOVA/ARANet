@@ -6,7 +6,7 @@ import {
   getSingleDataByModelGraphql,
   updateDataByModelGraphql,
 } from "../lib/api-wrappers/client";
-import { userSchema } from "./user/zodDataUser";
+import { userSchema, userSchemaInsert } from "./user/zodDataUser";
 
 export const useUser = (id: number) => {
   console.log("use user");
@@ -28,24 +28,22 @@ export const useUser = (id: number) => {
   });
 };
 
-export const useUpdateUser = () => {
-  return useMutation({
-    mutationKey: ["userUpdate"],
-    mutationFn: async ({ id, data }: { id: number; data: any }) => {
-      // Zod Schema
-      console.log("dentro del update");
-      try {
-        delete (data as any).id;
-        delete (data as any).profile.id;
-        delete (data as any).profile.user_id;
-
-        const r = await updateDataByModelGraphql("user", id, data);
-
-        return r;
-      } catch (error) {
-        console.log("ha habido un error en el update: ", error);
-        throw error; 
-      }
-    },
-  });
-};
+// export const useUpdateUser = () => {
+//   return useMutation({
+//     mutationKey: ["userUpdate"],
+//     mutationFn: async ({ id, data }: { id: number; data: any }) => {
+//       // Zod Schema
+//       console.log("dentro del update");
+//       try {
+//         delete (data as any).id;
+//         delete (data as any).profile.id;
+//         delete (data as any).profile.user_id;
+//         const r = await updateDataByModelGraphql("user", id, data);
+//         return r;
+//       } catch (error) {
+//         console.log("ha habido un error en el update: ", error);
+//         throw error; 
+//       }
+//     },
+//   });
+// };
