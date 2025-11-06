@@ -5,7 +5,7 @@ import { useFormUiStore } from "@/store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import NewUserForm from "./NewUserForm";
 import UserEditForm from "./UserEditForm";
-import { useUser } from "@/app/data/ClientDataPlain";
+import { useSaveMutation, useUser } from "@/app/data/ClientDataPlain";
 import {
   UserFormDataDTO,
   UserInsertFormDataDTO,
@@ -42,43 +42,7 @@ export const ListFormUser = () => {
     }
   }, [data]);
 
-  const mutation = useMutation<
-    SingleResponse<void>,
-    Error,
-    UserInsertFormDataDTO
-  >({
-    mutationFn: (data) => updateDataByModelGraphql("user", id, data),
-
-    onSuccess: (data) => {
-      if (data.statusCode < 300) {
-        setToastProps({
-          type: "success",
-          title: "¡Conseguido!",
-          subtitle: `Registro guardado`,
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["user", id] as const,
-        });
-        closeDrawer();
-      } else {
-        setToastProps({
-          type: "error",
-          title: "Algo fué mal!",
-          subtitle: `No se pudo guardar el registro`,
-        });
-      }
-      showToast(3000);
-    },
-    onError: (error) => {
-      console.log(error);
-      setToastProps({
-        type: "warning",
-        title: "Algo fué mal!",
-        subtitle: `Intentalo más tarde`,
-      });
-      showToast(3000);
-    },
-  });
+  const mutation = useSaveMutation('user', id);
 
   const onSubmit = (data: UserInsertFormDataDTO) => {
     console.log("data del onsubmit", data);

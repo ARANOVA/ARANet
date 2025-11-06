@@ -1,12 +1,16 @@
 "use client";
 
 import { User } from "@/interfaces";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getSingleDataByModelGraphql,
   updateDataByModelGraphql,
 } from "../lib/api-wrappers/client";
-import { userSchema, userSchemaInsert } from "./user/zodDataUser";
+import { UserInsertFormDataDTO, userSchema, userSchemaInsert } from "./user/zodDataUser";
+import { SingleResponse } from "@aranova/aranova-react-ui";
+import { useFormUiStore } from "@/store";
+
+
 
 export const useUser = (id: number) => {
   console.log("use user");
@@ -47,3 +51,46 @@ export const useUser = (id: number) => {
 //     },
 //   });
 // };
+
+
+export function useSaveMutation(
+  model: string,
+  id: number,
+
+) {
+  const { setToastProps, showToast, closeDrawer } = useFormUiStore();
+  const queryClient = useQueryClient();
+
+  return useMutation<SingleResponse<void>, Error,  any>({
+    mutationFn: (data) => updateDataByModelGraphql(model, id, data),
+
+    onSuccess: (data) => {
+      if (data.statusCode < 300) {
+        setToastProps({
+          type: "success",
+          title: "¡Conseguido!",
+          subtitle: "Registro guardado",
+        });
+        queryClient.invalidateQueries({ queryKey: [model, id] });
+        closeDrawer();
+      } else {
+        setToastProps({
+          type: "error",
+          title: "Algo fue mal!",
+          subtitle: "No se pudo guardar el registro",
+        });
+      }
+      showToast(3000);
+    },
+
+    onError: (error) => {
+      console.error(error);
+      setToastProps({
+        type: "warning",
+        title: "Algo fue mal!",
+        subtitle: "Inténtalo más tarde",
+      });
+      showToast(3000);
+    },
+  });
+}
