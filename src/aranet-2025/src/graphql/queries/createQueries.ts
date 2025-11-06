@@ -1,9 +1,9 @@
 export const CREATE_QUERIES = {
   invoice_item: `
     mutation CreateInvoiceItem(
-      $data: InvoiceItemUpdate!,
+      $data InvoiceItemUpdate!,
     ) {
-      createInvoiceItem(data: $data) {
+      createInvoiceItem(data $data) {
         error
         statusCode
         data {
@@ -18,4 +18,14 @@ export const CREATE_QUERIES = {
       }
     }
   `,
-}
+  
+  user: `
+  mutation createUser($data: UserUpdate!) {
+    createUser(data: $data) {
+      error
+      statusCode
+    }
+  }
+  
+  `,
+};

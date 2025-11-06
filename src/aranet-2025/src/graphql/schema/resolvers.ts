@@ -10,7 +10,7 @@ import {
   listById,
   getContacts,
 } from "@/app/lib/api-helpers";
-import { aranet_invoice } from "@/generated/prisma";
+import { aranet_invoice, sf_guard_user } from "@/generated/prisma";
 import { GraphQLContext } from "../context";
 import { createListQuery, createGetQuery } from "../queries";
 import { enumDeleteModel } from "@/app/data";
@@ -244,6 +244,34 @@ export const resolvers = {
         args.data
       );
     },
+
+    createUser: async (
+      _: any,
+      { data }: { data: sf_guard_user },
+      context: GraphQLContext
+    ) => {
+      console.log("*******************", data)
+      const profile = (data as any).profile;
+      if (profile) {
+        // Update profile first
+        console.log({profile})
+        delete profile.id; // Remove id to avoid conflicts
+        await createData(
+          context.prisma,
+          context.session,
+          "user_profile",
+          profile
+        );
+        delete (data as any).profile;
+      }
+      return await createData(
+        context.prisma,
+        context.session,
+        "user",
+        data
+      );
+    },
+    
     updateUser: async (
       _: any,
       args: { id: number; data: unknown },

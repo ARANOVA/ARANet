@@ -9,6 +9,8 @@ import {
 import { UserInsertFormDataDTO, userSchema, userSchemaInsert } from "./user/zodDataUser";
 import { SingleResponse } from "@aranova/aranova-react-ui";
 import { useFormUiStore } from "@/store";
+import { createSingleDataByModel } from '@/app/lib/api-wrappers/server';
+import { createDataByModel } from '../lib/api-wrappers/client/createDataByModel';
 
 
 
@@ -55,15 +57,27 @@ export const useUser = (id: number) => {
 
 export function useSaveMutation(
   model: string,
-  id: number,
+  id?: number,
 
 ) {
   const { setToastProps, showToast, closeDrawer } = useFormUiStore();
   const queryClient = useQueryClient();
+  console.log('mutation');
 
   return useMutation<SingleResponse<void>, Error,  any>({
-    mutationFn: (data) => updateDataByModelGraphql(model, id, data),
 
+    mutationFn: (data): Promise<SingleResponse<void>> => {
+      console.log("💾 Ejecutando mutationFn con:", { model, id, data });
+    
+      if (id) {
+        console.log("➡️ Actualizando registro existente");
+        return updateDataByModelGraphql(model, id, data);
+      } else {
+        console.log("🆕 Creando nuevo registro");
+        return createDataByModel(model, data);
+      }
+    },
+    
     onSuccess: (data) => {
       if (data.statusCode < 300) {
         setToastProps({

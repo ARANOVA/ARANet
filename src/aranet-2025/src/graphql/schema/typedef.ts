@@ -573,6 +573,8 @@ input UpdateProfile {
 input UserUpdate {
   username: String
   password: String
+  salt:String
+  algorithm: String
   profile: UpdateProfile
   last_login: DateTime
   is_active: Int
@@ -968,6 +970,7 @@ type Query {
 
 type Mutation {
   createInvoice(number: String!): Invoice!
+  createUser(data:UserUpdate!) : SingleResponse!
   deleteExpenses(ids: [Int!]!): SingleResponse!
   deleteClients(ids: [Int!]!): SingleResponse!
   deleteVendors(ids: [Int!]!): SingleResponse!
@@ -986,7 +989,7 @@ type Mutation {
 
   updateInvoice(id: Int!, data: InvoiceUpdate!): InvoiceSingleResponse!
 
-  updateUser(id: Int!, data: UserUpdate!): UserSingleResponse!
+  updateUser(id: Int, data: UserUpdate!): UserSingleResponse!
 
   
 }

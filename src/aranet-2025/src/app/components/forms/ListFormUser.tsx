@@ -62,7 +62,7 @@ export const ListFormUser = () => {
         </>
       ) : (
         <>
-          <NewUserForm />
+          <NewUserForm onSubmit={onSubmit}/>
         </>
       )}
     </section>
