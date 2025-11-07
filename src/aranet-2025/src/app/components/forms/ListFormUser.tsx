@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useFormUiStore } from "@/store";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import NewUserForm from "./NewUserForm";
 import UserEditForm from "./UserEditForm";
 import { useSaveMutation, useUser } from "@/app/data/ClientDataPlain";
@@ -10,20 +9,13 @@ import {
   UserFormDataDTO,
   UserInsertFormDataDTO,
 } from "@/app/data/user/zodDataUser";
-import { SingleResponse } from "@aranova/aranova-react-ui";
-import { updateDataByModelGraphql } from "@/app/lib/api-wrappers/client";
 import { ToastStoreAlert } from '@/app/components';
 
 export const ListFormUser = () => {
-  const model = "user";
   const {
-    closeDrawer,
     selectedItem,
     pageDataSelectedForm,
-    setToastProps,
-    showToast,
   } = useFormUiStore();
-  const queryClient = useQueryClient();
 
   const [currentUser, setCurrentUser] = useState<UserFormDataDTO | null>(null);
 

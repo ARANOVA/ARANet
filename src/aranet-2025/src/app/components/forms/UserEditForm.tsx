@@ -17,6 +17,7 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useFormUiStore } from "@/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
+import { Textarea } from '@aranova/aranova-react-ui';
 
 import {
   UserFormDataDTO,
@@ -30,6 +31,7 @@ interface Props {
 }
 
 export default function UserEditForm({ defaultValues, onSubmit }: Props) {
+  console.log('d. ', defaultValues)
   const { modeForm } = useFormUiStore();
 
   const {
@@ -184,20 +186,46 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
             </Fieldset>
           </TabPanel>
 
-          {/* 👤 PERFIL */}
-          <TabPanel key="Perfil">
+           {/* 👤 PERFIL */}
+           <TabPanel key="Perfil">
             <div className="w-full flex justify-center p-5">
               <h1 className="text-lg font-semibold text-center">
-                DATOS PERSONALES
+                DATOS PERSONALES / EMPRESA
               </h1>
             </div>
             <Fieldset className="grid grid-cols-1 md:grid-cols-8 gap-6">
+              {/* Título */}
+              <Field className="col-span-4 relative">
+                <Label htmlFor="first_name">Título</Label>
+                <div className="flex">
+                  <Input
+                    id="title"
+                    placeholder="Introduce un tiítulo"
+                    {...register("profile.title")}
+                    disabled={isSubmitting || modeForm === "show"}
+                  />
+                  <Controller
+                    name="profile.public_title"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        title="Hacer público"
+                        checked={!!field.value}
+                        onChange={(v) => field.onChange(v ? 1 : 0)}
+                        className=" items-center ml-2"
+                        disabled={isSubmitting || modeForm === "show"}
+                      />
+                    )}
+                  />
+                </div>
+              </Field>
               {/* Nombre */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="first_name">Nombre</Label>
                 <div className="flex">
                   <Input
                     id="first_name"
+                    placeholder="Introduce tu nombre"
                     {...register("profile.first_name")}
                     disabled={isSubmitting || modeForm === "show"}
                   />
@@ -223,6 +251,7 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                 <div className="flex">
                   <Input
                     id="last_name"
+                    placeholder="Introduce tus apellidos"
                     {...register("profile.last_name")}
                     disabled={isSubmitting || modeForm === "show"}
                   />
@@ -250,7 +279,7 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                   control={control}
                   render={({ field }) => (
                     <RadioGroup
-                      value={field.value?.toString() || ""}
+                      value={field.value?.toString()}
                       onChange={(v) => field.onChange(parseInt(v))}
                       className="flex gap-4"
                       disabled={isSubmitting || modeForm === "show"}
@@ -267,6 +296,7 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                         <Radio value="2" id="masculino" />
                         <Label htmlFor="masculino">Masculino</Label>
                       </RadioField>
+                      <RadioField></RadioField>
                     </RadioGroup>
                   )}
                 />
@@ -281,6 +311,7 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                   <Input
                     id="email"
                     type="email"
+                    placeholder="Introduce un correo electrónico"
                     {...register("profile.email", {
                       required: "Campo obligatorio",
                     })}
@@ -308,12 +339,54 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                 )}
               </Field>
 
+              {/* URL */}
+              <Field className="col-span-4 relative">
+                <Label htmlFor="url">URL</Label>
+                <div className="flex">
+                  <Input
+                    id="url"
+                    type="url"
+                    placeholder="Introduce una url"
+                    {...register("profile.url")}
+                    disabled={isSubmitting || modeForm === "show"}
+                  />
+                  <Controller
+                    name="profile.public_url"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        title="Hacer público"
+                        checked={!!field.value}
+                        onChange={(v) => field.onChange(v ? 1 : 0)}
+                        className=" items-center ml-2"
+                        disabled={isSubmitting || modeForm === "show"}
+                      />
+                    )}
+                  />
+                </div>
+              </Field>
+
+              {/* OPENID URL */}
+              <Field className="col-span-4 relative">
+                <Label htmlFor="openid_url">OpenID URL</Label>
+                <div className="flex">
+                  <Input
+                    id="openid_url"
+                    type="url"
+                    placeholder="Introduce tu URL de OpenID"
+                    {...register("profile.openid_url")}
+                    disabled={isSubmitting || modeForm === "show"}
+                  />
+                </div>
+              </Field>
+
               {/* CIF */}
               <Field className="col-span-4 relative">
-                <Label htmlFor="cif">CIF</Label>
+                <Label htmlFor="cif">CIF / NIF</Label>
                 <div className="flex">
                   <Input
                     id="cif"
+                    placeholder="Introduce el CIF / NIF | DNI / NIE"
                     {...register("profile.cif")}
                     disabled={isSubmitting || modeForm === "show"}
                   />
@@ -326,6 +399,31 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                         checked={!!field.value}
                         onChange={(v) => field.onChange(v ? 1 : 0)}
                         className=" items-center ml-2"
+                        disabled={isSubmitting || modeForm === "show"}
+                      />
+                    )}
+                  />
+                </div>
+              </Field>
+              {/* Empresa */}
+              <Field className="col-span-4 relative">
+                <Label htmlFor="company">Empresa</Label>
+                <div className="flex">
+                  <Input
+                    id="company"
+                    placeholder="Introduce el nombre de empresa"
+                    {...register("profile.company")}
+                    disabled={isSubmitting || modeForm === "show"}
+                  />
+                  <Controller
+                    name="profile.public_company"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        title="Hacer público"
+                        className=" items-center ml-2"
+                        checked={!!field.value}
+                        onChange={(v) => field.onChange(v ? 1 : 0)}
                         disabled={isSubmitting || modeForm === "show"}
                       />
                     )}
@@ -366,6 +464,8 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                 <div className="flex">
                   <Input
                     id="phone1"
+                    type="tel"
+                    placeholder="Introduce un número de teléfono"
                     {...register("profile.phone1")}
                     disabled={isSubmitting || modeForm === "show"}
                   />
@@ -391,6 +491,8 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                 <div className="flex">
                   <Input
                     id="phone2"
+                    type="tel"
+                    placeholder="Introduce un número de teléfono"
                     {...register("profile.phone2")}
                     disabled={isSubmitting || modeForm === "show"}
                   />
@@ -409,68 +511,58 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                   />
                 </div>
               </Field>
+              {/* fax */}
+              <Field className="col-span-4 relative">
+                <Label htmlFor="fax">Fax</Label>
+                <div className="flex">
+                  <Input
+                    id="fax"
+                    placeholder="Introduce un número de fax"
+                    {...register("profile.fax")}
+                    disabled={isSubmitting || modeForm === "show"}
+                  />
+                  <Controller
+                    name="profile.public_fax"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        title="Hacer público"
+                        checked={!!field.value}
+                        onChange={(v) => field.onChange(v ? 1 : 0)}
+                        className=" items-center ml-2"
+                        disabled={isSubmitting || modeForm === "show"}
+                      />
+                    )}
+                  />
+                </div>
+              </Field>
+              {/* Notas */}
+              <Field className="col-span-4 relative">
+                <Label htmlFor="notes">Notas</Label>
+                <div className="flex items-start">
+                  <Textarea
+                    id="notes"
+                    placeholder="Introduce alguna nota o comentario"
+                    {...register("profile.notes")}
+                    disabled={isSubmitting || modeForm === "show"}
+                    className="flex-1"
+                    rows={3}
+                  />
+                </div>
+              </Field>
             </Fieldset>
             <Divider className="w-full mt-5 mb-5" />
             <div className="w-full flex justify-center p-5">
               <h1 className="text-lg font-semibold text-center">DIRECCIÓN</h1>
             </div>
             <Fieldset className="grid grid-cols-1 md:grid-cols-8 gap-6">
-              {/* Calle */}
-              <Field className="col-span-4 relative">
-                <Label htmlFor="street">Calle</Label>
-                <div className="flex">
-                  <Input
-                    id="street"
-                    {...register("profile.street")}
-                    disabled={isSubmitting || modeForm === "show"}
-                  />
-                  <Controller
-                    name="profile.public_street"
-                    control={control}
-                    render={({ field }) => (
-                      <Checkbox
-                        title="Hacer público"
-                        className=" items-center ml-2"
-                        checked={!!field.value}
-                        onChange={(v) => field.onChange(v ? 1 : 0)}
-                        disabled={isSubmitting || modeForm === "show"}
-                      />
-                    )}
-                  />
-                </div>
-              </Field>
-
-              {/* Estado */}
-              <Field className="col-span-4 relative">
-                <Label htmlFor="state">Estado</Label>
-                <div className="flex">
-                  <Input
-                    id="state"
-                    {...register("profile.state")}
-                    disabled={isSubmitting || modeForm === "show"}
-                  />
-                  <Controller
-                    name="profile.public_state"
-                    control={control}
-                    render={({ field }) => (
-                      <Checkbox
-                        title="Hacer público"
-                        className=" items-center ml-2"
-                        checked={!!field.value}
-                        onChange={(v) => field.onChange(v ? 1 : 0)}
-                        disabled={isSubmitting || modeForm === "show"}
-                      />
-                    )}
-                  />
-                </div>
-              </Field>
-
               {/* País */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="country">País</Label>
                 <div className="flex">
                   <Input
                     id="country"
+                    placeholder="Introduce el país"
                     {...register("profile.country")}
                     disabled={isSubmitting || modeForm === "show"}
                   />
@@ -495,12 +587,39 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                 )}
               </Field>
 
+              {/* Estado */}
+              <Field className="col-span-4 relative">
+                <Label htmlFor="state">Estado / Provincia</Label>
+                <div className="flex">
+                  <Input
+                    id="state"
+                    placeholder="Introduce el estado/provincia"
+                    {...register("profile.state")}
+                    disabled={isSubmitting || modeForm === "show"}
+                  />
+                  <Controller
+                    name="profile.public_state"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        title="Hacer público"
+                        className=" items-center ml-2"
+                        checked={!!field.value}
+                        onChange={(v) => field.onChange(v ? 1 : 0)}
+                        disabled={isSubmitting || modeForm === "show"}
+                      />
+                    )}
+                  />
+                </div>
+              </Field>
+
               {/* Ciudad */}
               <Field className="col-span-4 relative">
                 <Label htmlFor="city">Ciudad</Label>
                 <div className="flex">
                   <Input
                     id="city"
+                    placeholder="Introduce la ciudad"
                     {...register("profile.city")}
                     disabled={isSubmitting || modeForm === "show"}
                   />
@@ -520,17 +639,43 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
                 </div>
               </Field>
 
-              {/* Empresa */}
+              {/* Calle */}
               <Field className="col-span-4 relative">
-                <Label htmlFor="company">Empresa</Label>
+                <Label htmlFor="street">Calle</Label>
                 <div className="flex">
                   <Input
-                    id="company"
-                    {...register("profile.company")}
+                    id="street"
+                    placeholder="Introduce la calle"
+                    {...register("profile.street")}
                     disabled={isSubmitting || modeForm === "show"}
                   />
                   <Controller
-                    name="profile.public_company"
+                    name="profile.public_street"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        title="Hacer público"
+                        className=" items-center ml-2"
+                        checked={!!field.value}
+                        onChange={(v) => field.onChange(v ? 1 : 0)}
+                        disabled={isSubmitting || modeForm === "show"}
+                      />
+                    )}
+                  />
+                </div>
+              </Field>
+              {/* code */}
+              <Field className="col-span-4 relative">
+                <Label htmlFor="code">Código postal</Label>
+                <div className="flex">
+                  <Input
+                    id="code"
+                    placeholder="Introduce el código postal"
+                    {...register("profile.code")}
+                    disabled={isSubmitting || modeForm === "show"}
+                  />
+                  <Controller
+                    name="profile.public_code"
                     control={control}
                     render={({ field }) => (
                       <Checkbox

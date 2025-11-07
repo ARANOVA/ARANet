@@ -14,6 +14,8 @@ import { aranet_invoice, sf_guard_user } from "@/generated/prisma";
 import { GraphQLContext } from "../context";
 import { createListQuery, createGetQuery } from "../queries";
 import { enumDeleteModel } from "@/app/data";
+import { UserInsertFormDataDTO } from "@/app/data/user/zodDataUser";
+import { SingleResponse } from "../../../packages/aranova-react-ui/src/lib";
 
 export const resolvers = {
   DateTime: DateTimeResolver,
@@ -246,42 +248,66 @@ export const resolvers = {
     },
 
     createUser: async (
-      _: any,
-      { data }: { data: sf_guard_user },
+      _: unknown,
+      { data }: { data: sf_guard_user & { profile?: any } },
       context: GraphQLContext
-    ) => {
-      console.log("*******************", data)
-      const profile = (data as any).profile;
-      if (profile) {
-        // Update profile first
-        console.log({profile})
-        delete profile.id; // Remove id to avoid conflicts
-        await createData(
+    ): Promise<SingleResponse<void>> => {
+      try {
+        const { profile, ...userData } = data as any;
+
+        const userResponse = await createData<UserInsertFormDataDTO>(
           context.prisma,
           context.session,
-          "user_profile",
-          profile
+          "user",
+          userData
         );
-        delete (data as any).profile;
+
+        console.log({userResponse})
+        if (userResponse.statusCode !== 201 || !userResponse.data) {
+          throw new Error("No se pudo crear el usuario");
+        }
+
+        const user = userResponse.data;
+
+        if (profile) {
+          const { id, ...profileData } = profile;
+          const fullProfile = {
+            ...profileData,
+            user_id: user.id,
+          };
+
+          const userProfileResponse = await createData(
+            context.prisma,
+            context.session,
+            "user_profile",
+            fullProfile
+          );
+          if (userProfileResponse.statusCode !== 201 || !userProfileResponse.data) {
+            throw new Error("No se pudo crear el perfil del usuario");
+          }
+        }
+        return {
+          statusCode: 201,
+        }
+
+      } catch (error: any) {
+        return {
+          statusCode: 500,
+          error: error.toString(),
+        }
       }
-      return await createData(
-        context.prisma,
-        context.session,
-        "user",
-        data
-      );
     },
-    
+
     updateUser: async (
       _: any,
       args: { id: number; data: unknown },
       context: GraphQLContext
     ) => {
-      console.log("*******************", args.data)
+      console.log("*******************", args.data);
       const profile = (args.data as any).profile;
       if (profile) {
         // Update profile first
-        console.log({profile})
+        console.log({ profile });
         delete profile.id; // Remove id to avoid conflicts
         await updateById(
           context.prisma,
@@ -507,7 +533,9 @@ export const resolvers = {
       context: GraphQLContext
     ) => {
       return listById(context.prisma, "invoice_item", {
-        item_invoice_id: parent.id,
+        item_invoice_id: {
+          equals:parent.id,
+        }
       });
     },
   },

@@ -5,7 +5,7 @@ import { PrismaClient } from "@/generated/prisma";
 export const getById = async <T>(
   prisma: PrismaClient,
   model: enumGetModel,
-  id: number
+  idSearch: number
 ): Promise<T | null> => {
   const modelMap: Record<enumGetModel, any> = {
     contact: prisma.aranet_contact,
@@ -32,15 +32,18 @@ export const getById = async <T>(
     invoice_prev: prisma.aranet_invoice,
   };
 
-  if (!id) return null;
+  if (!idSearch) return null;
 
   try {
     const fn = modelMap[model];
 
-    const data = await (fn as any).findFirst({ where: { id } });
-    return data ? data as T : null;
+    const whereClause =
+      model === "profile" ? { user_id: idSearch } : { id: idSearch };
+
+    const data = await (fn as any).findFirst({ where: whereClause });
+    return data ? (data as T) : null;
   } catch (err) {
     logError(`Error GET /api/[model]/id: ${err}`);
     return null;
-  };
-}
+  }
+};

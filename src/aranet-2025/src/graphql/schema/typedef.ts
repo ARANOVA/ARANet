@@ -287,7 +287,7 @@ type User {
   # Relaciones
   groups: [Group!]!
   permissions: [Permission!]!
-  profile: Profile!
+  profile: Profile
 }
 
 

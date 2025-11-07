@@ -1,3 +1,5 @@
+
+
 function sum(arr: number[]): number {
   return parseFloat(arr.reduce((a, b) => a + b, 0).toFixed(2));
 }
@@ -92,3 +94,4 @@ export function getDescanso(
 export const generatePass = () => {
   return Math.random().toString(36).slice(-6);
 };
+

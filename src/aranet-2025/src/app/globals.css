@@ -38,5 +38,5 @@ body {
 
 label[data-obligatorio]::after {
   content: " (*)";
-  color: var(--color-text-red-500);
+  color: var(--color-red-500);
 }

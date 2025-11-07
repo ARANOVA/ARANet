@@ -6,10 +6,9 @@ import {
   getSingleDataByModelGraphql,
   updateDataByModelGraphql,
 } from "../lib/api-wrappers/client";
-import { UserInsertFormDataDTO, userSchema, userSchemaInsert } from "./user/zodDataUser";
+import { userSchema } from "./user/zodDataUser";
 import { SingleResponse } from "@aranova/aranova-react-ui";
 import { useFormUiStore } from "@/store";
-import { createSingleDataByModel } from '@/app/lib/api-wrappers/server';
 import { createDataByModel } from '../lib/api-wrappers/client/createDataByModel';
 
 
@@ -30,7 +29,7 @@ export const useUser = (id: number) => {
       }
     },
     enabled: !!id,
-    staleTime: 20000,
+   // staleTime: 20000,
   });
 };
 
@@ -67,13 +66,10 @@ export function useSaveMutation(
   return useMutation<SingleResponse<void>, Error,  any>({
 
     mutationFn: (data): Promise<SingleResponse<void>> => {
-      console.log("💾 Ejecutando mutationFn con:", { model, id, data });
     
       if (id) {
-        console.log("➡️ Actualizando registro existente");
         return updateDataByModelGraphql(model, id, data);
       } else {
-        console.log("🆕 Creando nuevo registro");
         return createDataByModel(model, data);
       }
     },
