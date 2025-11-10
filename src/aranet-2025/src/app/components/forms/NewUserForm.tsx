@@ -21,22 +21,23 @@ import {
   UserInsertFormDataDTO,
   userSchemaInsert,
 } from "@/app/data/user/zodDataUser";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { ToastStoreAlert } from "..";
 
 interface Props {
   onSubmit: (data: UserInsertFormDataDTO) => void;
 }
 
 export default function NewUserForm({ onSubmit }: Props) {
-  const { modeForm } = useFormUiStore();
+  const { modeForm, setToastProps, showToast, hideToast } = useFormUiStore();
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isSubmitted },
   } = useForm<UserFormDataDTO>({
     resolver: zodResolver(userSchemaInsert as any),
     defaultValues: {
@@ -65,12 +66,12 @@ export default function NewUserForm({ onSubmit }: Props) {
         notes: null,
         cif: null,
         public_first_name: 0,
-        public_title:0,
-        public_code:0,
+        public_title: 0,
+        public_code: 0,
         public_last_name: 0,
         public_email: 0,
-        public_fax:0,
-        public_url:0,
+        public_fax: 0,
+        public_url: 0,
         public_gender: 0,
         public_birthday: 0,
         public_phone1: 0,
@@ -85,12 +86,25 @@ export default function NewUserForm({ onSubmit }: Props) {
     },
   });
 
-  console.log(errors)
+  useEffect(() => {
+    if (isSubmitted && Object.keys(errors).length > 0) {
+      setToastProps({
+        type: "warning",
+        title: "Campos inválidos",
+        subtitle: "Revisa los campos resaltados e intenta de nuevo",
+      });
+      showToast(3000);
+    }
+  }, [isSubmitted, errors]);
+
+  useEffect(() => {
+    hideToast();
+  }, []);
 
   const tabs = useMemo(
     () => [
       { key: "Usuario", label: "Datos de usuario" },
-      { key: "Perfil", label: "Perfil del usuario" },
+      { key: "Perfil", label: "Perfil del usuario *" },
     ],
     []
   );
@@ -107,6 +121,7 @@ export default function NewUserForm({ onSubmit }: Props) {
 
   return (
     <form onSubmit={handleSubmit(submitForm)} className="space-y-6 mt-5">
+      <ToastStoreAlert />
       <TabGroup>
         <TabList className="flex gap-4 overflow-x-auto pb-4">
           {tabs.map(({ key, label }) => (
@@ -760,7 +775,11 @@ export default function NewUserForm({ onSubmit }: Props) {
       </TabGroup>
 
       <div className="flex justify-center my-10">
-        <Button type="submit" className="w-[30%]" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          className="w-[30%] cursor-pointer"
+          disabled={isSubmitting}
+        >
           Guardar
         </Button>
       </div>

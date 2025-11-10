@@ -20,12 +20,10 @@ const args: Record<string, unknown> = {
   data,
 };
 
-console.log('crear data ');
   // TODO: Partir a variable search
   const query = (CREATE_QUERIES as Record<any, string>)[model];
   if (!query) return { statusCode: 404, error: 'Query not found' };
   try {
-    console.log('en de create')
 
     let res;
 
@@ -44,7 +42,6 @@ console.log('crear data ');
       return json as SingleResponse<void>;
     }
     const keys = Object.keys(json.data);
-    console.log('fin de create')
     return json.data[keys[0]] as SingleResponse<void>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

@@ -16,14 +16,15 @@ import { useForm, Controller } from "react-hook-form";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useFormUiStore } from "@/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo } from "react";
-import { Textarea } from '@aranova/aranova-react-ui';
+import { useEffect, useMemo } from "react";
+import { Textarea } from "@aranova/aranova-react-ui";
 
 import {
   UserFormDataDTO,
   UserInsertFormDataDTO,
   userSchemaInsert,
 } from "@/app/data/user/zodDataUser";
+import { ToastStoreAlert } from "..";
 
 interface Props {
   defaultValues: UserFormDataDTO;
@@ -31,15 +32,12 @@ interface Props {
 }
 
 export default function UserEditForm({ defaultValues, onSubmit }: Props) {
-  console.log('d. ', defaultValues)
-  const { modeForm } = useFormUiStore();
-
+  const { modeForm, setToastProps, showToast, hideToast } = useFormUiStore();
   const {
     register,
     control,
     handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting,isSubmitted },
   } = useForm<UserFormDataDTO>({
     defaultValues,
     resolver: zodResolver(userSchemaInsert as any),
@@ -52,6 +50,21 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
     ],
     []
   );
+  useEffect(() => {
+    hideToast()
+  }, []);
+
+  useEffect(() => {
+    if (isSubmitted && Object.keys(errors).length > 0) {
+      console.log('errores: ', errors)
+      setToastProps({
+        type: "warning",
+        title: "Campos inválidos",
+        subtitle: "Revisa los campos resaltados e intenta de nuevo",
+      });
+      showToast(3000);
+    }
+  }, [isSubmitted, errors]);
 
   const tabClassName =
     "rounded-lg cursor-pointer px-3 py-2 text-sm font-semibold text-white data-selected:bg-white/10";
@@ -66,6 +79,7 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
 
   return (
     <form onSubmit={handleSubmit(submitForm)} className="space-y-6 mt-5">
+      {/* <ToastStoreAlert /> */}
       <TabGroup>
         <TabList className="flex gap-4 overflow-x-auto pb-4">
           {tabs.map(({ key, label }) => (
@@ -186,8 +200,8 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
             </Fieldset>
           </TabPanel>
 
-           {/* 👤 PERFIL */}
-           <TabPanel key="Perfil">
+          {/* 👤 PERFIL */}
+          <TabPanel key="Perfil">
             <div className="w-full flex justify-center p-5">
               <h1 className="text-lg font-semibold text-center">
                 DATOS PERSONALES / EMPRESA
@@ -695,7 +709,11 @@ export default function UserEditForm({ defaultValues, onSubmit }: Props) {
       </TabGroup>
 
       <div className="flex justify-center my-10">
-        <Button type="submit" className="w-[30%]" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          className="w-[30%] cursor-pointer"
+          disabled={isSubmitting}
+        >
           Guardar
         </Button>
       </div>

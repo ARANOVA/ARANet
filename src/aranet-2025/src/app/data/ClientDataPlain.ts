@@ -9,12 +9,9 @@ import {
 import { userSchema } from "./user/zodDataUser";
 import { SingleResponse } from "@aranova/aranova-react-ui";
 import { useFormUiStore } from "@/store";
-import { createDataByModel } from '../lib/api-wrappers/client/createDataByModel';
-
-
+import { createDataByModel } from "../lib/api-wrappers/client/createDataByModel";
 
 export const useUser = (id: number) => {
-  console.log("use user");
   return useQuery({
     queryKey: ["user", id],
     queryFn: async () => {
@@ -29,7 +26,7 @@ export const useUser = (id: number) => {
       }
     },
     enabled: !!id,
-   // staleTime: 20000,
+    // staleTime: 20000,
   });
 };
 
@@ -47,33 +44,25 @@ export const useUser = (id: number) => {
 //         return r;
 //       } catch (error) {
 //         console.log("ha habido un error en el update: ", error);
-//         throw error; 
+//         throw error;
 //       }
 //     },
 //   });
 // };
 
-
-export function useSaveMutation(
-  model: string,
-  id?: number,
-
-) {
+export function useSaveMutation(model: string, id?: number) {
   const { setToastProps, showToast, closeDrawer } = useFormUiStore();
   const queryClient = useQueryClient();
-  console.log('mutation');
 
-  return useMutation<SingleResponse<void>, Error,  any>({
-
+  return useMutation<SingleResponse<void>, Error, any>({
     mutationFn: (data): Promise<SingleResponse<void>> => {
-    
       if (id) {
         return updateDataByModelGraphql(model, id, data);
       } else {
         return createDataByModel(model, data);
       }
     },
-    
+
     onSuccess: (data) => {
       if (data.statusCode < 300) {
         setToastProps({
@@ -94,7 +83,6 @@ export function useSaveMutation(
     },
 
     onError: (error) => {
-      console.error(error);
       setToastProps({
         type: "warning",
         title: "Algo fue mal!",

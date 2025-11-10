@@ -76,7 +76,7 @@ export const userSchemaInsert = z.object({
     • 1 letra minúscula
     • 1 número
     `,
-  }),
+  }).optional(),
   is_active: z.number(),
   is_super_admin: z.number(),
 

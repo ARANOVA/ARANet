@@ -36,7 +36,7 @@ body {
   color: var(--foreground);
 }
 
-label[data-obligatorio]::after {
+[data-obligatorio]::after {
   content: " (*)";
   color: var(--color-red-500);
 }
