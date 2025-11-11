@@ -46,11 +46,11 @@ export const vendorSchemaInsert = z.object({
   vendor_comments: z.string(),
   vendor_has_tags: z.union([z.string(), z.number()]).transform((v) => Number(v)),
   created_at: z.date().optional().nullable(),
-  created_by: z.number().optional(),
+  created_by: z.number().optional().nullable(),
   updated_at: z.date().optional().nullable(),
-  updated_by: z.number().optional(),
+  updated_by: z.number().optional().nullable(),
   deleted_at: z.date().optional().nullable(),
-  deleted_by: z.number().optional(),
+  deleted_by: z.number().optional().nullable(),
   vendor_company_type: z.union([z.string(), z.number()]).transform((v) => Number(v)),
 });
 

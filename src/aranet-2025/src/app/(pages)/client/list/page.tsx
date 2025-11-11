@@ -4,6 +4,9 @@ import { getSession } from "@/app/lib/session";
 import { EditableStoreTable, PageStoreHeader, PaginationStore, ToastStoreAlert } from "@/app/components";
 import { Metadata } from "next";
 import { clientColumns, clientFilters } from "@/app/data/client";
+import { ListFormGeneric } from "@/app/components/forms/ListFormGeneric";
+import { useEntity } from "@/app/data/ClientDataPlain";
+import NewClientForm from "@/app/components/forms/clients/NewClientForm";
 
 export const dynamic = 'force-dynamic';
 
@@ -71,15 +74,20 @@ export default async function ClientListPage({ searchParams }: Props) {
           viewTitle="Ver cliente"
           subtitle="Por favor, completa todos los campos obligatorios"
           model="client"
-          editModel="page"
-          showModel="page"
+          editModel="modal"
+          showModel="modal"
           columns={clientColumns}
           filters={clientFilters}
           idField="id"
           sortField={sortField || 'client_company_name'}
           sortDir={typedSortDir}
         >
-          <span>Hola</span>
+           <ListFormGeneric
+            model="client"
+            useGetHook={useEntity}
+            EditForm={NewClientForm}
+            NewForm={NewClientForm}
+          />
         </EditableStoreTable>
       </div>
     </>
