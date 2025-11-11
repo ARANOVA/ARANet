@@ -28,4 +28,13 @@ export const CREATE_QUERIES = {
   }
   
   `,
+  vendor: `
+  mutation createVendor($data: VendorUpdate!) {
+    createVendor(data: $data) {
+      error
+      statusCode
+    }
+  }
+  
+  `,
 };

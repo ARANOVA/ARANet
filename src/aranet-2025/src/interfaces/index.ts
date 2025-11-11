@@ -8,3 +8,4 @@ export * from './sesionPayload.interface';
 export * from './tables.interface';
 export * from './ui.interface';
 export * from './verifactu.interface';
+export * from './general';

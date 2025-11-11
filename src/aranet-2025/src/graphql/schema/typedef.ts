@@ -88,7 +88,7 @@ type Vendor {
   vendor_company_name: String!
   vendor_cif: String
   vendor_kind_of_company_id: Int
-  vendor_since: String
+  vendor_since: DateTime
   vendor_website: String
   vendor_comments: String
   vendor_has_tags: Int
@@ -588,7 +588,7 @@ input VendorUpdate {
   vendor_company_name: String
   vendor_cif: String
   vendor_kind_of_company_id: Int
-  vendor_since: String
+  vendor_since: DateTime
   vendor_website: String
   vendor_comments: String
   vendor_has_tags: Int
@@ -1018,6 +1018,7 @@ type Query {
 type Mutation {
   createInvoice(number: String!): Invoice!
   createUser(data:UserUpdate!) : SingleResponse!
+  createVendor(data:VendorUpdate!) : SingleResponse!
   deleteExpenses(ids: [Int!]!): SingleResponse!
   deleteClients(ids: [Int!]!): SingleResponse!
   deleteUser(ids: [Int!]!): SingleResponse!

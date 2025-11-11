@@ -367,6 +367,18 @@ export const resolvers = {
         args.data
       );
     },
+    createVendor: async (
+      _: any,
+      args: { data: unknown },
+      context: GraphQLContext
+    ) => {
+      return await createData(
+        context.prisma,
+        context.session,
+        "vendor",
+        args.data
+      );
+    },
     updateVendor: async (
       _: any,
       args: { id: number; data: unknown },

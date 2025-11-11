@@ -20,7 +20,7 @@ export type enumUpdateModel =
   | "user_profile"
   | "vendor";
 
-export type enumCreateModel = "invoice_item" | "user" | "user_profile";
+export type enumCreateModel = "invoice_item" | "user" | "user_profile"|"vendor";
 
 export type enumDeleteModel =
   | "contact"

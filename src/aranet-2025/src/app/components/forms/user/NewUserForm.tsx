@@ -120,7 +120,6 @@ export default function NewUserForm({ onSubmit }: Props) {
 
   return (
     <form onSubmit={handleSubmit(submitForm)} className="space-y-6 mt-5">
-      <ToastStoreAlert />
       <TabGroup>
         <TabList className="flex gap-4 overflow-x-auto pb-4">
           {tabs.map(({ key, label }) => (

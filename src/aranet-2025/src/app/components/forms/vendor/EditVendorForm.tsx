@@ -10,7 +10,7 @@ import {
 } from "@aranova/aranova-react-ui";
 import { Controller, useForm } from "react-hook-form";
 import { useFormUiStore } from "@/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   VendorFormDataDTO,
@@ -19,6 +19,7 @@ import {
 } from "@/app/data/vendor/zodDataVendor";
 import { getListDataByModelGraphql } from "@/app/lib/api-wrappers/client";
 import { wrapGetListDataByModelGraphql } from "@/app/data/ClientDataPlain";
+import { Kind_of_company } from "@/interfaces";
 
 interface Props {
   defaultValues: VendorFormDataDTO;
@@ -28,15 +29,22 @@ interface Props {
 export default function EditVendorForm({ defaultValues, onSubmit }: Props) {
   const { modeForm, setToastProps, showToast, hideToast } = useFormUiStore();
 
-  const kinds = wrapGetListDataByModelGraphql("kind_of_company")
-  .then((response) => {
-    console.log("Tipos de compañía:", response.data);
-  })
-  .catch((error) => {
-    console.error("Error al obtener tipos de compañía:", error);
-  });
+  const [kinds, setKinds] = useState<Kind_of_company[]>([]);
 
-  console.log("kind of company received", kinds);
+  useEffect(() => {
+    const fetchKinds = async () => {
+      try {
+        const response = await wrapGetListDataByModelGraphql<Kind_of_company>(
+          "kind_of_company"
+        );
+        setKinds(response?.data?.items ? response?.data.items : []);
+      } catch (error) {
+        console.error("Error al obtener tipos de compañía:", error);
+      }
+    };
+    fetchKinds();
+  }, []);
+
   const {
     register,
     control,
@@ -80,7 +88,7 @@ export default function EditVendorForm({ defaultValues, onSubmit }: Props) {
           id="vendor_unique_name"
           placeholder="Introduce el nombre único"
           {...register("vendor_unique_name", { required: "Campo obligatorio" })}
-          disabled={isSubmitting}
+          disabled={isSubmitting || modeForm === "show"}
         />
         {errors.vendor_unique_name && (
           <p className="text-red-600 text-sm mt-1">
@@ -100,7 +108,7 @@ export default function EditVendorForm({ defaultValues, onSubmit }: Props) {
           {...register("vendor_company_name", {
             required: "Campo obligatorio",
           })}
-          disabled={isSubmitting}
+          disabled={isSubmitting || modeForm === "show"}
         />
         {errors.vendor_company_name && (
           <p className="text-red-600 text-sm mt-1">
@@ -116,7 +124,7 @@ export default function EditVendorForm({ defaultValues, onSubmit }: Props) {
           id="vendor_cif"
           placeholder="Introduce el CIF/NIF"
           {...register("vendor_cif")}
-          disabled={isSubmitting}
+          disabled={isSubmitting || modeForm === "show"}
         />
       </Field>
 
@@ -127,9 +135,12 @@ export default function EditVendorForm({ defaultValues, onSubmit }: Props) {
           name="vendor_kind_of_company_id"
           control={control}
           render={({ field }) => (
-            <Select {...field} disabled={isSubmitting}>
-              <option value={0}>Selecciona un tipo</option>
-              {/* Aquí deberías mapear los tipos de empresa desde tu API */}
+            <Select {...field} disabled={isSubmitting || modeForm === "show"}>
+              {kinds.map((kind) => (
+                <option key={kind.id} value={kind.id}>
+                  {kind.kind_of_company_title}
+                </option>
+              ))}
             </Select>
           )}
         />
@@ -153,7 +164,7 @@ export default function EditVendorForm({ defaultValues, onSubmit }: Props) {
           id="vendor_website"
           placeholder="Introduce la web"
           {...register("vendor_website")}
-          disabled={isSubmitting}
+          disabled={isSubmitting || modeForm === "show"}
         />
       </Field>
 
@@ -164,7 +175,7 @@ export default function EditVendorForm({ defaultValues, onSubmit }: Props) {
           id="vendor_comments"
           placeholder="Comentarios"
           {...register("vendor_comments")}
-          disabled={isSubmitting}
+          disabled={isSubmitting || modeForm === "show"}
         />
       </Field>
       {/* Tags */}
@@ -175,7 +186,7 @@ export default function EditVendorForm({ defaultValues, onSubmit }: Props) {
           type="number"
           placeholder="Introduce el número de tags"
           {...register("vendor_has_tags")}
-          disabled={isSubmitting}
+          disabled={isSubmitting || modeForm === "show"}
         />
       </Field>
       {/* Vendor type of company */}
@@ -185,7 +196,7 @@ export default function EditVendorForm({ defaultValues, onSubmit }: Props) {
           name="vendor_company_type"
           control={control}
           render={({ field }) => (
-            <Select {...field} disabled={isSubmitting}>
+            <Select {...field} disabled={isSubmitting || modeForm === "show"}>
               <option value={0}>Selecciona un tipo</option>
               <option value={1}>tipo 0</option>
               <option value={2}>tipo 1</option>
@@ -195,9 +206,11 @@ export default function EditVendorForm({ defaultValues, onSubmit }: Props) {
       </Field>
 
       <div className="flex justify-center my-10">
-        <Button type="submit" disabled={isSubmitting}>
-          Guardar
-        </Button>
+        {modeForm === "edit" && (
+          <Button type="submit" disabled={isSubmitting}>
+            Guardar
+          </Button>
+        )}
       </div>
     </form>
   );
