@@ -14,6 +14,7 @@ export const getSingleDataByModelGraphql = async <T>(
     id,
   };
 
+  console.log('modelo y id',model,id)
   // TODO: Partir a variable search
   const query = (ID_QUERIES as Record<any, string>)[model];
   if (!query) return { statusCode: 404, error: 'Query not found' } as SingleResponse<T>

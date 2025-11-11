@@ -5,14 +5,14 @@ import { PrismaClient } from "@/generated/prisma";
 export const getById = async <T>(
   prisma: PrismaClient,
   model: enumGetModel,
-  idSearch: number
+  id: number,
 ): Promise<T | null> => {
   const modelMap: Record<enumGetModel, any> = {
     contact: prisma.aranet_contact,
     client: prisma.aranet_client,
     vendor: prisma.aranet_vendor,
     project_status: prisma.aranet_project_status,
-    profile: prisma.sf_guard_user_profile,
+    user_profile: prisma.sf_guard_user_profile,
     user: prisma.sf_guard_user,
     kind_of_company: prisma.aranet_kind_of_company,
     budget_status: prisma.aranet_budget_status,
@@ -32,13 +32,13 @@ export const getById = async <T>(
     invoice_prev: prisma.aranet_invoice,
   };
 
-  if (!idSearch) return null;
+  if (!id) return null;
 
   try {
     const fn = modelMap[model];
 
     const whereClause =
-      model === "profile" ? { user_id: idSearch } : { id: idSearch };
+      model === "user_profile" ? { user_id: id } : { id };
 
     const data = await (fn as any).findFirst({ where: whereClause });
     return data ? (data as T) : null;

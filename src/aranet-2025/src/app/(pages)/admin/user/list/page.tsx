@@ -1,15 +1,27 @@
-import { MenuItem, NotAuthorized, TopBreadcrumb } from "@aranova/aranova-react-ui";
+import {
+  MenuItem,
+  NotAuthorized,
+  TopBreadcrumb,
+} from "@aranova/aranova-react-ui";
 import ServerDataPlain from "@/app/data/ServerDataPlain";
 import { getSession } from "@/app/lib/session";
-import { EditableStoreTable, PageStoreHeader, PaginationStore, ToastStoreAlert } from "@/app/components";
+import {
+  EditableStoreTable,
+  PageStoreHeader,
+  PaginationStore,
+  ToastStoreAlert,
+} from "@/app/components";
 import { Metadata } from "next";
 import { userColumns, userFilters } from "@/app/data/user";
-import { ListFormUser } from "@/app/components/forms/ListFormUser";
+import { ListFormGeneric } from "@/app/components/forms/ListFormGeneric";
+import UserEditForm from "@/app/components/forms/user/EditUserForm";
+import NewUserForm from "@/app/components/forms/user/NewUserForm";
+import { useEntity } from "../../../../data/ClientDataPlain";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: 'Usuarios - Administración',
+  title: "Usuarios - Administración",
 };
 
 interface Props {
@@ -19,7 +31,7 @@ interface Props {
     sortField?: string;
     sortDir?: string;
     filter?: string;
-    'search[]'?: string[] | string;
+    "search[]"?: string[] | string;
   }>;
 }
 
@@ -34,21 +46,25 @@ export default async function AdminUserListPage({ searchParams }: Props) {
   if (!me.data?.id) {
     return <NotAuthorized />;
   }
-  
+
   const { page, limit, sortField, sortDir } = await searchParams;
   const currentPage =
     page === undefined || isNaN(+page) || +page < 1 ? 1 : +page;
   const currentLimit =
-    limit === undefined || isNaN(+limit) || +limit < 10 ? 10 : (+limit > 200 ? 200 : +limit);
+    limit === undefined || isNaN(+limit) || +limit < 10
+      ? 10
+      : +limit > 200
+      ? 200
+      : +limit;
 
-  const typedSortDir: 'asc' | 'desc' = ({ desc: 'desc', asc: 'asc' }[
-    (sortDir || 'asc').toLowerCase()
-  ] || 'desc') as 'asc' | 'desc';
+  const typedSortDir: "asc" | "desc" = ({ desc: "desc", asc: "asc" }[
+    (sortDir || "asc").toLowerCase()
+  ] || "desc") as "asc" | "desc";
 
   const links: MenuItem[] = [
-    { name: 'Inicio', href: '/' },
-    { name: 'Administración', href: null },
-    { name: 'Usuarios', href: '/admin/user/list' },
+    { name: "Inicio", href: "/" },
+    { name: "Administración", href: null },
+    { name: "Usuarios", href: "/admin/user/list" },
   ];
 
   return (
@@ -77,13 +93,18 @@ export default async function AdminUserListPage({ searchParams }: Props) {
           columns={userColumns}
           filters={userFilters}
           idField="id"
-          sortField={sortField || 'id'}
+          sortField={sortField || "id"}
           sortDir={typedSortDir}
         >
-          <ListFormUser/>
+          <ListFormGeneric
+            model="user"
+            useGetHook={useEntity}
+            EditForm={UserEditForm}
+            NewForm={NewUserForm}
+          />
+          {/* <ListFormUser/> */}
         </EditableStoreTable>
       </div>
     </>
-  )
-
+  );
 }

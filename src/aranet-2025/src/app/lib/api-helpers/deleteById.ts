@@ -22,6 +22,8 @@ export const deleteById = async (
     income: prisma.aranet_income_item,
     invoice: prisma.aranet_invoice,
     invoice_item: prisma.aranet_invoice_item,
+    user:prisma.sf_guard_user,
+    user_profile:prisma.sf_guard_user_profile
   };
 
   if ((ids || []).length === 0) {

@@ -4,6 +4,10 @@ import { getSession } from "@/app/lib/session";
 import { EditableStoreTable, PageStoreHeader, PaginationStore, ToastStoreAlert } from "@/app/components";
 import { Metadata } from "next";
 import { vendorColumns, vendorFilters } from "@/app/data/vendor";
+import { ListFormGeneric } from "@/app/components/forms/ListFormGeneric";
+import { useEntity } from "@/app/data/ClientDataPlain";
+import NewVendorForm from "@/app/components/forms/vendor/NewVendorForm";
+import EditVendorForm from "@/app/components/forms/vendor/EditVendorForm";
 
 export const dynamic = 'force-dynamic';
 
@@ -71,15 +75,20 @@ export default async function VendorListPage({ searchParams }: Props) {
           viewTitle="Ver proveedor"
           subtitle="Por favor, completa todos los campos obligatorios"
           model="vendor"
-          editModel="page"
-          showModel="page"
+          editModel="modal"
+          showModel="modal"
           columns={vendorColumns}
           filters={vendorFilters}
           idField="id"
           sortField={sortField || 'vendor_company_name'}
           sortDir={typedSortDir}
         >
-          <span>Hola</span>
+           <ListFormGeneric
+            model="vendor"
+            useGetHook={useEntity}
+            EditForm={EditVendorForm}
+            NewForm={NewVendorForm}
+          />
         </EditableStoreTable>
       </div>
     </>

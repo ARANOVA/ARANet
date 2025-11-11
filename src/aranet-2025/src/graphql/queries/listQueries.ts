@@ -513,4 +513,30 @@ export const LIST_QUERIES = {
       }
     }
   `,
+  kind_of_company: `
+  query ListKindOfCompany(
+    $sortField: String,
+      $sortDir: String,
+  ) {
+    kind_of_companies(
+      sortField: $sortField,
+      sortDir: $sortDir,
+    ){
+      statusCode
+      data {
+        items {
+          id
+          kind_of_company_title
+          kind_of_company_description
+        }
+        metadata {
+          total
+          page
+          quantity
+          last
+        }
+      }
+    }
+  }
+`,
 };

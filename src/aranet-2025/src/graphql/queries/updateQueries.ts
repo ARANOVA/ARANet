@@ -47,4 +47,18 @@ export const UPDATE_QUERIES = {
     }
   }
   `,
+  vendor: `
+  mutation UpdateVendor(
+    $id: Int!,
+    $data: VendorUpdate!
+  ) {
+    updateVendor(id: $id, data: $data) {
+      error
+      statusCode
+      data {
+        id
+      }
+    }
+  }
+  `,
 };

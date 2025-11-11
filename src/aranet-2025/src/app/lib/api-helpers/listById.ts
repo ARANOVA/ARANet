@@ -11,6 +11,7 @@ export const listById = async <T>(
   const modelMap: Record<enumSimpleListModel, any> = {
     expense_item: prisma.aranet_expense_item,
     invoice_item: prisma.aranet_invoice_item,
+    user_profile:prisma.sf_guard_user_profile,
   };
 
   try {

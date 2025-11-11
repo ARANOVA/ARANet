@@ -31,9 +31,10 @@ export const listByModel = async <T>(
     invoice: prisma.aranet_invoice,
     user: prisma.sf_guard_user,
     invoice_item: prisma.aranet_invoice_item,
+    kind_of_company:prisma.aranet_kind_of_company
   };
 
-  const noIncludeDelete = ['invoice_item'];
+  const noIncludeDelete = ['invoice_item', 'kind_of_company'];
 
   const where: any = noIncludeDelete.includes(model) ? {AND: []} : {
     AND: [

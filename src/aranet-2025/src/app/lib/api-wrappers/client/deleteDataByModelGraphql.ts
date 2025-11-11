@@ -13,21 +13,27 @@ export const deleteDataByModelGraphql = async (
   }
 
   const query = (DELETE_QUERIES as Record<any, string>)[model];
-  if (!query) return { statusCode: 404, error: 'Query not found' };
+  //if (!query) return { statusCode: 404, error: 'Query not found' };
   try {
     const res = await fetch('/api/graphql', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query, variables: { ids } }),
     });
+    console.log(res);
     const json = await res.json();
+    console.log(json)
     if (json.errors) {
+      console.log('json errors')
       throw new Error(json.errors[0].message);
     }
     if (json.error) {
+      console.log('json error')
       return json as SingleResponse<void>;
     }
     const keys = Object.keys(json.data);
+    console.log(keys)
+    console.log('json res.data', json.data[keys[0]] )
     return json.data[keys[0]] as SingleResponse<void>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

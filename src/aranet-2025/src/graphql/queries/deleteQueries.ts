@@ -99,6 +99,16 @@ export const DELETE_QUERIES = {
       }
     }
   `,
+  user:`
+  mutation DeleteUser(
+    $ids: [Int!]!,
+  ) {
+    deleteUser(ids: $ids) {
+      error
+      statusCode
+    }
+  }
+  `,
   invoice_item: `
     mutation DeleteInvoiceItems(
       $ids: [Int!]!,

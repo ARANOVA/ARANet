@@ -30,18 +30,18 @@ export const createData = async <T>(
 
     if (model === "user") {
       const userData = { ...(data as unknown as UserInsertFormDataDTO) };
-      userData.salt = createSalt();
-      userData.algorithm = "SHA-512";
-      userData.password = await hmacCreatePassword(
-        userData.password,
-        userData.salt
-      );
-
+      if (userData.password) {
+        userData.salt = createSalt();
+        userData.algorithm = "SHA-512";
+        userData.password = await hmacCreatePassword(
+          userData.password,
+          userData.salt
+        );
+      }
       dataToCreate = userData as T;
     }
 
     const fn = modelMap[model];
-    console.log("vamos a crear: ", data);
     const created = await (fn as any).create({ data: dataToCreate });
 
     return {

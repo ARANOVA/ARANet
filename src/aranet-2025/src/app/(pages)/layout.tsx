@@ -52,7 +52,7 @@ export default async function RootLayout({
     ]);
   }
 
-  if (isRole('crm', me.data)) {
+  if (isRole('crm', me.data)) {    
     navItems.push({
       header: 'Empresas',
       items: [

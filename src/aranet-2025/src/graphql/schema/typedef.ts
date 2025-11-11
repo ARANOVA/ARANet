@@ -577,9 +577,28 @@ input UserUpdate {
   algorithm: String
   profile: UpdateProfile
   last_login: DateTime
+  created_at: DateTime
   is_active: Int
   is_super_admin: Int
   roles: [String!]
+}
+
+input VendorUpdate {
+  vendor_unique_name: String
+  vendor_company_name: String
+  vendor_cif: String
+  vendor_kind_of_company_id: Int
+  vendor_since: String
+  vendor_website: String
+  vendor_comments: String
+  vendor_has_tags: Int
+  created_at: DateTime
+  created_by: Int
+  updated_at: DateTime
+  updated_by: Int
+  deleted_at: DateTime
+  deleted_by: Int
+  vendor_company_type: Int
 }
 
 type InvoiceItem {
@@ -665,13 +684,19 @@ type ExpenseSingleResponse {
 type UserSingleResponse {
   statusCode: Int!
   error: String
-  data: User
+  data: User!
+}
+
+type VendorSingleResponse {
+  statusCode: Int!
+  error: String
+  data: Vendor!
 }
 
 type InvoiceSingleResponse {
   statusCode: Int!
   error: String
-  data: Invoice
+  data: Invoice!
 }
 
 type InvoiceData {
@@ -782,6 +807,17 @@ type CashItemListResponse {
   statusCode: Int!
   error: String
   data: CashItemData!
+}
+
+type KindOfCompanyData {
+  items: [KindOfCompany!]!
+  metadata: Metadata!
+}
+
+type KindOfCompanyListResponse {
+  statusCode: Int!
+  error: String
+  data: KindOfCompanyData!
 }
 
 type InvoiceItemData {
@@ -945,6 +981,13 @@ type Query {
     filters: WhereInput
   ): CashItemListResponse!
 
+  kind_of_companies(
+    page: Int = 1,
+    size: Int = 100,
+    sortField: String = "id",
+    sortDir: String = "asc"
+  ): KindOfCompanyListResponse!
+
   invoice_items(
     sortField: String = "id",
     sortDir: String = "asc",
@@ -966,6 +1009,10 @@ type Query {
   user(
     id: Int!
   ): UserSingleResponse!
+
+  vendor(
+    id: Int!
+  ): VendorSingleResponse!
 }
 
 type Mutation {
@@ -973,6 +1020,7 @@ type Mutation {
   createUser(data:UserUpdate!) : SingleResponse!
   deleteExpenses(ids: [Int!]!): SingleResponse!
   deleteClients(ids: [Int!]!): SingleResponse!
+  deleteUser(ids: [Int!]!): SingleResponse!
   deleteVendors(ids: [Int!]!): SingleResponse!
   deleteContacts(ids: [Int!]!): SingleResponse!
   deleteProjects(ids: [Int!]!): SingleResponse!
@@ -983,13 +1031,11 @@ type Mutation {
   deleteCashes(ids: [Int!]!): SingleResponse!
   deleteInvoiceItems(ids: [Int!]!): SingleResponse!
   restoreRegister(model: String!, ids: [Int!]!): SingleResponse!
-
   updateInvoiceItem(id: Int!, data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
   createInvoiceItem(data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
-
   updateInvoice(id: Int!, data: InvoiceUpdate!): InvoiceSingleResponse!
-
   updateUser(id: Int, data: UserUpdate!): UserSingleResponse!
+  updateVendor(id: Int, data: VendorUpdate!): VendorSingleResponse!
 
   
 }

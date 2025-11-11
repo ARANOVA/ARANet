@@ -17,7 +17,8 @@ export type enumUpdateModel =
   | "invoice_item"
   | "invoice"
   | "user"
-  | "user_profile";
+  | "user_profile"
+  | "vendor";
 
 export type enumCreateModel = "invoice_item" | "user" | "user_profile";
 
@@ -32,9 +33,11 @@ export type enumDeleteModel =
   | "invoice"
   | "income"
   | "cash"
-  | "invoice_item";
+  | "invoice_item"
+  | "user"
+  | "user_profile";
 
-export type enumSimpleListModel = "expense_item" | "invoice_item";
+export type enumSimpleListModel = "expense_item" | "invoice_item" | "user_profile";
 
 export type enumGetModel =
   | "client"
@@ -44,7 +47,7 @@ export type enumGetModel =
   | "vendor"
   | "contact"
   | "project_status"
-  | "profile"
+  | "user_profile"
   | "kind_of_company"
   | "budget_status"
   | "invoice_category"
@@ -73,7 +76,8 @@ export type enumListModel =
   | "budget"
   | "cash"
   | "user"
-  | "invoice_item";
+  | "invoice_item"
+  | "kind_of_company";
 
 export const getTextFields = (model: enumListModel): string[] => {
   switch (model) {

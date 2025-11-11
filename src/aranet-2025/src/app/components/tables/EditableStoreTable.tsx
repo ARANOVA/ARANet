@@ -69,7 +69,8 @@ export const EditableStoreTable = <T extends { id?: number }>({
     ids: number[]
   ): Promise<SingleResponse<void>> => {
     formUi.closeAlert();
-    return deleteDataByModelGraphql(model, ids);
+    const e = deleteDataByModelGraphql(model, ids);
+    return e;
   };
 
   // // Modal (export)

@@ -8,7 +8,7 @@ export const updateById = async (
   prisma: PrismaClient,
   session: SessionPayload | null | Promise<SessionPayload | null>,
   model: enumUpdateModel,
-  id: number,
+  idSearch: number,
   data: unknown,
 ): Promise<SingleResponse<void>> => {
   const modelMap: Record<enumUpdateModel, any> = {
@@ -16,9 +16,10 @@ export const updateById = async (
     invoice: prisma.aranet_invoice,
     user: prisma.sf_guard_user,
     user_profile: prisma.sf_guard_user_profile,
+    vendor: prisma.aranet_vendor,
   };
 
-  if (!id) {
+  if (!idSearch) {
     return { statusCode: 400, error: 'Necesitas enviar el id del registro a actualizar'};
   }
 
@@ -26,11 +27,12 @@ export const updateById = async (
   if (!cookie) {
     return { statusCode: 401, error: 'Unauthorized'};
   }
-    
+
+  const whereClause = model === "user_profile" ? { user_id: idSearch } : { id: idSearch };
   try {
     const fn = modelMap[model];
     const x = await (fn as any).update({
-      where: { id },
+      where:  whereClause ,
       data
     });
     return { statusCode: 204, data: x };

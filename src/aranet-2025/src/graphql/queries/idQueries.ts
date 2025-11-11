@@ -33,6 +33,22 @@ export const ID_QUERIES = {
       }
     }
   `,
+  kind_of_company: `
+    query GetKindOfCompany(
+      $id : Int!,
+    ) {
+      expense(
+        id: $id
+      ) {
+        statusCode
+        data {
+          id
+          kind_of_company_title
+          kind_of_company_description
+        }
+      }
+    }
+  `,
   invoice: `
     query GetInvoice(
       $id: Int!,
@@ -204,5 +220,35 @@ export const ID_QUERIES = {
         }
       }
     }
+  `,
+  vendor: `
+  query GetVendor(
+    $id : Int!,
+  ) {
+    vendor(
+      id: $id
+    ) {
+      statusCode
+      data {
+        id
+        vendor_unique_name
+        vendor_company_name
+        vendor_cif
+        vendor_kind_of_company_id
+        vendor_since
+        vendor_website
+        vendor_comments
+        vendor_has_tags
+        created_at
+        created_by
+        updated_at
+        updated_by
+        deleted_at
+        deleted_by
+        vendor_company_type
+       
+      }
+    }
+  }
   `,
 };

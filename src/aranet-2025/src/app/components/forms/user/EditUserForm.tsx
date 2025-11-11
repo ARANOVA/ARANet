@@ -7,84 +7,52 @@ import {
   Fieldset,
   Input,
   Label,
+  Checkbox,
+  RadioGroup,
   Radio,
   RadioField,
-  RadioGroup,
-  Textarea,
-  Checkbox,
 } from "@aranova/aranova-react-ui";
+import { useForm, Controller } from "react-hook-form";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import { Controller, useForm } from "react-hook-form";
 import { useFormUiStore } from "@/store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useMemo } from "react";
+import { Textarea } from "@aranova/aranova-react-ui";
+
 import {
   UserFormDataDTO,
   UserInsertFormDataDTO,
   userSchemaInsert,
 } from "@/app/data/user/zodDataUser";
-import { useEffect, useMemo, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { ToastStoreAlert } from "..";
+import { ToastStoreAlert } from "../..";
 
 interface Props {
+  defaultValues: UserFormDataDTO;
   onSubmit: (data: UserInsertFormDataDTO) => void;
 }
 
-export default function NewUserForm({ onSubmit }: Props) {
+export default function UserEditForm({ defaultValues, onSubmit }: Props) {
   const { modeForm, setToastProps, showToast, hideToast } = useFormUiStore();
-  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     control,
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitted },
   } = useForm<UserFormDataDTO>({
+    defaultValues,
     resolver: zodResolver(userSchemaInsert as any),
-    defaultValues: {
-      username: "",
-      is_active: 0,
-      is_super_admin: 0,
-      password: "",
-      profile: {
-        title: null,
-        first_name: null,
-        last_name: null,
-        email: null,
-        gender: 0,
-        birthday: null,
-        phone1: null,
-        phone2: null,
-        url: null,
-        openid_url: null,
-        street: null,
-        state: null,
-        country: "",
-        code: null,
-        city: null,
-        company: null,
-        fax: null,
-        notes: null,
-        cif: null,
-        public_first_name: 0,
-        public_title: 0,
-        public_code: 0,
-        public_last_name: 0,
-        public_email: 0,
-        public_fax: 0,
-        public_url: 0,
-        public_gender: 0,
-        public_birthday: 0,
-        public_phone1: 0,
-        public_phone2: 0,
-        public_street: 0,
-        public_state: 0,
-        public_country: 0,
-        public_city: 0,
-        public_company: 0,
-        public_cif: 0,
-      },
-    },
   });
+
+  const tabs = useMemo(
+    () => [
+      { key: "Usuario", label: "Datos de usuario" },
+      { key: "Perfil", label: "Perfil del usuario" },
+    ],
+    []
+  );
+  useEffect(() => {
+    hideToast();
+  }, []);
 
   useEffect(() => {
     if (isSubmitted && Object.keys(errors).length > 0) {
@@ -97,31 +65,21 @@ export default function NewUserForm({ onSubmit }: Props) {
     }
   }, [isSubmitted, errors]);
 
-  useEffect(() => {
-    hideToast();
-  }, []);
-
-  const tabs = useMemo(
-    () => [
-      { key: "Usuario", label: "Datos de usuario" },
-      { key: "Perfil", label: "Perfil del usuario *" },
-    ],
-    []
-  );
-
   const tabClassName =
     "rounded-lg cursor-pointer px-3 py-2 text-sm font-semibold text-white data-selected:bg-white/10";
 
   const submitForm = (data: UserFormDataDTO) => {
-    console.log("dentro del onsubmit de new: ", data);
+    delete (data as any).id;
+    delete (data as any).profile.id;
+    delete (data as any).profile.user_id;
+    (data as any).profile.updated_at = new Date();
+    (data as any).profile.updated_by = 1;
     const formData: UserInsertFormDataDTO = userSchemaInsert.parse(data);
-    console.log("dentro del onsubmit de new: ", data);
     onSubmit(formData);
   };
 
   return (
     <form onSubmit={handleSubmit(submitForm)} className="space-y-6 mt-5">
-      <ToastStoreAlert />
       <TabGroup>
         <TabList className="flex gap-4 overflow-x-auto pb-4">
           {tabs.map(({ key, label }) => (
@@ -144,7 +102,6 @@ export default function NewUserForm({ onSubmit }: Props) {
                 </Label>
                 <Input
                   id="username"
-                  placeholder="Introduce tu nombre de usuario"
                   {...register("username", { required: "Campo obligatorio" })}
                   disabled={isSubmitting || modeForm === "show"}
                 />
@@ -155,71 +112,48 @@ export default function NewUserForm({ onSubmit }: Props) {
                 )}
               </Field>
 
+              {/* Password
               <Field className="col-span-4">
                 <Label htmlFor="password" data-obligatorio>
                   Contraseña
                 </Label>
-                <div className="relative mt-3">
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    {...register("password", { required: "Campo obligatorio" })}
-                    autoComplete="current-password"
-                    placeholder="Introduce tu contraseña"
-                    className=" block appearance-none rounded-lg w-full  text-zinc-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                    disabled={isSubmitting || modeForm === "show"}
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 dark:text-zinc-400"
-                    aria-label={
-                      showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-                    }
-                  >
-                    {showPassword ? (
-                      <EyeSlashIcon className="w-5 h-5" />
-                    ) : (
-                      <EyeIcon className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-red-600 text-sm mt-1 whitespace-pre-line">
-                    {errors.password.message}
-                  </p>
-                )}
-              </Field>
+                <Input
+                  id="password"
+                  type="password"
+                  defaultValue={""}
+                  {...register("password", { required: "Campo obligatorio" })}
+                  disabled={isSubmitting || modeForm === "show"}
+                />
+              </Field> */}
 
               {/* Roles */}
               {/* <Field className="col-span-4">
-                  <Label htmlFor="roles" data-obligatorio>
-                    Roles
-                  </Label>
-                  <Controller
-                    name="roles"
-                    control={control}
-                    defaultValue={[]}
-                    render={({ field: { value, onChange } }) => (
-                      <Listbox
-                        multiple
-                        value={value || []}
-                        onChange={onChange}
-                        placeholder="Selecciona roles"
-                        disabled={isSubmitting || modeForm === "show"}
-                      >
-                        {["ROLE_ADMIN", "ROLE_USER", "ROLE_MANAGER"].map(
-                          (role) => (
-                            <ListboxOption key={role} value={role}>
-                              {role}
-                            </ListboxOption>
-                          )
-                        )}
-                      </Listbox>
-                    )}
-                  />
-                </Field> */}
+                <Label htmlFor="roles" data-obligatorio>
+                  Roles
+                </Label>
+                <Controller
+                  name="roles"
+                  control={control}
+                  defaultValue={[]}
+                  render={({ field: { value, onChange } }) => (
+                    <Listbox
+                      multiple
+                      value={value || []}
+                      onChange={onChange}
+                      placeholder="Selecciona roles"
+                      disabled={isSubmitting || modeForm === "show"}
+                    >
+                      {["ROLE_ADMIN", "ROLE_USER", "ROLE_MANAGER"].map(
+                        (role) => (
+                          <ListboxOption key={role} value={role}>
+                            {role}
+                          </ListboxOption>
+                        )
+                      )}
+                    </Listbox>
+                  )}
+                />
+              </Field> */}
               <Field className="col-span-full md:col-span-2 flex items-center gap-2">
                 <div>
                   <Label htmlFor="is_active" className="text-sm font-medium">
@@ -298,6 +232,11 @@ export default function NewUserForm({ onSubmit }: Props) {
                     )}
                   />
                 </div>
+                {errors.profile?.title && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.profile.title.message}
+                  </p>
+                )}
               </Field>
               {/* Nombre */}
               <Field className="col-span-4 relative">
@@ -775,13 +714,15 @@ export default function NewUserForm({ onSubmit }: Props) {
       </TabGroup>
 
       <div className="flex justify-center my-10">
-        <Button
-          type="submit"
-          className="w-[30%] cursor-pointer"
-          disabled={isSubmitting}
-        >
-          Guardar
-        </Button>
+        {modeForm === "edit" && (
+          <Button
+            type="submit"
+            className="w-[30%] cursor-pointer"
+            disabled={isSubmitting}
+          >
+            Guardar
+          </Button>
+        )}
       </div>
     </form>
   );
