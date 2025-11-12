@@ -8,6 +8,7 @@ import { ZodSchema } from "zod";
 import { userSchema } from "@/app/data/user/zodDataUser";
 import { vendorSchema } from "@/app/data/vendor/zodDataVendor";
 import { clientSchema } from "@/app/data/client/zodDataClient";
+import { contactSchema } from "@/app/data/contact/zodDataContact";
 
 interface ListFormGenericProps<TData, TInsert> {
   model: string;
@@ -37,7 +38,7 @@ export function ListFormGeneric<TData, TInsert>({
     user: userSchema,
     vendor:vendorSchema,
     client:clientSchema,
-
+    contact:contactSchema,
   };
 
   const { data, isLoading, isError } = id ? useGetHook(model, id, map[model]) : { data: null, isLoading: false, isError: false };

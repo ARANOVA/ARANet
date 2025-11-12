@@ -17,6 +17,9 @@ export const updateById = async (
     user: prisma.sf_guard_user,
     user_profile: prisma.sf_guard_user_profile,
     vendor: prisma.aranet_vendor,
+    client:prisma.aranet_client,
+    contact:prisma.aranet_contact
+
   };
 
   if (!idSearch) {
@@ -39,7 +42,7 @@ export const updateById = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     // Revisar el mensaje si no existe el id que se pasa
-    logError(`Error POST (UPDATE) /api/graphtql (${model}): ${err}`);
+    logError(`Error POST (UPDATE) /api/graphql (${model}): ${err}`);
     return { statusCode: 500, error: 'Error inexperado'};
   };
 }

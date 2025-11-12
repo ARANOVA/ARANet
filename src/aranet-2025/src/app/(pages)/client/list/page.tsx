@@ -7,6 +7,7 @@ import { clientColumns, clientFilters } from "@/app/data/client";
 import { ListFormGeneric } from "@/app/components/forms/ListFormGeneric";
 import { useEntity } from "@/app/data/ClientDataPlain";
 import NewClientForm from "@/app/components/forms/clients/NewClientForm";
+import EditClientForm from "@/app/components/forms/clients/EditClientForm";
 
 export const dynamic = 'force-dynamic';
 
@@ -85,7 +86,7 @@ export default async function ClientListPage({ searchParams }: Props) {
            <ListFormGeneric
             model="client"
             useGetHook={useEntity}
-            EditForm={NewClientForm}
+            EditForm={EditClientForm}
             NewForm={NewClientForm}
           />
         </EditableStoreTable>

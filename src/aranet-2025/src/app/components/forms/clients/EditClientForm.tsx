@@ -51,11 +51,12 @@ export default function EditClientForm({ defaultValues, onSubmit }: Props) {
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitted },
   } = useForm<ClientFormDataDTO>({
-    resolver: zodResolver(clientSchemaInsert),
+    resolver: zodResolver(clientSchemaInsert as any),
     defaultValues,
   });
 
   useEffect(() => {
+    console.log(errors)
     if (isSubmitted && Object.keys(errors).length > 0) {
       setToastProps({
         type: "warning",
@@ -137,9 +138,6 @@ export default function EditClientForm({ defaultValues, onSubmit }: Props) {
           control={control}
           render={({ field }) => (
             <Select {...field} disabled={isSubmitting}>
-              <option hidden value={0}>
-                Selecciona
-              </option>
               {kinds.map((kind) => (
                 <option key={kind.id} value={kind.id}>
                   {kind.kind_of_company_title}

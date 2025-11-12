@@ -42,12 +42,14 @@ export const listByModel = async <T>(
     ]
   };
 
-  const validFields = getValidFields(model);
-  search = search.filter(filter => filterByValidFields(validFields, filter))
+  //const validFields = getValidFields(model);
+ // search = search.filter(filter => filterByValidFields(validFields, filter))
+ console.log('busquedas EN EL QUERY: ', search)
   logDebug(`POST /api/graphql - ${model} - Búsquedas encontradas: ${JSON.stringify(search)}`);
   // Sistema "viejo" de filtros: con array de FilterDTO
   try {
-    filters = filters.filter(filter => filterByValidFields(validFields, filter));
+   // filters = filters.filter(filter => filterByValidFields(validFields, filter));
+    console.log('FILTROS EN EL QUERY: ', filters)
     // Convertir a "where"
     filterWhere(where, filters);
   } catch (err) {

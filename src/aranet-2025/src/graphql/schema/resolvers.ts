@@ -46,6 +46,8 @@ export const resolvers = {
     },
     user: createGetQuery("user"),
     vendor: createGetQuery("vendor"),
+    client: createGetQuery("client"),
+    contact: createGetQuery("contact"),
   },
   Mutation: {
     deleteExpenses: async (
@@ -388,6 +390,56 @@ export const resolvers = {
         context.prisma,
         context.session,
         "vendor",
+        args.id,
+        args.data
+      );
+    },
+    createClient: async (
+      _: any,
+      args: { data: unknown },
+      context: GraphQLContext
+    ) => {
+      return await createData(
+        context.prisma,
+        context.session,
+        "client",
+        args.data
+      );
+    },
+    updateClient: async (
+      _: any,
+      args: { id: number; data: unknown },
+      context: GraphQLContext
+    ) => {
+      return await updateById(
+        context.prisma,
+        context.session,
+        "client",
+        args.id,
+        args.data
+      );
+    },
+    createContact: async (
+      _: any,
+      args: { data: unknown },
+      context: GraphQLContext
+    ) => {
+      return await createData(
+        context.prisma,
+        context.session,
+        "contact",
+        args.data
+      );
+    },
+    updateContact: async (
+      _: any,
+      args: { id: number; data: unknown },
+      context: GraphQLContext
+    ) => {
+      return await updateById(
+        context.prisma,
+        context.session,
+        "contact",
         args.id,
         args.data
       );

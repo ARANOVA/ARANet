@@ -19,6 +19,8 @@ export const createData = async <T>(
     user: prisma.sf_guard_user,
     user_profile: prisma.sf_guard_user_profile,
     vendor:prisma.aranet_vendor,
+    client:prisma.aranet_client,
+    contact:prisma.aranet_contact
   };
 
   const cookie = await session;

@@ -7,14 +7,14 @@ export const vendorFilters: FilterField[] = [
     fieldTitle: 'Empresa',
     label: 'Buscar por nombre',
     type: 'search',
-    operator: SearchOperators.like,
+    operator: SearchOperators.equals,
   },
   {
     fieldName: 'id',
     fieldTitle: 'ID',
     label: 'Buscar por id',
-    type: 'search',
-    operator: SearchOperators.like,
+    type: 'number',
+    operator: SearchOperators.equals,
   },
 ];
 

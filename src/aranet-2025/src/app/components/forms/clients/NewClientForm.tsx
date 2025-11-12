@@ -46,13 +46,13 @@ export default function NewClientForm({ onSubmit }: Props) {
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitted },
   } = useForm<ClientFormDataDTO>({
-    resolver: zodResolver(clientSchemaInsert),
+    resolver: zodResolver(clientSchemaInsert as any),
     defaultValues: {
       client_unique_name: "",
       client_company_name: "",
       client_cif: "",
       client_kind_of_company_id: 0,
-      client_since: undefined,
+      client_since: null,
       client_website: "",
       client_comments: "",
       client_has_tags: 0,
@@ -60,6 +60,7 @@ export default function NewClientForm({ onSubmit }: Props) {
   });
 
   useEffect(() => {
+    console.log(errors)
     if (isSubmitted && Object.keys(errors).length > 0) {
       setToastProps({
         type: "warning",

@@ -59,7 +59,7 @@ type Client {
   client_company_name: String!
   client_cif: String
   client_kind_of_company_id: Int
-  client_since: String
+  client_since: DateTime
   client_website: String
   client_comments: String
   client_has_tags: Int
@@ -128,7 +128,7 @@ type Contact {
   contact_phone: String
   contact_fax: String
   contact_mobile: String
-  contact_birthday: String
+  contact_birthday: DateTime
   contact_org_unit: String
   created_at: DateTime
   created_by: Int
@@ -600,6 +600,39 @@ input VendorUpdate {
   deleted_by: Int
   vendor_company_type: Int
 }
+input ClientUpdate {
+  client_unique_name: String
+  client_company_name: String
+  client_cif: String
+  client_kind_of_company_id: Int
+  client_since: DateTime
+  client_website: String
+  client_comments: String
+  client_has_tags: Int
+  created_at: DateTime
+  created_by: Int
+  updated_at: DateTime
+  updated_by: Int
+  deleted_at: DateTime
+  deleted_by: Int
+}
+input ContactUpdate {
+  contact_salutation: String
+  contact_first_name: String
+  contact_last_name: String
+  contact_email: String
+  contact_phone: String
+  contact_fax: String
+  contact_mobile: String
+  contact_birthday: DateTime
+  contact_org_unit: String
+  created_at: DateTime
+  created_by: Int
+  updated_at: DateTime
+  updated_by: Int
+  deleted_at: DateTime
+  deleted_by: Int
+}
 
 type InvoiceItem {
   id: Int!
@@ -697,6 +730,16 @@ type InvoiceSingleResponse {
   statusCode: Int!
   error: String
   data: Invoice!
+}
+type ClientSingleResponse {
+  statusCode: Int!
+  error: String
+  data: Client!
+}
+type ContactSingleResponse {
+  statusCode: Int!
+  error: String
+  data: Contact!
 }
 
 type InvoiceData {
@@ -1013,12 +1056,22 @@ type Query {
   vendor(
     id: Int!
   ): VendorSingleResponse!
+
+  client(
+    id: Int!
+  ): ClientSingleResponse!
+  contact(
+    id: Int!
+  ): ContactSingleResponse!
 }
 
 type Mutation {
   createInvoice(number: String!): Invoice!
   createUser(data:UserUpdate!) : SingleResponse!
+  createInvoiceItem(data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
   createVendor(data:VendorUpdate!) : SingleResponse!
+  createClient(data:ClientUpdate!) : SingleResponse!
+  createContact(data:ContactUpdate!) : SingleResponse!
   deleteExpenses(ids: [Int!]!): SingleResponse!
   deleteClients(ids: [Int!]!): SingleResponse!
   deleteUser(ids: [Int!]!): SingleResponse!
@@ -1033,10 +1086,11 @@ type Mutation {
   deleteInvoiceItems(ids: [Int!]!): SingleResponse!
   restoreRegister(model: String!, ids: [Int!]!): SingleResponse!
   updateInvoiceItem(id: Int!, data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
-  createInvoiceItem(data: InvoiceItemUpdate!): InvoiceItemSingleResponse!
   updateInvoice(id: Int!, data: InvoiceUpdate!): InvoiceSingleResponse!
   updateUser(id: Int, data: UserUpdate!): UserSingleResponse!
   updateVendor(id: Int, data: VendorUpdate!): VendorSingleResponse!
+  updateClient(id: Int, data: ClientUpdate!): ClientSingleResponse!
+  updateContact(id: Int, data: ContactUpdate!): ContactSingleResponse!
 
   
 }

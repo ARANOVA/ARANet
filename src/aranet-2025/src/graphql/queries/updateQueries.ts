@@ -61,4 +61,32 @@ export const UPDATE_QUERIES = {
     }
   }
   `,
+  client: `
+  mutation UpdateClient(
+    $id: Int!,
+    $data: ClientUpdate!
+  ) {
+    updateClient(id: $id, data: $data) {
+      error
+      statusCode
+      data {
+        id
+      }
+    }
+  }
+  `,
+  contact: `
+  mutation UpdateContact(
+    $id: Int!,
+    $data: ContactUpdate!
+  ) {
+    updateContact(id: $id, data: $data) {
+      error
+      statusCode
+      data {
+        id
+      }
+    }
+  }
+  `,
 };

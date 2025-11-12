@@ -18,9 +18,17 @@ export type enumUpdateModel =
   | "invoice"
   | "user"
   | "user_profile"
+  | "client"
+  | "contact"
   | "vendor";
 
-export type enumCreateModel = "invoice_item" | "user" | "user_profile"|"vendor";
+export type enumCreateModel =
+  | "invoice_item"
+  | "user"
+  | "user_profile"
+  | "vendor"
+  | "client"
+  | "contact";
 
 export type enumDeleteModel =
   | "contact"
@@ -37,7 +45,10 @@ export type enumDeleteModel =
   | "user"
   | "user_profile";
 
-export type enumSimpleListModel = "expense_item" | "invoice_item" | "user_profile";
+export type enumSimpleListModel =
+  | "expense_item"
+  | "invoice_item"
+  | "user_profile";
 
 export type enumGetModel =
   | "client"

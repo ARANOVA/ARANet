@@ -251,4 +251,62 @@ export const ID_QUERIES = {
     }
   }
   `,
+  client: `
+  query GetClient(
+    $id : Int!,
+  ) {
+    client(
+      id: $id
+    ) {
+      statusCode
+      data {
+        id
+        client_unique_name
+        client_company_name
+        client_cif
+        client_kind_of_company_id
+        client_since
+        client_website
+        client_comments
+        client_has_tags
+        created_at
+        created_by
+        updated_at
+        updated_by
+        deleted_at
+        deleted_by
+       
+      }
+    }
+  }
+  `,
+  contact: `
+  query GetContact(
+    $id : Int!,
+  ) {
+    contact(
+      id: $id
+    ) {
+      statusCode
+      data {
+        id
+        contact_salutation
+        contact_first_name
+        contact_last_name
+        contact_email
+        contact_phone
+        contact_fax
+        contact_mobile
+        contact_birthday
+        contact_org_unit
+        created_at
+        created_by
+        updated_at
+        updated_by
+        deleted_at
+        deleted_by
+      }
+    }
+  }
+  `,
 };

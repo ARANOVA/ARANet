@@ -37,4 +37,22 @@ export const CREATE_QUERIES = {
   }
   
   `,
+  client: `
+  mutation createClient($data: ClientUpdate!) {
+    createClient(data: $data) {
+      error
+      statusCode
+    }
+  }
+  
+  `,
+  contact: `
+  mutation createContact($data: ContactUpdate!) {
+    createContact(data: $data) {
+      error
+      statusCode
+    }
+  }
+  
+  `,
 };

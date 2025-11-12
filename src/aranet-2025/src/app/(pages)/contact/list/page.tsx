@@ -4,6 +4,10 @@ import { getSession } from "@/app/lib/session";
 import { EditableStoreTable, PageStoreHeader, PaginationStore, ToastStoreAlert } from "@/app/components";
 import { Metadata } from "next";
 import { contactColumns, contactFilters } from "@/app/data/contact";
+import { ListFormGeneric } from "@/app/components/forms/ListFormGeneric";
+import { useEntity } from "@/app/data/ClientDataPlain";
+import EditContactForm from "@/app/components/forms/contact/EditContactForm";
+import NewContactForm from "@/app/components/forms/contact/NewContactForm";
 
 export const dynamic = 'force-dynamic';
 
@@ -72,15 +76,20 @@ export default async function ContactsListPage({ searchParams }: Props) {
           viewTitle="Ver contacto"
           subtitle="Por favor, completa todos los campos obligatorios"
           model="contact"
-          editModel="page"
-          showModel="page"
+          editModel="modal"
+          showModel="modal"
           columns={contactColumns}
           filters={contactFilters}
           idField="id"
           sortField={sortField || 'contact_first_name'}
           sortDir={typedSortDir}
         >
-          <span>Hola</span>
+          <ListFormGeneric
+            model="contact"
+            useGetHook={useEntity}
+            EditForm={EditContactForm}
+            NewForm={NewContactForm}
+          />
         </EditableStoreTable>
       </div>
     </>

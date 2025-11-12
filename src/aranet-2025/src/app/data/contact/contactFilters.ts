@@ -7,21 +7,21 @@ export const contactFilters: FilterField[] = [
     fieldTitle: 'Nombre',
     label: 'Buscar por nombre',
     type: 'search',
-    operator: SearchOperators.like,
+    operator: SearchOperators.equals,
   },
   {
     fieldName: 'contact_last_name',
     fieldTitle: 'Apellido',
     label: 'Buscar por apellido',
     type: 'search',
-    operator: SearchOperators.like,
+    operator: SearchOperators.equals,
   },
   {
     fieldName: 'id',
     fieldTitle: 'ID',
     label: 'Buscar por id',
-    type: 'search',
-    operator: SearchOperators.like,
+    type: 'number',
+    operator: SearchOperators.equals,
   },
 ];
 
