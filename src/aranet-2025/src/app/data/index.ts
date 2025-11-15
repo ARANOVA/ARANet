@@ -45,6 +45,20 @@ export type enumDeleteModel =
   | "user"
   | "user_profile";
 
+export const DELETE_MODELS: enumDeleteModel[] = [
+  'contact',
+  'client',
+  'vendor',
+  'project',
+  'expense',
+  'timesheet',
+  'budget',
+  'invoice',
+  'income',
+  'cash',
+  'invoice_item',
+];
+
 export type enumSimpleListModel =
   | "expense_item"
   | "invoice_item"

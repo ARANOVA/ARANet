@@ -5,5 +5,5 @@ export * from './deleteQueries';
 export * from './idQueries';
 export * from './invoicesQuery';
 export * from './listQueries';
-export * from './restoreQuesries';
+export * from './restoreQueries';
 export * from './updateQueries';
