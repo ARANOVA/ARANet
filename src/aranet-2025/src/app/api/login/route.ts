@@ -48,18 +48,18 @@ export async function POST(
       }, { status: 401 });
     }
 
-    // createSalt()
-    // const p = await hmacCreatePassword(password, result.salt, result.algorithm);
-    // await prisma.sf_guard_user.update({
-    //   where: {
-    //     id: result.id,
-    //   },
-    //   data: {
-    //     password: p,
-    //   },
-    // });
-
     const algorithm = result.algorithm === 'sha-256' ? 'SHA-256' : "SHA-512";
+    // createSalt()
+    const p = await hmacCreatePassword(password, result.salt, algorithm);
+    await prisma.sf_guard_user.update({
+      where: {
+        id: result.id,
+      },
+      data: {
+        password: p,
+      },
+    });
+
     const validPassword =
       result.salt &&
       await hmacCreatePassword(password, result.salt, algorithm) === result.password;

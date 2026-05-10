@@ -1,17 +1,17 @@
 services:
-  mysql:
+  mysql-new:
     image: mariadb:10.7
-    container_name: aranova-aranet-mysql
+    container_name: aranova-aranet-mysql-new
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root_password
       MYSQL_USER: aranet_user
       MYSQL_PASSWORD: user_password
-      MYSQL_DATABASE: aranet_db
+      MYSQL_DATABASE: aranet_db_new
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_new_data:/var/lib/mysql
     deploy:
       resources:
         limits:
@@ -22,4 +22,4 @@ services:
           memory: 512M
 
 volumes:
-  mysql_data:
+  mysql_new_data:

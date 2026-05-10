@@ -1,5 +1,6 @@
 Feature: Login
 
+  @simple
   Scenario: Usuario admin inicia sesión correctamente
     Given el usuario abre la página de login
     When el usuario "pablo" introduce la contraseña "1234"
@@ -8,6 +9,7 @@ Feature: Login
     And debería ver "pablo" en la parte superior derecha
     And debería ver el acceso a la sección de "Administración"
   
+  @simple
   Scenario: Usuario intenta iniciar sesión 
     Given el usuario abre la página de login
     When el usuario "gracia" introduce la contraseña "noesesta"
@@ -15,6 +17,7 @@ Feature: Login
     And presiona el botón "Acceder"
     Then debería ver un mensaje de error
 
+  @simple
   Scenario: Usuario inicia sesión correctamente pero no tiene permisos para la administración
     Given el usuario abre la página de login
     When el usuario "gracia" introduce la contraseña "1234"

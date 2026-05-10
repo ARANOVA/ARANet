@@ -1,86 +1,60 @@
-import { Given, When, Then, BeforeAll, AfterAll, Before, After } from "@cucumber/cucumber";
+import { Given, When, Then } from "@cucumber/cucumber";
 import { expect } from 'expect';
-import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import { CustomWorld } from '../world/world'; // Asegúrate de que la ruta a world.ts sea correcta
 
-let browser: Browser;
-let context: BrowserContext;
-let page: Page;
-
-// Este hook se ejecuta una vez antes de todos los escenarios
-BeforeAll(async function () {
-  browser = await chromium.launch();
+Given("el usuario abre la página de login", async function (this: CustomWorld) {
+  await this.page.goto("http://localhost:3000/login");
 });
 
-// Este hook se ejecuta antes de cada escenario
-Before(async function () {
-  context = await browser.newContext();
-  page = await context.newPage();
+When("el usuario introduce credenciales inválidas", async function (this: CustomWorld) {
+  await this.page.fill('input[name="username"]', "pablo");
+  await this.page.fill('input[name="password"]', "1111");
 });
 
-// Este hook se ejecuta después de cada escenario
-After(async function () {
-  await page.close();
-  await context.close();
+When('el usuario {string} introduce la contraseña {string}', async function (this: CustomWorld, nombre: string, pass: string) {
+  await this.page.fill('input[name="username"]', nombre);
+  await this.page.fill('input[name="password"]', pass);
 });
 
-// Este hook se ejecuta una vez al final de todos los escenarios
-AfterAll(async function () {
-  await browser.close();
+When('presiona el botón {string}', async function (this: CustomWorld, buttonText: string) {
+  await this.page.click(`text=${buttonText}`);
 });
 
-Given("el usuario abre la página de login", async function () {
-  await page.goto("http://localhost:3000/login");
-});
-
-When("el usuario introduce credenciales inválidas", async function () {
-  await page.fill('input[name="username"]', "pablo");
-  await page.fill('input[name="password"]', "1111");
-});
-
-When('el usuario {string} introduce la contraseña {string}', async function (nombre, pass) {
-  await page.fill('input[name="username"]', nombre);
-  await page.fill('input[name="password"]', pass);
-});
-
-When('presiona el botón {string}', async function (buttonText: string) {
-  await page.click(`text=${buttonText}`);
-});
-
-// Then("debería ver su panel de control", async function () {
-//   await page.waitForSelector("text=No autorizado");
+// Then("debería ver su panel de control", async function (this: CustomWorld) {
+//   await this.page.waitForSelector("text=No autorizado");
 //   await browser.close();
 // });
 
-Then("debería ver un mensaje de error", async function () {
-  await page.waitForSelector("text=¡Algo fué mal!");
+Then("debería ver un mensaje de error", async function (this: CustomWorld) {
+  await this.page.waitForSelector("text=¡Algo fué mal!");
 });
 
-Then('debería ver el dashboard', async function () {
-  await page.waitForURL('http://localhost:3000/');
-  const currentUrl = page.url();
+Then('debería ver el dashboard', async function (this: CustomWorld) {
+  await this.page.waitForURL('http://localhost:3000/');
+  const currentUrl = this.page.url();
   expect(currentUrl).toBe('http://localhost:3000/');
-  await page.waitForSelector("text=Hola");
+  await this.page.waitForSelector("text=Hola");
 });
 
-Then('debería ver el acceso a la sección de {string}', async function (seccion) {
+Then('debería ver el acceso a la sección de {string}', async function (this: CustomWorld, seccion: string) {
   if (seccion === 'Administración') {
     const xpathSeccion = `/html/body/div[2]/header/div[2]/nav/div[2]/div[6]/span/button/span[2]`;
-    const seccionVisible = await page.locator(`xpath=${xpathSeccion}`).isVisible();
+    const seccionVisible = await this.page.locator(`xpath=${xpathSeccion}`).isVisible();
     // Realizamos la aserción
     expect(seccionVisible).toBe(true);
   }
 });
 
-Then('debería ver {string} en la parte superior derecha', async function (nombre) {
+Then('debería ver {string} en la parte superior derecha', async function (this: CustomWorld, nombre: string) {
   const xpathSeccion = `/html/body/div[2]/header/div[2]/nav/div[4]/span[2]/button/span[3]`;
-  const nombreWeb = await page.locator(`xpath=${xpathSeccion}`).innerText();
+  const nombreWeb = await this.page.locator(`xpath=${xpathSeccion}`).innerText();
   expect(nombreWeb.trim()).toBe(nombre);
 });
 
-Then('no debería ver el acceso a la sección de {string}', async function (seccion) {
+Then('no debería ver el acceso a la sección de {string}', async function (this: CustomWorld, seccion: string) {
   if (seccion === 'Administración') {
     const xpathSeccion = `/html/body/div[2]/header/div[2]/nav/div[2]/div[6]/span/button/span[2]`;
-    const seccionVisible = await page.locator(`xpath=${xpathSeccion}`).isVisible();
+    const seccionVisible = await this.page.locator(`xpath=${xpathSeccion}`).isVisible();
     // Realizamos la aserción
     expect(seccionVisible).toBe(false);
   }

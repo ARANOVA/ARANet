@@ -1,7 +1,7 @@
 import { Badge } from "../../tw";
 
-type enumStates = 'draft' | 'temp' | 'request' | 'approved' | 'deleted' | 'published' | 'sent' | 'canceled' | 'signed' | 'frozen';
-const enumStates: string[] = ['draft', 'temp', 'request', 'approved', 'deleted', 'published', 'sent', 'canceled', 'signed', 'frozen'];
+type enumStates = 'draft' | 'temp' | 'request' | 'approved' | 'deleted' | 'published' | 'sent' | 'canceled' | 'signed' | 'frozen' | 'payed' | 'pending-payment';
+const enumStates: string[] = ['draft', 'temp', 'request', 'approved', 'deleted', 'published', 'sent', 'canceled', 'signed', 'frozen', 'payed', 'pending-payment'];
 
 interface Props {
     state?: {
@@ -48,6 +48,8 @@ export const StatusBagde = ({ state }: Props) => {
   canceled: { color: "orange", label: "Cancelado" },
   signed: { color: "indigo", label: "Firmado" },
   frozen: { color: "cyan", label: "Congelado" },
+  payed: { color: "lime", label: "Pagado" },
+  'pending-payment': { color: "yellow", label: "Pendiente de pago" },
 };
 
   const badge = colorMap[state.value as enumStates];

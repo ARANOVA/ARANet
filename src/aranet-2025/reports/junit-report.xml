@@ -1,23 +1,14 @@
 <?xml version="1.0"?>
-<testsuite name="Cucumber" time="2.913" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-09-24T17:27:11.873Z">
-  <testcase classname="Login" name="Usuario admin inicia sesión correctamente" time="1.264">
-    <system-out><![CDATA[Given el usuario abre la página de login....................................passed
-When el usuario "pablo" introduce credenciales válidas de un administrador..passed
-And presiona el botón "Acceder".............................................passed
-Then debería ver el dashboard...............................................passed
-And debería ver "pablo" en la parte superior derecha........................passed
-And debería ver el acceso a la sección de "Administración"..................passed]]></system-out>
-  </testcase>
-  <testcase classname="Login" name="Usuario intenta iniciar sesión" time="0.658">
-    <system-out><![CDATA[Given el usuario abre la página de login....................................passed
-When el usuario introduce credenciales inválidas............................passed
-And presiona el botón "Acceder".............................................passed
-Then debería ver un mensaje de error........................................passed]]></system-out>
-  </testcase>
-  <testcase classname="Login" name="Usuario inicia sesión correctamente pero no tiene permisos para el dashboard" time="0.702">
-    <system-out><![CDATA[Given el usuario abre la página de login....................................passed
-When el usuario introduce sus credenciales válidas..........................passed
-And presiona el botón "Acceder".............................................passed
-Then debería ver el dashboard...............................................passed]]></system-out>
+<testsuite name="Cucumber" time="6.044" tests="1" skipped="0" failures="1" errors="0" timestamp="2025-12-03T13:04:08.168Z">
+  <testcase classname="Nuevo cliente AEAT" name="Se accede a la web de AEAT para Verifactu y se crea un nuevo cliente" time="5.415">
+    <failure type="Error" message="function timed out, ensure the promise resolves within 5000 milliseconds"><![CDATA[    at Timeout.<anonymous> (/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/node_modules/@cucumber/cucumber/src/time.ts:52:14)
+    at listOnTimeout (node:internal/timers:588:17)
+    at processTimers (node:internal/timers:523:7)]]></failure>
+    <system-out><![CDATA[Given el usuario abre la página de Verifactu de la AEAT con certificado válido..failed
+When pulsa el enlace "Clientes".............................................skipped
+And pulsa el enlace "Nuevo cliente".........................................skipped
+Then rellena los datos del formulario de nuevo cliente con:.................skipped
+And presiona el botón "Guardar".............................................skipped
+Then debería ver el mensaje "El cliente se ha creado correctamente".........skipped]]></system-out>
   </testcase>
 </testsuite>

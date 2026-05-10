@@ -1,0 +1,21 @@
+{
+  "name": "@aranova/aranova-react-ui",
+  "version": "1.0.0",
+  "description": "This library was generated with [Nx](https://nx.dev).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "@headlessui/react": ">2.0 <2.5",
+    "@heroicons/react": ">2.0 <2.5",
+    "@tanstack/react-query": ">5.0 <6.0",
+    "@tanstack/react-table": ">8.0 <9.0",
+    "clsx": ">2.1.0 <2.3.0",
+    "motion": ">=12.23.0 <12.24",
+    "tailwindcss": ">4.0.0 <5.0.0",
+    "typescript": "^5"
+  }
+}

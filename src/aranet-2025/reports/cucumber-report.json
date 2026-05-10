@@ -4,293 +4,149 @@
     "elements": [
       {
         "description": "",
-        "id": "login;usuario-admin-inicia-sesión-correctamente",
+        "id": "nuevo-cliente-aeat;se-accede-a-la-web-de-aeat-para-verifactu-y-se-crea-un-nuevo-cliente",
         "keyword": "Scenario",
-        "line": 3,
-        "name": "Usuario admin inicia sesión correctamente",
+        "line": 4,
+        "name": "Se accede a la web de AEAT para Verifactu y se crea un nuevo cliente",
         "steps": [
           {
             "keyword": "Before",
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 112700082
-            }
-          },
-          {
-            "keyword": "Before",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 29639916
+              "duration": 324511500
             }
           },
           {
             "arguments": [],
             "keyword": "Given ",
-            "line": 4,
-            "name": "el usuario abre la página de login",
-            "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:31"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 305114000
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "When ",
             "line": 5,
-            "name": "el usuario \"pablo\" introduce credenciales válidas de un administrador",
+            "name": "el usuario abre la página de Verifactu de la AEAT con certificado válido",
             "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:50"
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/aeat.steps.ts:6"
             },
             "result": {
-              "status": "passed",
-              "duration": 107636915
+              "status": "failed",
+              "duration": 5002999416,
+              "error_message": "Error: function timed out, ensure the promise resolves within 5000 milliseconds\n    at Timeout.<anonymous> (/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/node_modules/@cucumber/cucumber/src/time.ts:52:14)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
             }
           },
           {
             "arguments": [],
-            "keyword": "And ",
+            "keyword": "When ",
             "line": 6,
-            "name": "presiona el botón \"Acceder\"",
+            "name": "pulsa el enlace \"Clientes\"",
             "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:55"
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/aeat.steps.ts:10"
             },
             "result": {
-              "status": "passed",
-              "duration": 33578958
+              "status": "skipped",
+              "duration": 0
             }
           },
           {
             "arguments": [],
-            "keyword": "Then ",
+            "keyword": "And ",
             "line": 7,
-            "name": "debería ver el dashboard",
+            "name": "pulsa el enlace \"Nuevo cliente\"",
             "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:68"
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/aeat.steps.ts:10"
             },
             "result": {
-              "status": "passed",
-              "duration": 656795875
+              "status": "skipped",
+              "duration": 0
             }
           },
           {
-            "arguments": [],
-            "keyword": "And ",
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "idtipopersonarec",
+                      "J"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "idNombreContraparte",
+                      "Tecco, S.L."
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "idNifContraparte",
+                      "B50577931"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "idviareceptor",
+                      "Pol. Malpica, C/ F Oeste, Grupo Quejido, 77"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "idcpreceptor",
+                      "50057"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "idpoblacionrec",
+                      "Zaragoza"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "idprovinciarec",
+                      "Zaragoza"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "idpaisrec",
+                      "ES"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "Then ",
             "line": 8,
-            "name": "debería ver \"pablo\" en la parte superior derecha",
+            "name": "rellena los datos del formulario de nuevo cliente con:",
             "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:84"
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/aeat.steps.ts:15"
             },
             "result": {
-              "status": "passed",
-              "duration": 6255291
+              "status": "skipped",
+              "duration": 0
             }
           },
           {
             "arguments": [],
             "keyword": "And ",
-            "line": 9,
-            "name": "debería ver el acceso a la sección de \"Administración\"",
+            "line": 17,
+            "name": "presiona el botón \"Guardar\"",
             "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:75"
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:19"
             },
             "result": {
-              "status": "passed",
-              "duration": 1406084
-            }
-          },
-          {
-            "keyword": "After",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 5301124
-            }
-          },
-          {
-            "keyword": "After",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 3761958
-            }
-          }
-        ],
-        "tags": [],
-        "type": "scenario"
-      },
-      {
-        "description": "",
-        "id": "login;usuario-intenta-iniciar-sesión",
-        "keyword": "Scenario",
-        "line": 11,
-        "name": "Usuario intenta iniciar sesión",
-        "steps": [
-          {
-            "keyword": "Before",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 26161665
-            }
-          },
-          {
-            "keyword": "Before",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 23156207
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "Given ",
-            "line": 12,
-            "name": "el usuario abre la página de login",
-            "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:31"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 205081957
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "When ",
-            "line": 13,
-            "name": "el usuario introduce credenciales inválidas",
-            "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:35"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 80154749
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "And ",
-            "line": 14,
-            "name": "presiona el botón \"Acceder\"",
-            "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:55"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 34404874
+              "status": "skipped",
+              "duration": 0
             }
           },
           {
             "arguments": [],
             "keyword": "Then ",
-            "line": 15,
-            "name": "debería ver un mensaje de error",
-            "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:64"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 279941542
-            }
-          },
-          {
-            "keyword": "After",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 2569083
-            }
-          },
-          {
-            "keyword": "After",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 5143542
-            }
-          }
-        ],
-        "tags": [],
-        "type": "scenario"
-      },
-      {
-        "description": "",
-        "id": "login;usuario-inicia-sesión-correctamente-pero-no-tiene-permisos-para-el-dashboard",
-        "keyword": "Scenario",
-        "line": 17,
-        "name": "Usuario inicia sesión correctamente pero no tiene permisos para el dashboard",
-        "steps": [
-          {
-            "keyword": "Before",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 22222957
-            }
-          },
-          {
-            "keyword": "Before",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 21278749
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "Given ",
             "line": 18,
-            "name": "el usuario abre la página de login",
+            "name": "debería ver el mensaje \"El cliente se ha creado correctamente\"",
             "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:31"
+              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/aeat.steps.ts:27"
             },
             "result": {
-              "status": "passed",
-              "duration": 165101417
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "When ",
-            "line": 19,
-            "name": "el usuario introduce sus credenciales válidas",
-            "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:40"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 77827458
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "And ",
-            "line": 20,
-            "name": "presiona el botón \"Acceder\"",
-            "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:55"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 42084875
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "Then ",
-            "line": 21,
-            "name": "debería ver el dashboard",
-            "match": {
-              "location": "file:/Users/psanchezg/Documents/ARANOVA/GitHub/ARANet/src/aranet-2025/__tests__/features/step_definitions/login.steps.ts:68"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 365639833
+              "status": "skipped",
+              "duration": 0
             }
           },
           {
@@ -298,27 +154,24 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 4771375
-            }
-          },
-          {
-            "keyword": "After",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 3110125
+              "duration": 84919334
             }
           }
         ],
-        "tags": [],
+        "tags": [
+          {
+            "name": "@aeat",
+            "line": 3
+          }
+        ],
         "type": "scenario"
       }
     ],
-    "id": "login",
+    "id": "nuevo-cliente-aeat",
     "line": 1,
     "keyword": "Feature",
-    "name": "Login",
+    "name": "Nuevo cliente AEAT",
     "tags": [],
-    "uri": "__tests__/features/login.feature"
+    "uri": "__tests__/features/aeat.feature"
   }
 ]

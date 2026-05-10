@@ -16,16 +16,16 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckVerifactuPage() {
-  const session = await getSession();
-  if (!session) {
-    return <NotAuthorized />;
-  }
+  // const session = await getSession();
+  // if (!session) {
+  //   return <NotAuthorized />;
+  // }
 
-  const dataPlain = ServerDataPlain.getInstance();
-  const me = await dataPlain.useMe(session.id);
-  if (!me.data?.id) {
-    return <NotAuthorized />;
-  }
+  // const dataPlain = ServerDataPlain.getInstance();
+  // const me = await dataPlain.useMe(session.id);
+  // if (!me.data?.id) {
+  //   return <NotAuthorized />;
+  // }
   
   const links: MenuItem[] = [
     { name: 'Inicio', href: '/' },

@@ -1,0 +1,16 @@
+export enum SearchOperators {
+  gte = '>=',
+  lte = '<=',
+  equals = '=',
+  notequals = '!=',
+  like = 'like',
+  empty = '',
+  gt = '>',
+  lt = '<',
+  not = '!=',
+  in = 'in',
+  not_in = 'not_in',
+  isnull = 'isnull',
+  isnotnull = 'isnotnull',
+  notEmpty = 'notEmpty',
+}

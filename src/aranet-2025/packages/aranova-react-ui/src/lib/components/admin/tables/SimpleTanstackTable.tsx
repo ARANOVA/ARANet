@@ -13,8 +13,6 @@ import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import {
   ChevronDownIcon,
-  PencilIcon,
-  TrashIcon,
   ChevronUpIcon,
   CheckIcon,
   XMarkIcon,
@@ -31,6 +29,7 @@ import {
   WhereInput,
   ListResponse,
   SingleResponse,
+  RowAction,
 } from '../../../interfaces';
 import {
   Button,
@@ -44,30 +43,34 @@ import {
 import { NotificationAlert, SyncLoader } from '../../elements';
 import { customFlexRender } from '../../../helpers';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import { ActionsCell, EditActionsCell } from './actions';
+import { DeleteActionsCell } from './actions';
 
 interface Props<T> {
-  model: string;
+  model?: string;
   idField?: string;
   sortField?: string;
   sortDir?: 'desc' | 'asc';
   columns: ColumnDef<T, any>[];
   data?: ListResponse<T>;
-  FilterField?: WhereInput | null;
+  actions?: RowAction<T>[];
+  filters?: WhereInput | null;
   deleteFn: (model: string, ids: number[]) => Promise<SingleResponse<void>>;
   fetchDataFn: <T>(
     model: string,
     sortField: string,
     sortDir: 'asc' | 'desc',
-    FilterField?: WhereInput | null,
+    filters?: WhereInput | null,
   ) => Promise<ListResponse<T>>;
   ui: any;
   editMode: boolean;
-  editingRowId: number | null;
-  setEditingRowId: (v: number | null) => void;
-  editingRows: boolean;
-  setEditingRows: (v: boolean) => void;
-  saveRowFn: (model: string, data?: WhereInput | null) => Promise<SingleResponse<unknown>>;
-  title: string;
+  editingRowId?: number | null;
+  setEditingRowId?: (v: number | null) => void;
+  editingRows?: boolean;
+  setEditingRows?: (v: boolean) => void;
+  saveRowFn?: (model: string, data: unknown, filters: WhereInput | null) => Promise<SingleResponse<unknown>>;
+  title?: string;
+  includeAddRow?: boolean;
 }
 
 export const SimpleTanstackTable = <T,>({
@@ -79,7 +82,8 @@ export const SimpleTanstackTable = <T,>({
   title,
   editMode,
   data,
-  FilterField,
+  actions,
+  filters,
   deleteFn,
   saveRowFn,
   fetchDataFn,
@@ -87,6 +91,7 @@ export const SimpleTanstackTable = <T,>({
   setEditingRowId,
   editingRows,
   setEditingRows,
+  includeAddRow = true,
 }: Props<T>) => {
   idField = idField || 'id';
   const [returnAlert, setReturnAlert] = useState<React.ReactNode>(null);
@@ -116,7 +121,7 @@ export const SimpleTanstackTable = <T,>({
     await wrapperSaveFn(newRow);
   };
 
-  const wrapperSaveFn = async (data: any): Promise<boolean> => {
+  const wrapperSaveFn = async (data: T): Promise<boolean> => {
     try {
       setNbsaved(1);
       await mutationSave.mutateAsync(data); // espera a que acabe
@@ -143,8 +148,8 @@ export const SimpleTanstackTable = <T,>({
     }
   };
 
-  const handleEdit = (data: any, id: number) => {
-    setEditingRowId(id);
+  const handleEdit = (data: any, id: number): void => {
+    if (setEditingRowId) setEditingRowId(id);
     setCurrentEditingRowId(id || null);
     // TODO
     ui.setModeForm('edit');
@@ -152,16 +157,16 @@ export const SimpleTanstackTable = <T,>({
     ui.setSelectedItem(data);
   };
 
-  const wrapperDeleteFn = (
-    ids: number[] | number
-  ): boolean => {
-    if (!Array.isArray(ids)) {
-      ids = [ids];
-    }
-    setNbdeleted(ui.items.length);
-    mutation.mutate(ids);
-    return mutation.isSuccess;
-  };
+  // const wrapperDeleteFn = (
+  //   ids: number[] | number
+  // ): boolean => {
+  //   if (!Array.isArray(ids)) {
+  //     ids = [ids];
+  //   }
+  //   setNbdeleted(ui.items.length);
+  //   mutation.mutate(ids);
+  //   return mutation.isSuccess;
+  // };
 
   const className = "text-right overflow-hidden whitespace-nowrap text-ellipsis min-w-[90px] max-w-[90px] w-[90px]";
   const actionsColumn: ColumnDef<T> = {
@@ -173,7 +178,7 @@ export const SimpleTanstackTable = <T,>({
     },
     header: () => 'Acciones',
     footer: () => {
-      return (
+      return includeAddRow && (
         <div className="inline-flex items-center justify-center gap-2">
           <span className="text-zinc-400 dark:text-zinc-500 hover:dark:text-white hover:text-black cursor-pointer">
             <PlusCircleIcon
@@ -186,39 +191,26 @@ export const SimpleTanstackTable = <T,>({
       );
     },
     cell: ({ row }) => {
-      const data = row.original;
-      return (
-        <div className="inline-flex items-center justify-center gap-2">
-          <span className="text-zinc-400 dark:text-zinc-500 hover:dark:text-white hover:text-black cursor-pointer">
-            {currentEditingRowId !== row.original[idField as keyof typeof row.original] ? (
-              <PencilIcon
-                title="Editar línea"
-                className="w-[25px] h-[25px]"
-                onClick={() => {
-                  handleEdit(data, row.original[idField as keyof typeof row.original] as number);
-                }}
-              />
-            ) : (
-              <CheckIcon
-                title="Guardar línea"
-                className="w-[25px] h-[25px]"
-                onClick={() => {
-                  !mutationSave.isPending ? wrapperSaveFn(data) : null;
-                }}
-              />
-            )}
-          </span>
-          <span className="text-zinc-400 dark:text-zinc-500 hover:dark:text-white hover:text-black cursor-pointer">
-            <TrashIcon
-              title="Eliminar línea"
-              className="w-[25px] h-[25px]"
-              onClick={() => {
-                ui.openAlert(data);
-              }}
-            />
-          </span>
-        </div>
-      );
+      return <ActionsCell
+        data={row.original}
+        actions={actions}
+        setCurrentEditingRowId={setCurrentEditingRowId}
+        currentEditingRowId={currentEditingRowId}
+        id={row.original[idField as keyof typeof row.original] as number}
+      />
+      // (
+      //   <div className="inline-flex items-center justify-center gap-2">
+      //     <EditActionsCell<any>
+      //       editFn={handleEdit}
+      //       saveFn={(!mutationSave.isPending ? wrapperSaveFn : null) as (d: any) => Promise<boolean> | null}
+      //       data={row.original}
+      //       id={row.original[idField as keyof typeof row.original] as number}
+      //       currentEditingRowId={currentEditingRowId}
+      //     />
+      //     <DeleteActionsCell data={row.original} openAlert={ui.openAlert} />
+      //     <ActionsCell data={row.original} actions={actions} />
+      //   </div>
+      // );
     },
   };
 
@@ -235,16 +227,23 @@ export const SimpleTanstackTable = <T,>({
 
   const mutationSave = useMutation<SingleResponse<unknown>, Error, unknown>({
      mutationFn: data => {
+      if (!saveRowFn) {
+        return new Promise(resolve => resolve({
+          statusCode: 500,
+          data: null,
+          error: "Save function not defined"
+        }));
+      }
       // FilterField?.forEach(f => {
       //   // TODO: Mejorar
       //   (data as any)[f.field] = f.field.endsWith('_id') ? Number(f.value) : f.value;
       // });
-      return saveRowFn(model as any, FilterField);
+      return saveRowFn(model as any, data, filters || null);
      },
      onSuccess: data => {
       if (data.statusCode < 300) {
         queryClient.invalidateQueries({ queryKey: [model] });
-        setEditingRowId(null);
+        if (setEditingRowId) setEditingRowId(null);
         setCurrentEditingRowId(null);
         ui.setToastProps({
           type: 'success',
@@ -305,21 +304,28 @@ export const SimpleTanstackTable = <T,>({
   });
 
   // Data
+  queryClient.setQueryData(
+    [model || 'undefined', { sorting }],
+    data
+  );
+
   const dataQuery = useQuery<ListResponse<T>>({
     queryKey: [
-      model,
+      model || 'undefined',
       { sorting },
     ],
     queryFn: () => {
       return fetchDataFn(
-        model,
+        model || '',
         sorting?.[0]?.id,
         sorting?.[0]?.desc ? 'desc' : 'asc',
-        FilterField,
+        filters,
       );
     },
+    enabled: !!data || !!model,
     initialData: data,
     placeholderData: keepPreviousData,
+    staleTime: Infinity,
   });
 
   const updateAlert = () => {
@@ -361,7 +367,7 @@ export const SimpleTanstackTable = <T,>({
   useEffect(() => {
     // setIsMounted(true);
     updateAlert();
-  }, [dataQuery.isFetched, dataQuery.isLoading, dataQuery.error, dataQuery.data?.error, dataQuery.data?.data?.metadata.total]);
+  }, [dataQuery.isFetched, dataQuery.isLoading, dataQuery.error, dataQuery.data?.error, dataQuery.data?.data?.metadata?.total]);
 
   const tableCols = [...columns];
   if (showEdit) {
@@ -393,18 +399,18 @@ export const SimpleTanstackTable = <T,>({
 
         <div className="max-sm:w-full sm:flex-1 flex flex-wrap items-center gap-2 mb-4">
 
-          <div className="flex-grow">
+          {title && <div className="flex-grow">
             <div className="flex items-center flex-1 gap-4 print:gap-0">
               <h3 className="text-lg/7 font-semibold tracking-[-0.015em] text-zinc-950 sm:text-base/7 dark:text-white">
                 {title}
               </h3>
             </div>
-          </div>
-          {showEdit && (
+          </div>}
+          {showEdit && setEditingRows && (
             <div className="flex justify-end grow sm:flex-none">
               <div className="flex gap-4">
                 {/* Edit/Save button */}
-                {!editingRows ? (
+                {!editingRows && setEditingRows ? (
                   <Button
                     title="Editar items"
                     className="cursor-pointer"
