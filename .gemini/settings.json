@@ -1,0 +1,17 @@
+{
+  "mcp": {
+    "allowed": [
+      "AiSecBox-MCP"
+    ],
+    "excluded": []
+  },
+  "mcpServers": {
+    "AiSecBox-MCP": {
+      "headers": {
+        "X-Api-Key": "8vGcomZv-zm3ycKCN-jgMxkIkA"
+      },
+      "url": "https://mcp.aisecbox.com/mcp",
+      "type": "http"
+    }
+  }
+}
